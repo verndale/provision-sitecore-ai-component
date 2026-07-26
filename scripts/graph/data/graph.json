@@ -1,29 +1,29 @@
 {
   "counts": {
-    "nodes": 81,
-    "edges": 164,
+    "nodes": 79,
+    "edges": 156,
     "byType": {
       "hook": 7,
       "root-doc": 4,
-      "automation": 22,
+      "automation": 21,
       "skill-readme": 1,
       "reference": 6,
       "skill": 1,
       "source": 7,
-      "test": 11,
+      "test": 10,
       "wiki-index": 3,
-      "wiki-journal": 8,
+      "wiki-journal": 9,
       "wiki-plan": 8,
-      "wiki-topic": 3
+      "wiki-topic": 2
     },
     "byEdgeType": {
-      "covers": 10,
+      "covers": 8,
       "invokes": 7,
-      "links-to": 72,
+      "links-to": 69,
       "plan": 8,
       "references": 6,
-      "requires": 46,
-      "topic": 15
+      "requires": 45,
+      "topic": 13
     }
   },
   "nodes": [
@@ -120,7 +120,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 6632,
+      "bytes": 6467,
       "degree": 11
     },
     {
@@ -160,18 +160,6 @@
       "degree": 8
     },
     {
-      "id": "scripts/evals/check.cjs",
-      "label": "check.cjs",
-      "type": "automation",
-      "dir": "scripts/evals",
-      "topics": [],
-      "aliases": [],
-      "prs": [],
-      "issues": [],
-      "bytes": 24805,
-      "degree": 3
-    },
-    {
       "id": "scripts/graph/build-graph.cjs",
       "label": "build-graph.cjs",
       "type": "automation",
@@ -180,7 +168,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 23451,
+      "bytes": 23445,
       "degree": 6
     },
     {
@@ -604,18 +592,6 @@
       "degree": 4
     },
     {
-      "id": "test/evals-check.test.cjs",
-      "label": "evals-check.test.cjs",
-      "type": "test",
-      "dir": "test",
-      "topics": [],
-      "aliases": [],
-      "prs": [],
-      "issues": [],
-      "bytes": 7490,
-      "degree": 3
-    },
-    {
       "id": "test/executor.test.cjs",
       "label": "executor.test.cjs",
       "type": "test",
@@ -744,7 +720,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 4813,
+      "bytes": 4896,
       "degree": 16
     },
     {
@@ -830,7 +806,7 @@
       ],
       "issues": [],
       "bytes": 2573,
-      "degree": 4
+      "degree": 2
     },
     {
       "id": "wiki/journal/2026-07-21-skill-shipped-guardrails.md",
@@ -885,6 +861,18 @@
       "degree": 4
     },
     {
+      "id": "wiki/journal/2026-07-25-remove-skill-evals.md",
+      "label": "Removed the skill eval subsystem",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "bytes": 2099,
+      "degree": 1
+    },
+    {
       "id": "wiki/MECHANICS.md",
       "label": "Wiki Mechanics",
       "type": "wiki-index",
@@ -930,7 +918,7 @@
         "1"
       ],
       "bytes": 13049,
-      "degree": 3
+      "degree": 2
     },
     {
       "id": "wiki/plans/2026-07-21-fix-codex-pretooluse-enforcement-and-track-the-bug--9937d534aad2.md",
@@ -1098,26 +1086,6 @@
       ],
       "bytes": 6920,
       "degree": 30
-    },
-    {
-      "id": "wiki/topics/skill-evals.md",
-      "label": "Skill evals — Design History",
-      "type": "wiki-topic",
-      "dir": "wiki/topics",
-      "topics": [],
-      "aliases": [
-        "skill eval scenarios",
-        "evals check",
-        "coverage policy",
-        "scenario schema",
-        "eval harness"
-      ],
-      "prs": [],
-      "issues": [
-        "1"
-      ],
-      "bytes": 3152,
-      "degree": 8
     }
   ],
   "edges": [
@@ -1159,16 +1127,6 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/executor.cjs",
-      "type": "covers"
-    },
-    {
-      "source": "wiki/topics/skill-evals.md",
-      "target": "scripts/evals/check.cjs",
-      "type": "covers"
-    },
-    {
-      "source": "wiki/topics/skill-evals.md",
-      "target": "test/evals-check.test.cjs",
       "type": "covers"
     },
     {
@@ -1453,6 +1411,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-07-25-remove-skill-evals.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -1475,13 +1440,6 @@
     {
       "source": "wiki/INDEX.md",
       "target": "wiki/topics/sitecore-provisioning.md",
-      "type": "links-to",
-      "count": 1,
-      "anchors": []
-    },
-    {
-      "source": "wiki/INDEX.md",
-      "target": "wiki/topics/skill-evals.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -1690,27 +1648,6 @@
       "anchors": []
     },
     {
-      "source": "wiki/topics/skill-evals.md",
-      "target": "scripts/evals/check.cjs",
-      "type": "links-to",
-      "count": 1,
-      "anchors": []
-    },
-    {
-      "source": "wiki/topics/skill-evals.md",
-      "target": "test/evals-check.test.cjs",
-      "type": "links-to",
-      "count": 1,
-      "anchors": []
-    },
-    {
-      "source": "wiki/topics/skill-evals.md",
-      "target": "wiki/journal/2026-07-21-skill-eval-scenarios-and-ci.md",
-      "type": "links-to",
-      "count": 3,
-      "anchors": []
-    },
-    {
       "source": "wiki/journal/2026-07-21-agents-and-claude-md.md",
       "target": "wiki/plans/2026-07-21-add-agents-md-and-claude-md-issue-2.md",
       "type": "plan"
@@ -1891,11 +1828,6 @@
       "type": "requires"
     },
     {
-      "source": "test/evals-check.test.cjs",
-      "target": "scripts/evals/check.cjs",
-      "type": "requires"
-    },
-    {
       "source": "test/executor.test.cjs",
       "target": "src/build-plan.cjs",
       "type": "requires"
@@ -2036,11 +1968,6 @@
       "type": "topic"
     },
     {
-      "source": "wiki/journal/2026-07-21-skill-eval-scenarios-and-ci.md",
-      "target": "wiki/topics/skill-evals.md",
-      "type": "topic"
-    },
-    {
       "source": "wiki/journal/2026-07-21-skill-shipped-guardrails.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
@@ -2053,11 +1980,6 @@
     {
       "source": "wiki/journal/2026-07-22-read-tool-env-guard.md",
       "target": "wiki/topics/sitecore-provisioning.md",
-      "type": "topic"
-    },
-    {
-      "source": "wiki/plans/2026-07-21-add-skill-eval-scenarios-validator-ci-issue-1.md",
-      "target": "wiki/topics/skill-evals.md",
       "type": "topic"
     },
     {

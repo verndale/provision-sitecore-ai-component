@@ -24,19 +24,17 @@ dependency-free CommonJS.
   plans + TSX). Regenerate goldens with the tool, never by hand.
 - `wiki/` — the committed context wiki (history, decisions, wiring). Start at
   [wiki/INDEX.md](wiki/INDEX.md); the write-side protocol is `wiki/MECHANICS.md`.
-- `scripts/` — repo automation (`graph/`, `wiki/`, `evals/`, `hooks/`, `release/`); no user-facing runtime.
-- `evals/` — behavioral skill-eval scenarios pinned in CI.
+- `scripts/` — repo automation (`graph/`, `wiki/`, `hooks/`, `release/`); no user-facing runtime.
 
 ## Run it
 
 pnpm 10.33.0 via Corepack, Node ≥ 24.14.0 (`corepack enable && pnpm install`).
 
 - `pnpm test` — full suite (goldens, executor units, skills-lint, wiki conformance, graph
-  freshness, evals gate).
+  freshness).
 - `pnpm commit` — Conventional Commits via `@verndale/ai-commit` (husky-enforced).
 - `pnpm graph:build` / `pnpm graph:view` — rebuild the knowledge graph (+ the generated
   `wiki/connections*` pages) / serve the viewer at `localhost:4173`.
-- `pnpm evals:check` — validate the eval scenarios.
 - `bash setup.sh [claude] [codex] [cursor] [--uninstall]` — symlink the skill into your tool's
   user skills dir, register the PreToolUse guard for Claude Code/Codex, and offer the one-time
   credential bootstrap (`~/.config/provision-sitecore-component/.env`).
@@ -98,4 +96,4 @@ The CLI needs no install: `node src/cli.cjs <plan|check|push> <manifest.json>` �
   (`manifest-contract` and `authoring-api` are normative).
 - Repo history / wiring: [wiki/INDEX.md](wiki/INDEX.md), or
   `node scripts/wiki/navigate.cjs --intent why|wiring|impact`.
-- Contributor workflow: [CONTRIBUTING.md](CONTRIBUTING.md). Behavioral evals: `evals/`.
+- Contributor workflow: [CONTRIBUTING.md](CONTRIBUTING.md).
