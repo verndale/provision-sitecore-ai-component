@@ -20,12 +20,12 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 - [Knowledge graph](topics/knowledge-graph.md) — the repo's typed node/edge self-model, rendered into the connections wiring map and interactive viewer and gated fresh in CI.
 - [Sitecore component provisioning](topics/sitecore-provisioning.md) — one reviewed manifest driving both the CMS items (Authoring API, add-only reconcile) and the front-end TSX handoff scaffold.
-- [Skill evals](topics/skill-evals.md) — behavioral eval scenarios that guard the skill's push gate, repair loop, and boundaries, validated for schema + coverage and gated in CI.
 
 ## Journal
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
+- 2026-07-25 — [Removed the skill eval subsystem](journal/2026-07-25-remove-skill-evals.md) — the corpus-only eval layer, its validator, and both CI gates are gone; the topic page went with them while the original journal and archived plan stay as the record.
 - 2026-07-22 — [Plan-artifact edit guard](journal/2026-07-22-plan-artifact-edit-guard.md) — generated <slug>.plan.json is deny-on-edit in tool/provisioning repos to protect the step-6 gate review artifact; not a push bypass (push rebuilds from the manifest).
 - 2026-07-22 — [Read-tool .env guard](journal/2026-07-22-read-tool-env-guard.md) — the harness Read tool joins Bash readers and edit tools under the .env secret-read policy: consumer-repo .env and the central credential file deny via a new Claude Read matcher.
 - 2026-07-21 — [Codex PreToolUse live compatibility](journal/2026-07-21-codex-pretooluse-compatibility.md) — current Codex hook payloads, unsupported ask semantics, exact-hash trust, and git-root launch behavior are reflected in the guard and installer.
