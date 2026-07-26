@@ -2,7 +2,7 @@
 date: 2026-07-25
 topics: []
 plan: none
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-component/pull/27
 ---
 # Removed the skill eval subsystem
 
