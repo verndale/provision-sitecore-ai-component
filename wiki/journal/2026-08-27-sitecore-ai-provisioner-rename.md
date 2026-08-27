@@ -2,7 +2,7 @@
 date: 2026-08-27
 topics: [sitecore-provisioning]
 plan: none
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/33
 issue: https://github.com/verndale/provision-sitecore-ai-component/issues/32
 ---
 # SitecoreAI provisioner rename

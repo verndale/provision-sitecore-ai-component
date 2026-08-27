@@ -19,6 +19,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Decisions
 
+- 2026-08-27 — chore(pr): codex/32-sitecore-ai-provisioner ([verndale/provision-sitecore-ai-component PR #33](https://github.com/verndale/provision-sitecore-ai-component/pull/33))
 - 2026-08-27 — Renamed the provisioner around the canonical SitecoreAI identity as a tracked breaking migration; runtime aliases and legacy credential/config fallbacks were ruled out so every consumer converges on one package, CLI, skill, and config contract ([issue #32](https://github.com/verndale/provision-sitecore-ai-component/issues/32), [journal](../journal/2026-08-27-sitecore-ai-provisioner-rename.md)).
 - 2026-08-27 — build(ci): Update GitHub Actions workflows for improved ([verndale/provision-sitecore-component PR #30](https://github.com/verndale/provision-sitecore-component/pull/30))
 - 2026-07-26 — chore(ci): Remove deprecated eval scenarios and related files ([PR #27](https://github.com/verndale/provision-sitecore-component/pull/27))
