@@ -1,7 +1,9 @@
 ---
 status: implemented
 executed: 2026-08-23
-evidence: ["verndale/provision-sitecore-component issue #29 https://github.com/verndale/provision-sitecore-component/issues/29"]
+evidence:
+  - "verndale/provision-sitecore-component issue #29 https://github.com/verndale/provision-sitecore-component/issues/29"
+  - "verndale/provision-sitecore-component PR #30 https://github.com/verndale/provision-sitecore-component/pull/30 (merged 2026-08-27)"
 source_tool: codex
 source: user-approved-plan:issue-29
 topics: [knowledge-graph]

@@ -2,7 +2,7 @@
 date: 2026-08-23
 topics: [knowledge-graph]
 plan: plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-component/pull/30
 issue: https://github.com/verndale/provision-sitecore-component/issues/29
 ---
 # Wiki Actions and routing standard
