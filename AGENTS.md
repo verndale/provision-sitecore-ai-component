@@ -39,6 +39,16 @@ pnpm 10.33.0 via Corepack, Node ≥ 24.14.0 (`corepack enable && pnpm install`).
   user skills dir, register the PreToolUse guard for Claude Code/Codex, and offer the one-time
   credential bootstrap (`~/.config/provision-sitecore-component/.env`).
 
+## Context wiki navigation
+
+Never bulk-load `wiki/` or open `scripts/graph/data/graph.json` as reading context.
+
+- For a direct history or rationale question, start at `wiki/INDEX.md` and open only the page it routes to.
+- For a cross-page question, silently run `node scripts/wiki/navigate.cjs --intent <intent> --query "<term>"`: use `why` for rationale, `wiring` for dependency or ownership, and `impact` for change reach.
+- For known endpoints, use `--from <node-id> --to <node-id>`. Read only the returned itinerary; its per-page and total byte counts are the reading budget.
+- If navigation is ambiguous, choose only from the returned candidates or ask one focused question. If it has no match, use targeted `rg <term> wiki`, then `git log` or `gh`; never guess a route.
+- Wiki history explains decisions. Source and tests remain authoritative for current runtime behavior.
+
 The CLI needs no install: `node src/cli.cjs <plan|check|push> <manifest.json>` — `plan`
 (offline; writes `<slug>.plan.json` + the TSX pair), `check` (read-only preflight), `push`
 (mutating, add-only, gated).

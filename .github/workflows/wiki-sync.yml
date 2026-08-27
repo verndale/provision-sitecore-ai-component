@@ -1,40 +1,47 @@
 name: Sync context wiki
 
-# When a PR merges, reconcile the context wiki: fill `pr: pending` in journal
-# entries, draft a stub for a substantive PR that added none, append a topic
-# Decisions bullet, and complete a plans/INDEX.md row. Changes land as a bot PR
-# (never a direct push to main), so generated prose is reviewed and the release
-# bot's main push is never raced. Skips its own bot branches to avoid recursion.
+# Reconcile offline evidence from a merged PR into Markdown, rebuild the curated
+# graph, and open a review PR. workflow_dispatch replays an already merged PR by
+# number; it never creates a durable PR snapshot or live viewer API.
 
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Merged pull request number to replay"
+        required: true
+        type: number
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
 
 concurrency:
-  group: wiki-sync-${{ github.event.pull_request.number }}
+  group: wiki-sync-${{ inputs.pr_number || github.event.pull_request.number }}
   cancel-in-progress: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  PR_NUMBER: ${{ github.event.pull_request.number }}
+  GRAPHIFY_SKIP_HOOK: "1"
+  PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
 
 jobs:
   sync:
     if: >-
-      github.event.pull_request.merged == true &&
-      !startsWith(github.event.pull_request.head.ref, 'bot/wiki-')
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+      !startsWith(github.event.pull_request.head.ref, 'bot/wiki-'))
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PR_BOT_TOKEN }}
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -46,7 +53,7 @@ jobs:
 
       - name: Get pnpm store path
         id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -59,26 +66,38 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build PR context
-        env:
-          GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          PR_MERGED_AT: ${{ github.event.pull_request.merged_at }}
+      - name: Require bot token
         run: |
-          files=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" --paginate --jq '[.[].filename]')
-          commits=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/commits" --paginate --jq '[.[] | {hash: .sha, subject: (.commit.message | split("\n")[0])}]')
+          test -n "$GH_TOKEN" || { echo 'PR_BOT_TOKEN is required'; exit 1; }
+          gh auth setup-git
+
+      - name: Build merged PR context
+        id: context
+        run: |
+          gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}" > "$RUNNER_TEMP/wiki-pr.json"
+          jq -e '.merged == true and .merged_at != null' "$RUNNER_TEMP/wiki-pr.json" > /dev/null \
+            || { echo "PR #${PR_NUMBER} is not merged"; exit 1; }
+          jq -e '(.head.ref | startswith("bot/wiki-") | not)' "$RUNNER_TEMP/wiki-pr.json" > /dev/null \
+            || { echo "Refusing to replay bot wiki PR #${PR_NUMBER}"; exit 1; }
+
+          gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/files" --paginate --slurp \
+            | jq -c 'map(.[] | .filename)' > "$RUNNER_TEMP/wiki-files.json"
+          gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/commits" --paginate --slurp \
+            | jq -c 'map(.[] | {hash: .sha, subject: (.commit.message | split("\n")[0])})' > "$RUNNER_TEMP/wiki-commits.json"
+
           jq -n \
-            --arg n "$PR_NUMBER" --arg t "$PR_TITLE" --arg b "$PR_BODY" \
-            --arg u "$PR_URL" --arg m "$PR_MERGED_AT" \
-            --argjson f "$files" --argjson c "$commits" \
-            '{number: ($n|tonumber), title: $t, body: $b, url: $u, mergedAt: $m, changedPaths: $f, commits: $c}' \
-            > ctx.json
+            --arg repository "${{ github.repository }}" \
+            --slurpfile pr "$RUNNER_TEMP/wiki-pr.json" \
+            --slurpfile files "$RUNNER_TEMP/wiki-files.json" \
+            --slurpfile commits "$RUNNER_TEMP/wiki-commits.json" \
+            '{schemaVersion: 1, repository: $repository, number: $pr[0].number, title: $pr[0].title, body: ($pr[0].body // ""), url: $pr[0].html_url, mergedAt: $pr[0].merged_at, changedPaths: $files[0], commits: $commits[0]}' \
+            > "$RUNNER_TEMP/wiki-merge.json"
+          echo "base_branch=$(jq -r '.base.ref' "$RUNNER_TEMP/wiki-pr.json")" >> "$GITHUB_OUTPUT"
 
       - name: Sync wiki
         id: sync
         env:
+          BASE_BRANCH: ${{ steps.context.outputs.base_branch }}
           WIKI_AI: ${{ vars.WIKI_AI }}
           WIKI_AI_ENDPOINT: ${{ vars.WIKI_AI_ENDPOINT }}
           WIKI_AI_MODEL: ${{ vars.WIKI_AI_MODEL }}
@@ -89,28 +108,25 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B "bot/wiki-sync/${PR_NUMBER}" origin/main
-          node scripts/wiki/on-merge-sync.cjs --context ctx.json
-          # Wiki files are knowledge-graph nodes/edges; rebuild the graph so the bot
-          # commit stays in sync (the graph-freshness test would otherwise fail this
-          # PR). No-op diff when the sync made no wiki change.
-          node scripts/graph/build-graph.cjs
+          git checkout -B "bot/wiki-sync/${PR_NUMBER}" "origin/${BASE_BRANCH}"
+          node scripts/wiki/on-merge-sync.cjs --context "$RUNNER_TEMP/wiki-merge.json"
+          pnpm run graph:build
+          pnpm run wiki:check
           git add wiki scripts/graph/data/graph.json
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "No wiki changes for #${PR_NUMBER}."
+            echo "No wiki changes for ${GITHUB_REPOSITORY}#${PR_NUMBER}."
           else
-            git commit -m "docs(wiki): sync journal, topics, and plans for #${PR_NUMBER}"
-            git push --force origin "bot/wiki-sync/${PR_NUMBER}"
+            git commit -m "docs(wiki): reconcile merged PR #${PR_NUMBER}"
+            git push --force-with-lease origin "bot/wiki-sync/${PR_NUMBER}"
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Open or update PR
         if: steps.sync.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
-          PR_BASE_BRANCH: main
-          PR_HEAD_BRANCH: bot/wiki-sync/${{ github.event.pull_request.number }}
+          PR_BASE_BRANCH: ${{ steps.context.outputs.base_branch }}
+          PR_HEAD_BRANCH: bot/wiki-sync/${{ inputs.pr_number || github.event.pull_request.number }}
           PR_DRAFT: "false"
           PR_AI: ${{ vars.PR_AI }}
           PR_AI_ENDPOINT: ${{ vars.PR_AI_ENDPOINT }}

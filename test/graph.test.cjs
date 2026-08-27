@@ -18,7 +18,7 @@ const {
   coverageProblems,
   OUT_FILE,
 } = require("../scripts/graph/build-graph.cjs");
-const { route, loadPolicy, policyProblems } = require("../scripts/graph/routing.cjs");
+const { route, formatRoute, loadPolicy, policyProblems } = require("../scripts/graph/routing.cjs");
 
 const graph = build();
 
@@ -50,6 +50,18 @@ test("routing policy is valid against the live graph", () => {
   assert.deepEqual(policyProblems(loadPolicy(), graph), []);
 });
 
+test("Node routing rejects malformed exclusion and intent type arrays", () => {
+  const policy = loadPolicy();
+  assert.ok(policyProblems({ ...policy, excludedIntermediateTypes: [null] }, graph).length > 0);
+  assert.ok(policyProblems({
+    ...policy,
+    intents: {
+      ...policy.intents,
+      why: { ...policy.intents.why, preferredSourceTypes: [null] },
+    },
+  }, graph).length > 0);
+});
+
 test("navigate router returns real routes for why / wiring / impact", () => {
   const why = route(graph, { intent: "why", query: "src/executor.cjs" });
   assert.equal(why.status, "ok", JSON.stringify(why));
@@ -63,4 +75,43 @@ test("navigate router returns real routes for why / wiring / impact", () => {
 
   const ambiguous = route(graph, { intent: "why", query: "manifest" });
   assert.notEqual(ambiguous.status, "ok", "an ambiguous query reports instead of guessing");
+});
+
+test("compact routes print relation, authority, per-page bytes, and total bytes", () => {
+  const result = route(graph, { intent: "why", query: "src/executor.cjs" });
+  assert.equal(result.status, "ok", JSON.stringify(result));
+  const compact = formatRoute(result);
+  assert.ok(compact.includes(result.totalBytes + " B to read:"));
+  for (const item of result.itinerary) {
+    assert.ok(
+      compact.includes(item.id + " [" + item.bytes + " B] — " + item.relation + " — authority: " + item.authority),
+      "missing compact authority for " + item.id,
+    );
+  }
+});
+
+test("Node and browser routing prefer the lower-byte equal-hop itinerary", () => {
+  const fixture = {
+    nodes: [
+      { id: "source", label: "Source", type: "source", degree: 2, bytes: 10, topics: [], aliases: [] },
+      { id: "large", label: "Large", type: "source", degree: 2, bytes: 16384, topics: [], aliases: [] },
+      { id: "small", label: "Small", type: "source", degree: 2, bytes: 16, topics: [], aliases: [] },
+      { id: "target", label: "Target", type: "source", degree: 2, bytes: 10, topics: [], aliases: [] },
+    ],
+    edges: [
+      { source: "source", target: "large", type: "requires" },
+      { source: "large", target: "target", type: "requires" },
+      { source: "source", target: "small", type: "requires" },
+      { source: "small", target: "target", type: "requires" },
+    ],
+  };
+  const intent = { preferredSourceTypes: ["source"], preferredTargetTypes: ["source"] };
+  const policy = { edgeCosts: { requires: 1 }, hubPenalty: 0, bytePenaltyPerKiB: 0.05, excludedIntermediateTypes: [], intents: { why: intent, wiring: intent, impact: intent } };
+  const result = route(fixture, { intent: "wiring", from: "source", to: "target", policy });
+  assert.deepEqual(result.itinerary.map((item) => item.id), ["source", "small", "target"]);
+
+  const vm = require("node:vm");
+  const browser = { window: {} };
+  vm.runInNewContext(fs.readFileSync(path.join(REPO, "scripts/graph/viewer/routing.js"), "utf8"), browser);
+  assert.deepEqual(Array.from(browser.window.KGRouting.shortestPath(fixture, "source", "target", policy).nodes), ["source", "small", "target"]);
 });

@@ -14,6 +14,7 @@ Every agent plan written for this repo, gathered from Claude plan stores, Codex 
 
 | Date | Plan | Status | Evidence | Topics |
 | --- | --- | --- | --- | --- |
+| 2026-08-23 | [Standardize wiki Actions, hooks, and route navigation](2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md) | implemented | [issue #29](https://github.com/verndale/provision-sitecore-component/issues/29), PR pending | knowledge-graph |
 | 2026-07-21 | [Plan: `provision-sitecore-component` — standalone repo (CLI + skill)](2026-07-21-plan-provision-sitecore-component-standalone-repo-cli-skill.md) | implemented | [PR #7](https://github.com/verndale/provision-sitecore-component/pull/7) | sitecore-provisioning |
 | 2026-07-21 | [Add skill-eval scenarios + validator + CI (issue #1)](2026-07-21-add-skill-eval-scenarios-validator-ci-issue-1.md) | implemented | [PR #3](https://github.com/verndale/provision-sitecore-component/pull/3) | skill-evals |
 | 2026-07-21 | [Add AGENTS.md and CLAUDE.md — Issue #2](2026-07-21-add-agents-md-and-claude-md-issue-2.md) | implemented | [PR #5](https://github.com/verndale/provision-sitecore-component/pull/5) | repo-tooling |
@@ -23,4 +24,4 @@ Every agent plan written for this repo, gathered from Claude plan stores, Codex 
 | 2026-07-22 | [Close the Read-tool `.env` gap in the PreToolUse guard](2026-07-22-close-the-read-tool-env-gap-in-the-pretooluse-guard.md) | implemented | Issue #20, [PR #21](https://github.com/verndale/provision-sitecore-component/pull/21) | sitecore-provisioning |
 | 2026-07-22 | [Deny hand-edits to generated `<slug>.plan.json` plan artifacts](2026-07-22-deny-hand-edits-to-generated-slug-plan-json-plan-artifacts.md) | implemented | Issue #23, [PR #24](https://github.com/verndale/provision-sitecore-component/pull/24) | sitecore-provisioning |
 
-Totals: 8 implemented (8 plans).
+Totals: 9 implemented (9 plans).

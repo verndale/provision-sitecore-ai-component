@@ -1,29 +1,29 @@
 {
   "counts": {
-    "nodes": 79,
-    "edges": 156,
+    "nodes": 85,
+    "edges": 173,
     "byType": {
       "hook": 7,
       "root-doc": 4,
-      "automation": 21,
+      "automation": 23,
       "skill-readme": 1,
       "reference": 6,
       "skill": 1,
       "source": 7,
-      "test": 10,
+      "test": 12,
       "wiki-index": 3,
-      "wiki-journal": 9,
-      "wiki-plan": 8,
+      "wiki-journal": 10,
+      "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 8,
       "invokes": 7,
-      "links-to": 69,
-      "plan": 8,
+      "links-to": 73,
+      "plan": 9,
       "references": 6,
-      "requires": 45,
-      "topic": 13
+      "requires": 55,
+      "topic": 15
     }
   },
   "nodes": [
@@ -36,6 +36,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 890,
       "degree": 2
     },
@@ -48,6 +49,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 551,
       "degree": 2
     },
@@ -60,6 +62,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 55,
       "degree": 0
     },
@@ -72,7 +75,8 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 833,
+      "githubRefs": [],
+      "bytes": 364,
       "degree": 3
     },
     {
@@ -84,6 +88,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 155,
       "degree": 1
     },
@@ -96,6 +101,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 67,
       "degree": 0
     },
@@ -108,6 +114,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 1617,
       "degree": 1
     },
@@ -120,7 +127,8 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 6467,
+      "githubRefs": [],
+      "bytes": 7348,
       "degree": 11
     },
     {
@@ -132,6 +140,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 88,
       "degree": 1
     },
@@ -144,6 +153,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3015,
       "degree": 5
     },
@@ -156,6 +166,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 12723,
       "degree": 8
     },
@@ -168,8 +179,22 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 23445,
-      "degree": 6
+      "githubRefs": [],
+      "bytes": 23531,
+      "degree": 7
+    },
+    {
+      "id": "scripts/graph/pre-commit.cjs",
+      "label": "pre-commit.cjs",
+      "type": "automation",
+      "dir": "scripts/graph",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 3026,
+      "degree": 2
     },
     {
       "id": "scripts/graph/routing.cjs",
@@ -180,8 +205,9 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 11971,
-      "degree": 3
+      "githubRefs": [],
+      "bytes": 14910,
+      "degree": 5
     },
     {
       "id": "scripts/graph/serve.cjs",
@@ -192,6 +218,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 1871,
       "degree": 1
     },
@@ -204,6 +231,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 2014,
       "degree": 3
     },
@@ -216,6 +244,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 14719,
       "degree": 2
     },
@@ -228,6 +257,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 4456,
       "degree": 2
     },
@@ -240,6 +270,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6490,
       "degree": 5
     },
@@ -252,6 +283,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 7507,
       "degree": 1
     },
@@ -264,6 +296,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 7293,
       "degree": 3
     },
@@ -276,6 +309,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 1592,
       "degree": 1
     },
@@ -288,6 +322,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 5663,
       "degree": 2
     },
@@ -300,6 +335,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 5231,
       "degree": 1
     },
@@ -312,6 +348,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 5117,
       "degree": 2
     },
@@ -324,8 +361,22 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3801,
       "degree": 3
+    },
+    {
+      "id": "scripts/wiki/lib/github.cjs",
+      "label": "github.cjs",
+      "type": "automation",
+      "dir": "scripts/wiki/lib",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 4913,
+      "degree": 5
     },
     {
       "id": "scripts/wiki/lib/substantive.cjs",
@@ -336,6 +387,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 2044,
       "degree": 4
     },
@@ -348,6 +400,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3921,
       "degree": 2
     },
@@ -360,6 +413,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 1292,
       "degree": 2
     },
@@ -372,8 +426,9 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 10355,
-      "degree": 5
+      "githubRefs": [],
+      "bytes": 16012,
+      "degree": 7
     },
     {
       "id": "scripts/wiki/pre-commit-journal.cjs",
@@ -384,6 +439,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3646,
       "degree": 3
     },
@@ -396,8 +452,9 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 3517,
-      "degree": 0
+      "githubRefs": [],
+      "bytes": 5462,
+      "degree": 2
     },
     {
       "id": "setup.sh",
@@ -408,6 +465,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6871,
       "degree": 0
     },
@@ -420,6 +478,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 2459,
       "degree": 4
     },
@@ -432,6 +491,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6342,
       "degree": 5
     },
@@ -444,6 +504,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3884,
       "degree": 2
     },
@@ -456,6 +517,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6981,
       "degree": 5
     },
@@ -468,6 +530,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 7737,
       "degree": 3
     },
@@ -480,6 +543,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3823,
       "degree": 2
     },
@@ -492,6 +556,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3294,
       "degree": 3
     },
@@ -504,6 +569,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 7888,
       "degree": 13
     },
@@ -516,6 +582,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 13544,
       "degree": 6
     },
@@ -528,6 +595,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 10400,
       "degree": 5
     },
@@ -540,6 +608,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6644,
       "degree": 6
     },
@@ -552,6 +621,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 22876,
       "degree": 4
     },
@@ -564,6 +634,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 4047,
       "degree": 2
     },
@@ -576,6 +647,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 790,
       "degree": 4
     },
@@ -588,6 +660,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 14288,
       "degree": 4
     },
@@ -600,8 +673,22 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 14257,
       "degree": 4
+    },
+    {
+      "id": "test/graph-precommit.test.cjs",
+      "label": "graph-precommit.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1065,
+      "degree": 1
     },
     {
       "id": "test/graph.test.cjs",
@@ -612,7 +699,8 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 2682,
+      "githubRefs": [],
+      "bytes": 5260,
       "degree": 2
     },
     {
@@ -624,6 +712,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6280,
       "degree": 4
     },
@@ -636,6 +725,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 6202,
       "degree": 1
     },
@@ -648,6 +738,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 26357,
       "degree": 4
     },
@@ -660,6 +751,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 4570,
       "degree": 4
     },
@@ -672,6 +764,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 4713,
       "degree": 1
     },
@@ -684,6 +777,7 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 4932,
       "degree": 0
     },
@@ -696,8 +790,22 @@
       "aliases": [],
       "prs": [],
       "issues": [],
+      "githubRefs": [],
       "bytes": 3333,
       "degree": 3
+    },
+    {
+      "id": "test/wiki-actions.test.cjs",
+      "label": "wiki-actions.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 19196,
+      "degree": 5
     },
     {
       "id": "test/wiki.test.cjs",
@@ -708,7 +816,8 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 7349,
+      "githubRefs": [],
+      "bytes": 7423,
       "degree": 4
     },
     {
@@ -720,8 +829,9 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 4896,
-      "degree": 16
+      "githubRefs": [],
+      "bytes": 5290,
+      "degree": 17
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -737,6 +847,14 @@
         "5"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 5,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/5"
+        }
+      ],
       "bytes": 2200,
       "degree": 4
     },
@@ -755,6 +873,20 @@
       "issues": [
         "17"
       ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 18,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/18"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 17,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/17"
+        }
+      ],
       "bytes": 2470,
       "degree": 4
     },
@@ -771,6 +903,14 @@
         "13"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 13,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
+        }
+      ],
       "bytes": 3002,
       "degree": 4
     },
@@ -789,6 +929,14 @@
         "7"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 7,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
+        }
+      ],
       "bytes": 3141,
       "degree": 6
     },
@@ -805,6 +953,14 @@
         "3"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 3,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
+        }
+      ],
       "bytes": 2573,
       "degree": 2
     },
@@ -821,6 +977,14 @@
         "10"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 10,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
+        }
+      ],
       "bytes": 4801,
       "degree": 4
     },
@@ -838,6 +1002,20 @@
       ],
       "issues": [
         "23"
+      ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 24,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 23,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/23"
+        }
       ],
       "bytes": 2100,
       "degree": 4
@@ -857,6 +1035,20 @@
       "issues": [
         "20"
       ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 21,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/21"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 20,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/20"
+        }
+      ],
       "bytes": 2099,
       "degree": 4
     },
@@ -871,8 +1063,40 @@
         "27"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 27,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/27"
+        }
+      ],
       "bytes": 2156,
       "degree": 1
+    },
+    {
+      "id": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "label": "Wiki Actions and routing standard",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "29"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 29,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        }
+      ],
+      "bytes": 2680,
+      "degree": 4
     },
     {
       "id": "wiki/MECHANICS.md",
@@ -883,7 +1107,8 @@
       "aliases": [],
       "prs": [],
       "issues": [],
-      "bytes": 8386,
+      "githubRefs": [],
+      "bytes": 8464,
       "degree": 6
     },
     {
@@ -900,6 +1125,20 @@
       ],
       "issues": [
         "2"
+      ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 5,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/5"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 2,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/2"
+        }
       ],
       "bytes": 8937,
       "degree": 2
@@ -919,6 +1158,20 @@
       "issues": [
         "1"
       ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 3,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 1,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/1"
+        }
+      ],
       "bytes": 13049,
       "degree": 2
     },
@@ -935,6 +1188,14 @@
         "18"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 18,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/18"
+        }
+      ],
       "bytes": 4026,
       "degree": 4
     },
@@ -949,6 +1210,14 @@
         "13"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 13,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
+        }
+      ],
       "bytes": 10494,
       "degree": 3
     },
@@ -965,6 +1234,14 @@
         "7"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 7,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
+        }
+      ],
       "bytes": 18957,
       "degree": 4
     },
@@ -981,6 +1258,14 @@
         "10"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 10,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
+        }
+      ],
       "bytes": 16786,
       "degree": 3
     },
@@ -997,6 +1282,14 @@
         "21"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 21,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/21"
+        }
+      ],
       "bytes": 6662,
       "degree": 4
     },
@@ -1013,7 +1306,39 @@
         "24"
       ],
       "issues": [],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 24,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
+        }
+      ],
       "bytes": 5635,
+      "degree": 4
+    },
+    {
+      "id": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
+      "label": "Standardize wiki Actions, hooks, and route navigation",
+      "type": "wiki-plan",
+      "dir": "wiki/plans",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "29"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 29,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        }
+      ],
+      "bytes": 1633,
       "degree": 4
     },
     {
@@ -1033,9 +1358,67 @@
         "21",
         "24"
       ],
-      "issues": [],
-      "bytes": 2958,
-      "degree": 10
+      "issues": [
+        "29"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 29,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 7,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 3,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 5,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/5"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 10,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 13,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 18,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/18"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 21,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/21"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 24,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
+        }
+      ],
+      "bytes": 3224,
+      "degree": 11
     },
     {
       "id": "wiki/topics/knowledge-graph.md",
@@ -1056,9 +1439,37 @@
         "5",
         "7"
       ],
-      "issues": [],
-      "bytes": 3707,
-      "degree": 11
+      "issues": [
+        "29"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 29,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 13,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 5,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/5"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 7,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
+        }
+      ],
+      "bytes": 5300,
+      "degree": 15
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
@@ -1086,6 +1497,68 @@
         "23",
         "20",
         "17"
+      ],
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 27,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/27"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 24,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 23,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/23"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 21,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/21"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 20,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/20"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 18,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/18"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 17,
+          "url": "https://github.com/verndale/provision-sitecore-component/issues/17"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 10,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 7,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 3,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
+        }
       ],
       "bytes": 7076,
       "degree": 30
@@ -1144,7 +1617,7 @@
     },
     {
       "source": ".husky/pre-commit",
-      "target": "scripts/graph/build-graph.cjs",
+      "target": "scripts/graph/pre-commit.cjs",
       "type": "invokes"
     },
     {
@@ -1421,6 +1894,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -1525,6 +2005,13 @@
       "anchors": []
     },
     {
+      "source": "wiki/plans/INDEX.md",
+      "target": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
       "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/journal/2026-07-21-agents-and-claude-md.md",
       "type": "links-to",
@@ -1547,7 +2034,21 @@
     },
     {
       "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/plans/2026-07-21-plan-model-lifecycle-hooks-as-first-class-knowledge-graph-no.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -1691,6 +2192,11 @@
       "type": "plan"
     },
     {
+      "source": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "target": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
+      "type": "plan"
+    },
+    {
       "source": "skills/provision-sitecore-component/SKILL.md",
       "target": "skills/provision-sitecore-component/references/authoring-api.md",
       "type": "references"
@@ -1723,6 +2229,16 @@
     {
       "source": "scripts/graph/build-graph.cjs",
       "target": "scripts/wiki/lib/frontmatter.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "scripts/graph/build-graph.cjs",
+      "target": "scripts/wiki/lib/github.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "scripts/graph/routing.cjs",
+      "target": "scripts/wiki/lib/github.cjs",
       "type": "requires"
     },
     {
@@ -1777,6 +2293,11 @@
     },
     {
       "source": "scripts/wiki/on-merge-sync.cjs",
+      "target": "scripts/wiki/lib/github.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "scripts/wiki/on-merge-sync.cjs",
       "target": "scripts/wiki/lib/substantive.cjs",
       "type": "requires"
     },
@@ -1788,6 +2309,11 @@
     {
       "source": "scripts/wiki/pre-commit-journal.cjs",
       "target": "scripts/wiki/lib/substantive.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "scripts/wiki/refresh-issue-state.cjs",
+      "target": "scripts/wiki/lib/github.cjs",
       "type": "requires"
     },
     {
@@ -1848,6 +2374,11 @@
     {
       "source": "test/executor.test.cjs",
       "target": "test/helpers.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/graph-precommit.test.cjs",
+      "target": "scripts/graph/pre-commit.cjs",
       "type": "requires"
     },
     {
@@ -1926,6 +2457,31 @@
       "type": "requires"
     },
     {
+      "source": "test/wiki-actions.test.cjs",
+      "target": "scripts/graph/build-graph.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/wiki-actions.test.cjs",
+      "target": "scripts/graph/routing.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/wiki-actions.test.cjs",
+      "target": "scripts/wiki/lib/github.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/wiki-actions.test.cjs",
+      "target": "scripts/wiki/on-merge-sync.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/wiki-actions.test.cjs",
+      "target": "scripts/wiki/refresh-issue-state.cjs",
+      "type": "requires"
+    },
+    {
       "source": "test/wiki.test.cjs",
       "target": "scripts/wiki/lib/frontmatter.cjs",
       "type": "requires"
@@ -1986,6 +2542,11 @@
       "type": "topic"
     },
     {
+      "source": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
       "source": "wiki/plans/2026-07-21-fix-codex-pretooluse-enforcement-and-track-the-bug--9937d534aad2.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
@@ -2008,6 +2569,11 @@
     {
       "source": "wiki/plans/2026-07-22-deny-hand-edits-to-generated-slug-plan-json-plan-artifacts.md",
       "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
+      "target": "wiki/topics/knowledge-graph.md",
       "type": "topic"
     }
   ]
