@@ -1,17 +1,17 @@
 ---
-name: provision-sitecore-component
-description: Provisions a Sitecore XM Cloud component end to end from a reviewed component manifest. Drafts the manifest from a Confluence functional spec, then creates or updates the CMS side via the Authoring GraphQL API — datasource or page templates with fields, required-field validation, Source restrictions, Title labels and help text, the JSON rendering with datasource bindings, optional insert options and placeholder settings — and emits the house-pattern TSX contract pair (Component.tsx + Component.types.ts) the frontend pipeline consumes. Relevant when a component's Sitecore backend does not exist yet and a functional spec is available — before generate-build-pack. Triggers include "provision the component", "create the Sitecore template for", "set up the CMS side", "scaffold the component from the spec".
+name: provision-sitecore-ai-component
+description: Provisions a SitecoreAI component end to end from a reviewed component manifest. Drafts the manifest from a Confluence functional spec, then creates or updates the CMS side via the Authoring GraphQL API — datasource or page templates with fields, required-field validation, Source restrictions, Title labels and help text, the JSON rendering with datasource bindings, optional insert options and placeholder settings — and emits the house-pattern TSX contract pair (Component.tsx + Component.types.ts) the frontend pipeline consumes. Relevant when a component's SitecoreAI backend does not exist yet and a functional spec is available — before generate-build-pack. Triggers include "provision the component", "create the SitecoreAI template for", "set up the CMS side", "scaffold the component from the spec".
 ---
 
-# Skill: provision-sitecore-component
+# Skill: provision-sitecore-ai-component
 
-Turns a Confluence functional spec into a reviewed component manifest, provisions the Sitecore items from it (offline plan → human gate → optional API push), and emits the TSX handoff scaffold. One manifest drives both sides, so the frontend boundary contract mirrors the CMS by construction.
+Turns a Confluence functional spec into a reviewed component manifest, provisions the SitecoreAI items from it (offline plan → human gate → optional API push), and emits the TSX handoff scaffold. One manifest drives both sides, so the frontend boundary contract mirrors the CMS by construction.
 
 Operator docs: [README.md](README.md).
 
 ## Use when
 
-- A component from a functional spec needs its Sitecore backend created: datasource template, page-template field section, JSON rendering, bindings, placeholder settings.
+- A component from a functional spec needs its SitecoreAI backend created: datasource template, page-template field section, JSON rendering, bindings, placeholder settings.
 - The frontend needs the bare-bones TSX contract pair for a component whose CMS side is being provisioned.
 - The spec lives in Confluence and the manifest should be drafted from it rather than hand-typed.
 - Use `/generate-build-pack` instead when the CMS side already exists and the task is generating the Build Pack for implementation; this skill hands off to it.
@@ -49,7 +49,7 @@ Operator docs: [README.md](README.md).
 
 ## Validation loops
 
-- Manifest repair loop: when the CLI exits 2 with `ERROR: … Cause: … Next: …` lines, apply the bounded retry shape from [`references/retry-contract.md`](references/retry-contract.md) — repair mode (a) model-driven; editable surface: the manifest file only; escalation: developer-escalation via the canonical block, with option 3 "Continue with the manifest as-is" removed (an invalid manifest cannot proceed — on exhaustion, Halt is the only outcome).
+- Manifest repair loop: when the CLI exits 2 with `ERROR: … Cause: … Next: …` lines, apply the bounded retry shape from [`references/retry-contract.md`](references/retry-contract.md) — use model-driven repair, treat the manifest as the only editable surface, and apply the 3-failed-attempt cap for an other generation or conformance loop. On exhaustion, stop and report the remaining validation failures; an invalid manifest cannot proceed.
 - After any repair, re-run the same `plan` invocation before continuing.
 
 ## Guardrails

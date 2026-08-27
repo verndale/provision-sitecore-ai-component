@@ -19,12 +19,13 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 <!-- One line per topic page: [Title](topics/<slug>.md) — hook. Keep alphabetical by slug. -->
 
 - [Knowledge graph](topics/knowledge-graph.md) — the repo's typed node/edge self-model, rendered into the connections wiring map and interactive viewer and gated fresh in CI.
-- [Sitecore component provisioning](topics/sitecore-provisioning.md) — one reviewed manifest driving both the CMS items (Authoring API, add-only reconcile) and the front-end TSX handoff scaffold.
+- [SitecoreAI component provisioning](topics/sitecore-provisioning.md) — one reviewed manifest driving both the CMS items (Authoring API, add-only reconcile) and the front-end TSX handoff scaffold.
 
 ## Journal
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
+- 2026-08-27 — [SitecoreAI provisioner rename](journal/2026-08-27-sitecore-ai-provisioner-rename.md) — package, CLI, skill, setup, config, credentials, generated banners, and live repository references now share one breaking SitecoreAI identity without aliases.
 - 2026-08-23 — [Wiki Actions and routing standard](journal/2026-08-23-wiki-actions-routing-standard.md) — five stable workflow identities, repo-qualified GitHub evidence, byte-counted routes, and contamination-safe hooks now match the canonical wiki contract while preserving owner handoff.
 - 2026-07-25 — [Removed the skill eval subsystem](journal/2026-07-25-remove-skill-evals.md) — the corpus-only eval layer, its validator, and both CI gates are gone; the topic page went with them while the original journal and archived plan stay as the record.
 - 2026-07-22 — [Plan-artifact edit guard](journal/2026-07-22-plan-artifact-edit-guard.md) — generated <slug>.plan.json is deny-on-edit in tool/provisioning repos to protect the step-6 gate review artifact; not a push bypass (push rebuilds from the manifest).

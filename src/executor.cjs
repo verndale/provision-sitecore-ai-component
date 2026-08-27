@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Authoring API executor. Runs a mutation plan against the XM Cloud Authoring GraphQL
+ * Authoring API executor. Runs a mutation plan against the SitecoreAI Authoring GraphQL
  * API in one of two modes:
  * - "check": read-only. Preflight queries only; reports the decision each op would
  *   take (create / update / no-op / conflict). Never issues a mutation (enforced).
@@ -51,7 +51,7 @@ function readEnv(env) {
     throw new ExecutorError(
       "config",
       `Missing environment variable(s): ${missing.join(", ")}.`,
-      "Set the XM Cloud automation-client credentials and Authoring API endpoint (see the README's Authentication section), then re-run."
+      "Set the SitecoreAI automation-client credentials and Authoring API endpoint (see the README's Authentication section), then re-run."
     );
   }
   out.tokenUrl = (env.SITECORE_AUTHORING_TOKEN_URL || DEFAULT_TOKEN_URL).trim();
@@ -232,7 +232,7 @@ async function runPlan(plan, options) {
         for (const [placeholder, path] of Object.entries(op.resolves)) {
           if (placeholder === "__REQUIRED_RULE_ID__" && !planRequiresRule(plan)) continue;
           await resolveBinding(client, bindings, path, placeholder, {
-            remediation: `The well-known system item ${path} was not found; this environment differs from the assumed XM Cloud layout. Adjust the plan/manifest paths.`,
+            remediation: `The well-known system item ${path} was not found; this environment differs from the assumed SitecoreAI layout. Adjust the plan/manifest paths.`,
           });
         }
         record(op.id, "resolved", `${Object.keys(op.resolves).length} system item path(s)`);

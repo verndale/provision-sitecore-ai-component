@@ -11,7 +11,7 @@ const FIXTURES = path.join(__dirname, "fixtures");
 
 /** Copy a fixture directory into a fresh temp dir (auto-removed via t.after). */
 function withTempFixture(t, fixtureName, { only } = {}) {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `psc-${fixtureName}-`));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), `psai-${fixtureName}-`));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const source = path.join(FIXTURES, fixtureName);
   for (const entry of fs.readdirSync(source)) {
@@ -138,7 +138,7 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
 const FAKE_ENV = {
   SITECORE_AUTHORING_CLIENT_ID: "client-id",
   SITECORE_AUTHORING_CLIENT_SECRET: "client-secret",
-  SITECORE_AUTHORING_ENDPOINT: "https://xmc.example/sitecore/api/authoring/graphql/v1",
+  SITECORE_AUTHORING_ENDPOINT: "https://sitecore-ai.example/sitecore/api/authoring/graphql/v1",
 };
 
 module.exports = { REPO_ROOT, CLI, FIXTURES, withTempFixture, runCli, readFixtureFile, makeFakeCms, FAKE_ENV };

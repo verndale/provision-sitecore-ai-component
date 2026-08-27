@@ -18,8 +18,8 @@ const fs = require("fs");
 const path = require("path");
 const os = require("os");
 
-const PKG_NAME = "@verndale/provision-sitecore-component";
-const CLI_BASENAMES = new Set(["cli.cjs", "provision-sitecore-component"]);
+const PKG_NAME = "@verndale/provision-sitecore-ai-component";
+const CLI_BASENAMES = new Set(["cli.cjs", "provision-sitecore-ai-component"]);
 const LAUNCHERS = new Set(["node", "npx", "pnpm", "npm", "yarn"]);
 const READERS = new Set([
   "cat", "head", "tail", "less", "more", "grep", "egrep", "fgrep", "rg",
@@ -34,9 +34,9 @@ const REASONS = {
   handoff:
     "Version control here is deliver-and-handoff: leave an uncommitted working tree plus a suggested Conventional Commits message; the repo owner commits, pushes, merges, tags, and releases (AGENTS.md, Hard boundaries).",
   pushGate:
-    "provision-sitecore-component push mutates a shared Sitecore CMS environment. Approve only if the SKILL.md step-6 gate (one AskUserQuestion) was answered with approval in THIS session; the CLI additionally requires --yes or an interactive confirm (SKILL.md, Guardrails).",
+    "provision-sitecore-ai-component push mutates a shared SitecoreAI CMS environment. Approve only if the SKILL.md step-6 gate (one AskUserQuestion) was answered with approval in THIS session; the CLI additionally requires --yes or an interactive confirm (SKILL.md, Guardrails).",
   pushGateCodex:
-    "provision-sitecore-component push mutates a shared Sitecore CMS environment. Codex cannot request approval from PreToolUse: complete the SKILL.md step-6 gate in THIS session, then rerun the CLI with --yes as the recorded approval (SKILL.md, Guardrails).",
+    "provision-sitecore-ai-component push mutates a shared SitecoreAI CMS environment. Codex cannot request approval from PreToolUse: complete the SKILL.md step-6 gate in THIS session, then rerun the CLI with --yes as the recorded approval (SKILL.md, Guardrails).",
   envRead:
     "Agents never need .env values: node src/cli.cjs check names any missing variables without exposing them (authoring-api.md, Authentication). Secret values must not enter the transcript.",
   secrets:
@@ -62,7 +62,7 @@ function ask(reason, confirmed = false) {
 }
 
 function centralEnvFile() {
-  return path.join(os.homedir(), ".config", "provision-sitecore-component", ".env");
+  return path.join(os.homedir(), ".config", "provision-sitecore-ai-component", ".env");
 }
 
 function readJsonSafe(file) {
@@ -216,7 +216,7 @@ function decidePush(segment, tokens, prog) {
 function decideEnvRead(segment, tokens, prog, ctx) {
   if (!READERS.has(prog)) return null;
   // The central credential file is protected in every repo.
-  if (/provision-sitecore-component\/\.env(?!\.)/.test(segment)) return deny(REASONS.envRead);
+  if (/provision-sitecore-ai-component\/\.env(?!\.)/.test(segment)) return deny(REASONS.envRead);
   if (!ctx.inToolRepo && !ctx.inProvisioningRepo) return null;
   // cp reads its SOURCE operand: deny only when that is the real `.env`, so the
   // documented bootstrap `cp .env.example .env` stays allowed while
@@ -316,7 +316,7 @@ function decideFile(filePath, ctx) {
       if (rel === "wiki/connections.md" || rel.startsWith("wiki/connections/") || rel === "scripts/graph/data/graph.json") {
         return deny(REASONS.generated);
       }
-      if (rel.startsWith("skills/_meta/") || rel === "skills/provision-sitecore-component/references/retry-contract.md") {
+      if (rel.startsWith("skills/_meta/") || rel === "skills/provision-sitecore-ai-component/references/retry-contract.md") {
         return deny(REASONS.vendored);
       }
       // Matches the CONTRIBUTING glob test/fixtures/*/expected* — any golden,

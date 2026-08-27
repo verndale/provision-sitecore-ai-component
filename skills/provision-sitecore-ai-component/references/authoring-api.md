@@ -1,6 +1,6 @@
 # Authoring API contract
 
-How `check` and `push` talk to the XM Cloud Authoring and Management GraphQL API: authentication, the operation set, placeholder binding, reconcile semantics, and the verification procedure for environment differences. The executor (`src/executor.cjs`) implements this contract; the plan JSON embeds every GraphQL document verbatim so a reviewer sees exactly what will run.
+How `check` and `push` talk to the SitecoreAI Authoring and Management GraphQL API: authentication, the operation set, placeholder binding, reconcile semantics, and the verification procedure for environment differences. The executor (`src/executor.cjs`) implements this contract; the plan JSON embeds every GraphQL document verbatim so a reviewer sees exactly what will run.
 
 ## Contents
 
@@ -23,7 +23,7 @@ OAuth2 client credentials against Sitecore Cloud. Create an automation client fo
 - `SITECORE_AUTHORING_TOKEN_URL` — optional; default `https://auth.sitecorecloud.io/oauth/token`.
 - `SITECORE_AUTHORING_AUDIENCE` — optional; default `https://api.sitecorecloud.io`.
 
-The CLI fills unset keys in this order: exported environment variables → `./.env` at the invocation cwd (per-project override) → the per-machine `~/.config/provision-sitecore-component/.env` written by `setup.sh`'s one-time credential bootstrap (chmod 600). Missing variables fail before any network call (exit 2). Values are never echoed into output, plans, or logs.
+The CLI fills unset keys in this order: exported environment variables → `./.env` at the invocation cwd (per-project override) → the per-machine `~/.config/provision-sitecore-ai-component/.env` written by `setup.sh`'s one-time credential bootstrap (chmod 600). Missing variables fail before any network call (exit 2). Values are never echoed into output, plans, or logs.
 
 `push` is confirmation-gated at the CLI: on a terminal it asks y/N before loading credentials; in a non-interactive shell it refuses without `--yes`, which records the skill's step-6 gate approval.
 

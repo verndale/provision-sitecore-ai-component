@@ -1,4 +1,4 @@
 {
-  "stackAdapter": "optimizely",
+  "stackAdapter": "contentful",
   "artifactsRoot": "artifacts"
 }

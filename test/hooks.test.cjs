@@ -137,9 +137,9 @@ const PUSH_ASKED = [
   "node src/cli.cjs --config cfg.json push m.json",
   "node src/cli.cjs push m.json --yes",
   "./src/cli.cjs push m.json",
-  "provision-sitecore-component push m.json",
-  "pnpm exec provision-sitecore-component push m.json",
-  "npx @verndale/provision-sitecore-component push m.json",
+  "provision-sitecore-ai-component push m.json",
+  "pnpm exec provision-sitecore-ai-component push m.json",
+  "npx @verndale/provision-sitecore-ai-component push m.json",
   "node -e \"require('./src/executor.cjs').runPlan(plan,{mode:'push'})\"",
 ];
 
@@ -162,7 +162,9 @@ const PUSH_ALLOWED = [
   "grep -n push src/executor.cjs",
   'grep "node src/cli.cjs push" README.md',
   "node --test test/executor.test.cjs",
-  "pnpm --dir provision-sitecore-component test",
+  "pnpm --dir provision-sitecore-ai-component test",
+  "provision-sitecore-component push m.json",
+  "npx @verndale/provision-sitecore-component push m.json",
 ];
 
 for (const command of PUSH_ALLOWED) {
@@ -202,7 +204,7 @@ test(".env reads in unrelated repos are not policed", () => {
 });
 
 test("central credential file is protected everywhere", () => {
-  const decision = core.decideBash("cat ~/.config/provision-sitecore-component/.env", ctxPlain);
+  const decision = core.decideBash("cat ~/.config/provision-sitecore-ai-component/.env", ctxPlain);
   assert.ok(decision);
   assert.equal(decision.decision, "deny");
 });
@@ -276,7 +278,7 @@ const FILES_DENIED = [
   ["scripts/graph/data/graph.json", /graph:build/],
   ["skills/_meta/_skill-template.md", /ai-orchestration/],
   ["skills/_meta/_skill-sections.md", /ai-orchestration/],
-  ["skills/provision-sitecore-component/references/retry-contract.md", /ai-orchestration/],
+  ["skills/provision-sitecore-ai-component/references/retry-contract.md", /ai-orchestration/],
   ["test/fixtures/datasource-card/expected-plan.json", /regenerated with the tool/],
   ["test/fixtures/page-fields/expected/PeopleDetailMasthead.tsx", /regenerated with the tool/],
   // A golden named anything under the CONTRIBUTING expected* glob, not just expected-plan.json.
@@ -308,8 +310,8 @@ const FILES_ALLOWED = [
   "wiki/connections-draft.md",
   "scripts/graph/viewer/routing.js",
   "scripts/graph/routing-policy.json",
-  "skills/provision-sitecore-component/references/manifest-contract.md",
-  "skills/provision-sitecore-component/SKILL.md",
+  "skills/provision-sitecore-ai-component/references/manifest-contract.md",
+  "skills/provision-sitecore-ai-component/SKILL.md",
   "/etc/hosts",
   // endsWith(".plan.json") boundary: hyphen and bare names stay editable.
   "my-plan.json",

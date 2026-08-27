@@ -38,7 +38,7 @@ test("wrong stack adapter in build.config.json → exit 2", (t) => {
   const dir = withTempFixture(t, "wrong-adapter");
   const run = runCli(["plan", "manifest.json"], dir);
   assert.equal(run.status, 2);
-  assert.match(run.stderr, /stackAdapter "optimizely"/);
+  assert.match(run.stderr, /stackAdapter "contentful"/);
 });
 
 test("unknown flag → exit 2", (t) => {
@@ -68,10 +68,14 @@ test("pascalToKebab handles acronym runs", () => {
   assert.equal(pascalToKebab("PeopleDetailMasthead"), "people-detail-masthead");
 });
 
-test("resolveType falls back to a generic entry naming the unmapped type", () => {
-  const row = resolveType("Custom Badge Picker");
-  assert.equal(row.tsType, "Field<unknown>");
-  assert.match(row.todoNote, /Custom Badge Picker/);
+test("resolveType falls back to a complete generic entry for every unmapped type", () => {
+  for (const sitecoreType of ["Custom Badge Picker", "constructor", "toString", "__proto__"]) {
+    const row = resolveType(sitecoreType);
+    assert.equal(row.tsType, "Field<unknown>");
+    assert.deepEqual(row.typeImports, ["Field"]);
+    assert.equal(row.renderer, "todo");
+    assert.match(row.todoNote, new RegExp(sitecoreType));
+  }
   assert.equal(resolveType("single-line text").tsType, "Field<string>");
   assert.equal(resolveType("Rich Text").renderer, "richtext");
 });

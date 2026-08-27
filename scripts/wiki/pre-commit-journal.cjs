@@ -43,7 +43,7 @@ function unarchivedPlanHint({
       const st = fsImpl.statSync(p);
       if (st.mtimeMs < cutoff) continue;
       const text = fsImpl.readFileSync(p, "utf8");
-      if (!/provision-sitecore-component/.test(text)) continue;
+      if (!/provision-sitecore-ai-component/.test(text)) continue;
       const h1 = (text.match(/^#\s+(.+)$/m) || [])[1] || name;
       if (index && index.includes(h1.slice(0, 30))) continue; // already archived
       return { path: p, title: h1 };

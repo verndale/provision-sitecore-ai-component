@@ -11,7 +11,7 @@ const { archivePlan } = require("./archive-plan.cjs");
 const { findSessionPlans } = require("./lib/codex-plans.cjs");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
-const REPO_MATCH = /provision-sitecore-component/;
+const REPO_MATCH = /provision-sitecore-ai-component/;
 
 function parseArgs(argv) {
   const args = { archive: false, wiki: path.join(REPO_ROOT, "wiki"), dirs: [], codexDirs: [], sinceDays: null };
@@ -26,8 +26,8 @@ function parseArgs(argv) {
   if (!suppliedMarkdownDirs) {
     args.dirs = [
       path.join(os.homedir(), ".claude", "plans"),
-      path.join(os.homedir(), "Desktop", "claude-plans-organized", "provision-sitecore-component", "executed"),
-      path.join(os.homedir(), "Desktop", "claude-plans-organized", "provision-sitecore-component", "open-plans"),
+      path.join(os.homedir(), "Desktop", "claude-plans-organized", "provision-sitecore-ai-component", "executed"),
+      path.join(os.homedir(), "Desktop", "claude-plans-organized", "provision-sitecore-ai-component", "open-plans"),
     ];
   }
   // Supplying only --plans-dir preserves the existing test/operator behavior;

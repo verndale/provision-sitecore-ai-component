@@ -12,7 +12,7 @@ The exact shape of the emitted handoff pair — `<Component>.types.ts` + `<Compo
 
 ## Why a pair
 
-The frontend pipeline's sitecore-ai adapter mandates that the public props contract live in `ComponentName.types.ts` and mirror the backend Sitecore contract exactly — names, optionality, SDK wrapper types. Because the same manifest creates the CMS template, the emitted types file mirrors the backend by construction; `/implement-build-pack` later fills the `.tsx` in place without touching the boundary.
+The frontend pipeline's sitecore-ai adapter mandates that the public props contract live in `ComponentName.types.ts` and mirror the backend SitecoreAI contract exactly — names, optionality, SDK wrapper types. Because the same manifest creates the CMS template, the emitted types file mirrors the backend by construction; `/implement-build-pack` later fills the `.tsx` in place without touching the boundary.
 
 ## Datasource mode
 

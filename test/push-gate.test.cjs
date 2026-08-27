@@ -5,7 +5,7 @@
 // refuses (exit 2) BEFORE any credential is read or network touched; --yes
 // proceeds to the ordinary missing-env config failure offline. Also pins the
 // loadDotEnv resolution order (process env → ./.env → the per-machine
-// ~/.config/provision-sitecore-component/.env written by setup.sh).
+// ~/.config/provision-sitecore-ai-component/.env written by setup.sh).
 
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
@@ -54,7 +54,7 @@ test("push --yes passes the gate and fails offline on the ordinary missing-env e
 
 test("the central credential file fills unset keys (resolution order)", (t) => {
   const { home, work } = scratchFixture(t);
-  const centralDir = path.join(home, ".config", "provision-sitecore-component");
+  const centralDir = path.join(home, ".config", "provision-sitecore-ai-component");
   fs.mkdirSync(centralDir, { recursive: true });
   fs.writeFileSync(path.join(centralDir, ".env"), "SITECORE_AUTHORING_CLIENT_ID=from-central\n");
   const run = runCli(["push", "manifest.json", "--yes"], { home, work });
@@ -65,7 +65,7 @@ test("the central credential file fills unset keys (resolution order)", (t) => {
 
 test("a repo-root .env overrides the central file", (t) => {
   const { home, work } = scratchFixture(t);
-  const centralDir = path.join(home, ".config", "provision-sitecore-component");
+  const centralDir = path.join(home, ".config", "provision-sitecore-ai-component");
   fs.mkdirSync(centralDir, { recursive: true });
   fs.writeFileSync(path.join(centralDir, ".env"), "SITECORE_AUTHORING_CLIENT_ID=from-central\n");
   fs.writeFileSync(path.join(work, ".env"), "SITECORE_AUTHORING_CLIENT_ID=\n");
@@ -74,6 +74,16 @@ test("a repo-root .env overrides the central file", (t) => {
   const run = runCli(["push", "manifest.json", "--yes"], { home, work });
   assert.equal(run.status, 2);
   assert.match(run.stderr, /SITECORE_AUTHORING_CLIENT_ID/);
+});
+
+test("the former credential directory is not read as a fallback", (t) => {
+  const { home, work } = scratchFixture(t);
+  const legacyDir = path.join(home, ".config", "provision-sitecore-component");
+  fs.mkdirSync(legacyDir, { recursive: true });
+  fs.writeFileSync(path.join(legacyDir, ".env"), "SITECORE_AUTHORING_CLIENT_ID=legacy-value\n");
+  const run = runCli(["push", "manifest.json", "--yes"], { home, work });
+  assert.equal(run.status, 2);
+  assert.match(run.stderr, /SITECORE_AUTHORING_CLIENT_ID/, "legacy credentials must not satisfy the new contract");
 });
 
 test("plan ignores --yes and still succeeds offline", (t) => {

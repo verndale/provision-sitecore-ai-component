@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# setup.sh — one-command GLOBAL install of the provision-sitecore-component
+# setup.sh — one-command GLOBAL install of the provision-sitecore-ai-component
 # skill and its guardrails.
 #
 # Per tool, three steps (all idempotent, all printed as they land):
 #
-#   1. Symlink skills/provision-sitecore-component into the tool's user-level
+#   1. Symlink skills/provision-sitecore-ai-component into the tool's user-level
 #      skills directory, so the skill is available in every project:
 #
-#        Claude Code -> ~/.claude/skills/provision-sitecore-component
-#        Codex       -> ~/.codex/skills/provision-sitecore-component
-#        Cursor      -> ~/.cursor/skills/provision-sitecore-component
+#        Claude Code -> ~/.claude/skills/provision-sitecore-ai-component
+#        Codex       -> ~/.codex/skills/provision-sitecore-ai-component
+#        Cursor      -> ~/.cursor/skills/provision-sitecore-ai-component
 #
 #   2. Claude Code + Codex only: register the PreToolUse guard
 #      (scripts/hooks/pretooluse-guard.cjs) in the tool's user hook config
@@ -19,9 +19,9 @@
 #      remain the prose in SKILL.md.
 #
 #   3. Offer a one-time credential bootstrap for the Authoring API: writes
-#      ~/.config/provision-sitecore-component/.env (chmod 600, values never
+#      ~/.config/provision-sitecore-ai-component/.env (chmod 600, values never
 #      echoed). Skippable; exported env vars and a per-repo ./.env override it
-#      (see skills/provision-sitecore-component/references/authoring-api.md).
+#      (see skills/provision-sitecore-ai-component/references/authoring-api.md).
 #
 # Usage (from anywhere; the script resolves its own repo location):
 #
@@ -39,9 +39,9 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd -P)"
-SKILL_NAME="provision-sitecore-component"
+SKILL_NAME="provision-sitecore-ai-component"
 SKILL_SRC="$REPO_ROOT/skills/$SKILL_NAME"
-CRED_DIR="$HOME/.config/provision-sitecore-component"
+CRED_DIR="$HOME/.config/provision-sitecore-ai-component"
 CRED_FILE="$CRED_DIR/.env"
 
 [ -f "$SKILL_SRC/SKILL.md" ] || { echo "error: $SKILL_SRC/SKILL.md not found (run from a full clone)" >&2; exit 1; }
@@ -117,7 +117,7 @@ credential_bootstrap() {
     echo "credentials: non-interactive shell — create $CRED_FILE from .env.example when ready."
     return 0
   fi
-  printf "Configure Sitecore authoring credentials now (one per machine)? [y/N] "
+  printf "Configure SitecoreAI authoring credentials now (one per machine)? [y/N] "
   local reply="" ep="" cid="" csec="" turl="" aud=""
   read -r reply || reply=""
   if [ "$reply" != "y" ] && [ "$reply" != "Y" ]; then
@@ -138,7 +138,7 @@ credential_bootstrap() {
   umask 077
   mkdir -p "$CRED_DIR"
   {
-    echo "# provision-sitecore-component — Authoring API credentials (written by setup.sh)"
+    echo "# provision-sitecore-ai-component — Authoring API credentials (written by setup.sh)"
     echo "# Exported env vars and a per-repo ./.env override these (authoring-api.md)."
     echo "SITECORE_AUTHORING_ENDPOINT=$ep"
     echo "SITECORE_AUTHORING_CLIENT_ID=$cid"

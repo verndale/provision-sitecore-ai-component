@@ -4,7 +4,7 @@
  * Single source of truth for the Sitecore field type → TypeScript type → SDK renderer
  * mapping used by the plan builder and the TSX emitter.
  *
- * Documented mirror: skills/provision-sitecore-component/references/type-mapping.md
+ * Documented mirror: skills/provision-sitecore-ai-component/references/type-mapping.md
  * (this module is authoritative; the reference doc explains usage and the BA-spec
  * vocabulary mapping applied when drafting a manifest from Confluence).
  *
@@ -88,7 +88,9 @@ const TYPE_MAP = {
  */
 function resolveType(sitecoreType) {
   const key = String(sitecoreType || "").trim().toLowerCase();
-  const row = TYPE_MAP[key];
+  // TYPE_MAP is a closed allowlist. An inherited Object.prototype member must
+  // remain an unknown Sitecore field type rather than becoming a malformed row.
+  const row = Object.hasOwn(TYPE_MAP, key) ? TYPE_MAP[key] : null;
   if (row) {
     return { sitecoreType: String(sitecoreType).trim(), ...row };
   }

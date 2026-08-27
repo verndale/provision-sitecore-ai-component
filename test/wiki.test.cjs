@@ -66,7 +66,7 @@ test("topic pages carry aliases + covers, and covered paths exist (skill covered
     const covers = fm.readList(text, "covers");
     for (const target of covers) {
       assert.ok(fs.existsSync(path.join(REPO, target)), `${name}: covers path ${target} exists`);
-      if (target === "skills/provision-sitecore-component/SKILL.md") skillCovered = true;
+      if (target === "skills/provision-sitecore-ai-component/SKILL.md") skillCovered = true;
     }
   }
   assert.ok(skillCovered, "the skill's SKILL.md is covered by at least one topic");
@@ -129,7 +129,7 @@ test("merge sync fills pr: pending in this repo's seeded journal (temp copy)", a
     number: 1,
     title: "feat: scaffold provision-sitecore-component",
     body: "Initial delivery.",
-    url: "https://github.com/verndale/provision-sitecore-component/pull/1",
+    url: "https://github.com/verndale/provision-sitecore-ai-component/pull/1",
     mergedAt: "2026-07-22T00:00:00Z",
     changedPaths: ["src/cli.cjs", `wiki/journal/${journalName}`],
     commits: [{ hash: "abc", subject: "feat: scaffold" }],
@@ -141,7 +141,7 @@ test("merge sync fills pr: pending in this repo's seeded journal (temp copy)", a
   // The filled entry names the archived plan → its INDEX row gains the PR evidence.
   const plansIndex = fs.readFileSync(path.join(dir, "wiki", "plans", "INDEX.md"), "utf8");
   assert.ok(
-    plansIndex.includes("[verndale/provision-sitecore-component PR #1]"),
+    plansIndex.includes("[verndale/provision-sitecore-ai-component PR #1]"),
     "plans/INDEX.md evidence cell filled with repo-qualified PR",
   );
 });

@@ -8,8 +8,8 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
   - [build-graph.cjs](../../scripts/graph/build-graph.cjs)
   - [routing.cjs](../../scripts/graph/routing.cjs)
   - [serve.cjs](../../scripts/graph/serve.cjs)
-- [Sitecore component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) — 5 runtime surfaces
-  - [provision-sitecore-component](../../skills/provision-sitecore-component/SKILL.md)
+- [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) — 5 runtime surfaces
+  - [provision-sitecore-ai-component](../../skills/provision-sitecore-ai-component/SKILL.md)
   - [build-plan.cjs](../../src/build-plan.cjs)
   - [cli.cjs](../../src/cli.cjs)
   - [emit-tsx.cjs](../../src/emit-tsx.cjs)

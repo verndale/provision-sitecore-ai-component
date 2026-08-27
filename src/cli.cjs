@@ -2,12 +2,12 @@
 "use strict";
 
 /**
- * provision-sitecore-component — CLI entry.
+ * provision-sitecore-ai-component — CLI entry.
  *
  * Usage:
- *   provision-sitecore-component [plan] <manifest.json> [--no-tsx] [--force-tsx] [--config <path>]
- *   provision-sitecore-component check  <manifest.json> [--config <path>]
- *   provision-sitecore-component push   <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>]
+ *   provision-sitecore-ai-component [plan] <manifest.json> [--no-tsx] [--force-tsx] [--config <path>]
+ *   provision-sitecore-ai-component check  <manifest.json> [--config <path>]
+ *   provision-sitecore-ai-component push   <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>]
  *
  * Modes:
  *   plan  (default) offline: validate the manifest, write <slug>.plan.json next to it,
@@ -20,7 +20,7 @@
  *         records the in-session step-6 gate approval (SKILL.md).
  *
  * Config resolution: --config <path> → ./provision.config.json → ./build.config.json
- * (key sitecoreProvisioning; requires stackAdapter "sitecore-ai") → {} (paths must
+ * (key sitecoreAiProvisioning; requires stackAdapter "sitecore-ai") → {} (paths must
  * then come from manifest.sitecorePaths).
  *
  * Exit codes: 0 success or clean skip · 1 API/auth/conflict failure · 2 invocation,
@@ -112,11 +112,11 @@ function loadConfig(cwd, configPath) {
     if (value.stackAdapter !== "sitecore-ai") {
       return {
         error: `build.config.json has stackAdapter "${value.stackAdapter}".`,
-        cause: "This tool provisions Sitecore XM Cloud components and only runs in repos using the sitecore-ai adapter.",
+        cause: "This tool provisions SitecoreAI components and only runs in repos using the sitecore-ai adapter.",
         next: "Run it from a sitecore-ai app repo, or supply a standalone config via --config / provision.config.json.",
       };
     }
-    return { config: value.sitecoreProvisioning || {} };
+    return { config: value.sitecoreAiProvisioning || {} };
   }
   return { config: {} };
 }
@@ -135,11 +135,11 @@ function applyEnvFile(file, env) {
 /**
  * Minimal .env loader (KEY=VALUE lines; existing process env wins). No dependency.
  * Resolution order: process env → ./.env (per-repo override) → the per-machine
- * ~/.config/provision-sitecore-component/.env written by setup.sh.
+ * ~/.config/provision-sitecore-ai-component/.env written by setup.sh.
  */
 function loadDotEnv(cwd, env) {
   applyEnvFile(path.join(cwd, ".env"), env);
-  applyEnvFile(path.join(os.homedir(), ".config", "provision-sitecore-component", ".env"), env);
+  applyEnvFile(path.join(os.homedir(), ".config", "provision-sitecore-ai-component", ".env"), env);
 }
 
 /** Interactive push confirmation (prompt on stderr so stdout stays parseable). */
@@ -176,7 +176,7 @@ function emitTsxPair(manifest, resolved, cwd, { forceTsx }) {
 async function main() {
   const parsed = parseArgs(process.argv.slice(2));
   if (parsed.error) {
-    fail(parsed.error, "Expected: provision-sitecore-component [plan|check|push] <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>].", "Fix the invocation and re-run.");
+    fail(parsed.error, "Expected: provision-sitecore-ai-component [plan|check|push] <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>].", "Fix the invocation and re-run.");
   }
   const { mode, manifestPath, noTsx, forceTsx, configPath, yes } = parsed.args;
   const cwd = process.cwd();
