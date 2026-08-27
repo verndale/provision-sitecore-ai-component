@@ -21,7 +21,7 @@ const { slugify, addJournalLine, addTopicDecision } = require("./lib/wiki-io.cjs
 const { extractClosingIssues, extractGithubRefs, normalizeRepository, refKey } = require("./lib/github.cjs");
 const ai = require("./lib/ai.cjs");
 
-const DEFAULT_REPOSITORY = "verndale/provision-sitecore-component";
+const DEFAULT_REPOSITORY = "verndale/provision-sitecore-ai-component";
 
 function parseArgs(argv) {
   const a = { repo: path.resolve(__dirname, "..", "..") };

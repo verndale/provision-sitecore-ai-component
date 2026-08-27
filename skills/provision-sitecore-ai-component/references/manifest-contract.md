@@ -20,7 +20,7 @@ The CLI resolves the provisioning config in this order; the first hit wins:
 
 1. `--config <path>` — explicit JSON file.
 2. `./provision.config.json` — standalone config at the working-directory root.
-3. `./build.config.json` — pipeline repos: requires `stackAdapter: "sitecore-ai"` (any other adapter is a hard error) and reads the `sitecoreProvisioning` key.
+3. `./build.config.json` — pipeline repos: requires `stackAdapter: "sitecore-ai"` (any other adapter is a hard error) and reads the `sitecoreAiProvisioning` key.
 4. No file — every path must then come from `manifest.sitecorePaths`.
 
 Config shape (all keys optional at the file level; completeness is checked against what the manifest uses):

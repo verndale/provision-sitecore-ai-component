@@ -9,6 +9,7 @@ const { withTempFixture, runCli, readFixtureFile } = require("./helpers.cjs");
 const { validateManifest } = require("../src/validate-manifest.cjs");
 const { buildMutationPlan, serializePlan } = require("../src/build-plan.cjs");
 const { emitTypes, emitComponent } = require("../src/emit-tsx.cjs");
+const { loadConfig } = require("../src/cli.cjs");
 
 const GOLDENS = [
   {
@@ -17,7 +18,7 @@ const GOLDENS = [
     component: "RelatedContentCard",
     output: "src/components/related-content/related-content-card",
     configFile: "build.config.json",
-    configKey: "sitecoreProvisioning",
+    configKey: "sitecoreAiProvisioning",
   },
   {
     fixture: "page-fields",
@@ -100,4 +101,17 @@ test("manifest path is accepted without an explicit subcommand (plan is the defa
   const run = runCli(["manifest.json"], dir);
   assert.equal(run.status, 0, run.stderr);
   assert.match(run.stdout, /plan complete for PeopleDetailMasthead/);
+});
+
+test("build.config.json reads only sitecoreAiProvisioning and provides no legacy key fallback", (t) => {
+  const dir = withTempFixture(t, "datasource-card");
+  const file = path.join(dir, "build.config.json");
+  const canonical = JSON.parse(fs.readFileSync(file, "utf8"));
+  const expected = canonical.sitecoreAiProvisioning;
+  assert.deepEqual(loadConfig(dir, null), { config: expected });
+
+  canonical.sitecoreProvisioning = expected;
+  delete canonical.sitecoreAiProvisioning;
+  fs.writeFileSync(file, `${JSON.stringify(canonical, null, 2)}\n`);
+  assert.deepEqual(loadConfig(dir, null), { config: {} });
 });

@@ -1,16 +1,16 @@
 ---
-name: provision-sitecore-component
-description: Operator docs for the provision-sitecore-component skill — parameters, invocation examples, environment variables, and the CLI it drives.
+name: provision-sitecore-ai-component
+description: Operator docs for the provision-sitecore-ai-component skill — parameters, invocation examples, environment variables, and the CLI it drives.
 ---
 
-# provision-sitecore-component — operator docs
+# provision-sitecore-ai-component — operator docs
 
-Agent workflow that drafts a component manifest from a Confluence functional spec, provisions the Sitecore XM Cloud side from it (offline plan → gate → optional Authoring API push), and emits the TSX handoff scaffold. The runtime workflow lives in [SKILL.md](SKILL.md); this file is the operator's parameter and setup reference.
+Agent workflow that drafts a component manifest from a Confluence functional spec, provisions the SitecoreAI side from it (offline plan → gate → optional Authoring API push), and emits the TSX handoff scaffold. The runtime workflow lives in [SKILL.md](SKILL.md); this file is the operator's parameter and setup reference.
 
 ## Invocation
 
 ```text
-/provision-sitecore-component
+/provision-sitecore-ai-component
 Confluence: https://<site>.atlassian.net/wiki/spaces/CN/pages/6766788927/CN+-+Related+Content+Card
 Component: RelatedContentCard
 Output: src/components/related-content/related-content-card

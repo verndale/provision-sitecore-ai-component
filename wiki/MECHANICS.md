@@ -73,8 +73,8 @@ The pages are deliberately excluded from the graph's own nodes so they never bec
 date: YYYY-MM-DD
 topics: [<topic-slug>]          # topic slugs touched, or []
 plan: plans/YYYY-MM-DD-<slug>.md   # or none
-pr: https://github.com/verndale/provision-sitecore-component/pull/NNN   # or pending
-follow_up_pr: https://github.com/verndale/provision-sitecore-component/pull/NNN   # optional; or pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/NNN   # or pending
+follow_up_pr: https://github.com/verndale/provision-sitecore-ai-component/pull/NNN   # optional; or pending
 ---
 # <Title>
 
@@ -96,7 +96,7 @@ follow_up_pr: https://github.com/verndale/provision-sitecore-component/pull/NNN 
 ```markdown
 ---
 aliases: [<grounded lookup phrase>, <entrypoint or subsystem name>]
-covers: [skills/provision-sitecore-component/SKILL.md, <other exact runtime path>]
+covers: [skills/provision-sitecore-ai-component/SKILL.md, <other exact runtime path>]
 ---
 # <Subsystem> — Design History
 

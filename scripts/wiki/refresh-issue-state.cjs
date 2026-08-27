@@ -16,7 +16,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { extractGithubRefs, formatGithubRef } = require("./lib/github.cjs");
 
-const DEFAULT_REPOSITORY = "verndale/provision-sitecore-component";
+const DEFAULT_REPOSITORY = "verndale/provision-sitecore-ai-component";
 
 function parseArgs(argv) {
   const a = { wiki: path.join(path.resolve(__dirname, "..", ".."), "wiki") };

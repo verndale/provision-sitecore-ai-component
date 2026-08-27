@@ -1,14 +1,15 @@
 ---
-aliases: [component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation]
-covers: [skills/provision-sitecore-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs]
+aliases: [SitecoreAI component provisioning, component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation]
+covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs]
 ---
-# Sitecore component provisioning — Design History
+# SitecoreAI component provisioning — Design History
 
-How one reviewed manifest drives both the CMS side (templates, fields, rendering, placeholder settings via the Authoring GraphQL API) and the front-end TSX handoff scaffold.
+How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields, rendering, placeholder settings via the Authoring GraphQL API) and the front-end TSX handoff scaffold.
 
 ## Current state
 
-- The manifest ([contract](../../skills/provision-sitecore-component/references/manifest-contract.md)) is drafted from the Confluence functional spec by the skill, reviewed by a human, and is the single source for both sides.
+- The manifest ([contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)) is drafted from the Confluence functional spec by the skill, reviewed by a human, and is the single source for both sides.
+- The current distribution identity is `provision-sitecore-ai-component`: repository/package links, CLI, skill slug, generated banners, central credential directory, and `sitecoreAiProvisioning` config all use that exact name without legacy aliases or fallback reads.
 - `plan` is offline and byte-deterministic; the plan JSON embeds the GraphQL documents verbatim with `__PLACEHOLDER__` ids bound from preflights at run time — no hardcoded GUIDs ([src/build-plan.cjs](../../src/build-plan.cjs)).
 - `check` is read-only (a hard guard refuses mutations outside push mode); `push` reconciles add-only — extra CMS fields, type mismatches, and mislocated fields become follow-ups, never deletions or retypes ([src/executor.cjs](../../src/executor.cjs)) — and is confirmation-gated at the CLI (TTY y/N, or `--yes` recording the skill's step-6 approval).
 - The shared PreToolUse policy is platform-adapted: Claude Code can ask on push, while Codex denies the command until `--yes` records the skill gate; Codex hooks use canonical `Bash`/`apply_patch` payloads and require exact-hash trust after updates ([scripts/hooks/pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)).
@@ -18,6 +19,7 @@ How one reviewed manifest drives both the CMS side (templates, fields, rendering
 
 ## Decisions
 
+- 2026-08-27 — Renamed the provisioner around the canonical SitecoreAI identity as a tracked breaking migration; runtime aliases and legacy credential/config fallbacks were ruled out so every consumer converges on one package, CLI, skill, and config contract ([issue #32](https://github.com/verndale/provision-sitecore-ai-component/issues/32), [journal](../journal/2026-08-27-sitecore-ai-provisioner-rename.md)).
 - 2026-08-27 — build(ci): Update GitHub Actions workflows for improved ([verndale/provision-sitecore-component PR #30](https://github.com/verndale/provision-sitecore-component/pull/30))
 - 2026-07-26 — chore(ci): Remove deprecated eval scenarios and related files ([PR #27](https://github.com/verndale/provision-sitecore-component/pull/27))
 - 2026-07-23 — feat(provision-sitecore-component): Enforce rules against hand-editing g ([PR #24](https://github.com/verndale/provision-sitecore-component/pull/24))
@@ -37,6 +39,6 @@ How one reviewed manifest drives both the CMS side (templates, fields, rendering
 
 ## Open threads
 
-- Live `check`/`push` not yet validated against a dev XM Cloud environment (template-field item shapes, Required-rule wiring, `createItemTemplate` input variants).
+- Live `check`/`push` not yet validated against a dev SitecoreAI environment (template-field item shapes, Required-rule wiring, `createItemTemplate` input variants).
 - Available Renderings registration and rendering-parameters templates remain manual follow-ups (candidate v2 scope).
 - Content SDK 2 reference-field types (Droptree/Multilist) are conservatively `unknown` pending SDK-surface verification.

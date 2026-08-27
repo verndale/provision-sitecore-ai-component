@@ -9,7 +9,7 @@
  * - resolved (on success): merged Sitecore paths (manifest.sitecorePaths over config)
  *   plus componentPropsImport, consumed by the plan builder and TSX emitter.
  *
- * Contract doc: skills/provision-sitecore-component/references/manifest-contract.md
+ * Contract doc: skills/provision-sitecore-ai-component/references/manifest-contract.md
  */
 
 const { pascalToKebab, isPlainObject } = require("./util.cjs");

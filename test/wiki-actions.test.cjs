@@ -24,8 +24,8 @@ function read(relative) {
 
 test("GitHub citations are canonical, repo-qualified, deduplicated, and outside code fences", () => {
   const refs = extractGithubRefs([
-    "[PR](https://github.com/Verndale/Provision-Sitecore-Component/pull/29?x=1)",
-    "https://github.com/verndale/provision-sitecore-component/pull/29",
+    "[PR](https://github.com/Verndale/Provision-Sitecore-AI-Component/pull/29?x=1)",
+    "https://github.com/verndale/provision-sitecore-ai-component/pull/29",
     "[issue](https://github.com/other/repo/issues/12#note)",
     "https://example.test/github.com/hostile/repo/issues/13",
     "https://evil.example/https://github.com/hostile/repo/issues/14",
@@ -44,9 +44,9 @@ test("GitHub citations are canonical, repo-qualified, deduplicated, and outside 
   assert.deepEqual(refs, [
     {
       kind: "pull-request",
-      repository: "verndale/provision-sitecore-component",
+      repository: "verndale/provision-sitecore-ai-component",
       number: 29,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/29",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/29",
     },
     {
       kind: "issue",
@@ -62,13 +62,13 @@ test("GitHub citations are canonical, repo-qualified, deduplicated, and outside 
 test("closing syntax captures same- and cross-repository issues while bare mentions stay non-closing", () => {
   const refs = extractClosingIssues(
     "Closes: #9, #10, and Other/Repo#11. Related #99. Resolves #13 & fourth/repo#14.\n~~~md\nFixes hidden/repo#98.\n~~~\n```md\nFixes hidden/repo#97.\n```\n````md\n```\nFixes hidden/repo#96.\n```\n````\nResolved https://github.com/third/repo/issues/12.",
-    "verndale/provision-sitecore-component",
+    "verndale/provision-sitecore-ai-component",
   );
   assert.deepEqual(refs.map((ref) => ref.url), [
-    "https://github.com/verndale/provision-sitecore-component/issues/9",
-    "https://github.com/verndale/provision-sitecore-component/issues/10",
+    "https://github.com/verndale/provision-sitecore-ai-component/issues/9",
+    "https://github.com/verndale/provision-sitecore-ai-component/issues/10",
     "https://github.com/other/repo/issues/11",
-    "https://github.com/verndale/provision-sitecore-component/issues/13",
+    "https://github.com/verndale/provision-sitecore-ai-component/issues/13",
     "https://github.com/fourth/repo/issues/14",
     "https://github.com/third/repo/issues/12",
   ]);
@@ -78,10 +78,10 @@ test("evidence queries require repository qualification and resolve through citi
   assert.equal(parseGithubQuery("#29"), null);
   assert.equal(parseGithubQuery("https://evil.example/https://github.com/hostile/repo/issues/14"), null);
   assert.equal(
-    parseGithubQuery("https://github.com/verndale/provision-sitecore-component/issues/29?notification=1#issuecomment-2").url,
-    "https://github.com/verndale/provision-sitecore-component/issues/29",
+    parseGithubQuery("https://github.com/verndale/provision-sitecore-ai-component/issues/29?notification=1#issuecomment-2").url,
+    "https://github.com/verndale/provision-sitecore-ai-component/issues/29",
   );
-  assert.equal(parseGithubQuery("https://github.com/verndale/provision-sitecore-component/issues/29abc"), null);
+  assert.equal(parseGithubQuery("https://github.com/verndale/provision-sitecore-ai-component/issues/29abc"), null);
   const graph = {
     nodes: [
       {
@@ -90,16 +90,16 @@ test("evidence queries require repository qualification and resolve through citi
         type: "wiki-journal",
         githubRefs: [{
           kind: "issue",
-          repository: "verndale/provision-sitecore-component",
+          repository: "verndale/provision-sitecore-ai-component",
           number: 29,
-          url: "https://github.com/verndale/provision-sitecore-component/issues/29",
+          url: "https://github.com/verndale/provision-sitecore-ai-component/issues/29",
         }],
       },
     ],
     edges: [],
   };
   assert.equal(
-    resolveNode(graph, "verndale/provision-sitecore-component issue #29").node.id,
+    resolveNode(graph, "verndale/provision-sitecore-ai-component issue #29").node.id,
     "wiki/journal/change.md",
   );
 });
@@ -108,11 +108,11 @@ test("viewer search normalizes decorated canonical evidence URLs only", () => {
   const context = { window: {} };
   vm.runInNewContext(read("scripts/graph/viewer/routing.js"), context);
   assert.equal(
-    context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-component/issues/29?notification=1#issuecomment-2"),
-    "https://github.com/verndale/provision-sitecore-component/issues/29",
+    context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-ai-component/issues/29?notification=1#issuecomment-2"),
+    "https://github.com/verndale/provision-sitecore-ai-component/issues/29",
   );
-  assert.match(context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-component/issues/29abc"), /29abc$/);
-  assert.match(context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-component/issues/9007199254740993"), /9007199254740993$/);
+  assert.match(context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-ai-component/issues/29abc"), /29abc$/);
+  assert.match(context.window.KGRouting.normalizeGithubQuery("https://github.com/verndale/provision-sitecore-ai-component/issues/9007199254740993"), /9007199254740993$/);
   const graph = {
     nodes: [{ id: "a", type: "wiki-journal" }, { id: "b", type: "wiki-topic" }],
     edges: [{ source: "a", target: "b", type: "topic" }],
@@ -132,7 +132,7 @@ test("issue refresh never follows Markdown symlinks", (t) => {
   const topics = path.join(dir, "topics");
   fs.mkdirSync(topics, { recursive: true });
   const target = path.join(dir, "outside.md");
-  const original = "# Outside\n\n## Open threads\n\n- [issue](https://github.com/verndale/provision-sitecore-component/issues/29)\n";
+  const original = "# Outside\n\n## Open threads\n\n- [issue](https://github.com/verndale/provision-sitecore-ai-component/issues/29)\n";
   fs.writeFileSync(target, original);
   fs.symlinkSync(target, path.join(topics, "linked.md"));
   let calls = 0;
@@ -148,7 +148,7 @@ test("issue refresh rejects symlinked topics directories and wiki ancestors", (t
   const outsideTopics = path.join(outsideWiki, "topics");
   fs.mkdirSync(outsideTopics, { recursive: true });
   const target = path.join(outsideTopics, "outside.md");
-  const original = "# Outside\n\n## Open threads\n\n- [issue](https://github.com/verndale/provision-sitecore-component/issues/29)\n";
+  const original = "# Outside\n\n## Open threads\n\n- [issue](https://github.com/verndale/provision-sitecore-ai-component/issues/29)\n";
   fs.writeFileSync(target, original);
 
   const realWiki = path.join(root, "real-wiki");
@@ -167,33 +167,33 @@ test("merged-PR contexts accept legacy field aliases and reject mismatched ident
   const normalized = normalizeContext({
     number: "5",
     title: "Change",
-    url: "https://github.com/Verndale/Provision-Sitecore-Component/pull/5",
+    url: "https://github.com/Verndale/Provision-Sitecore-AI-Component/pull/5",
     merged_at: "2026-08-23T10:00:00Z",
     files: ["src/cli.cjs"],
     commits: [{ sha: "abc", message: "feat: change\nbody" }],
   });
-  assert.equal(normalized.repository, "verndale/provision-sitecore-component");
+  assert.equal(normalized.repository, "verndale/provision-sitecore-ai-component");
   assert.deepEqual(normalized.changedPaths, ["src/cli.cjs"]);
   assert.deepEqual(normalized.commits, [{ hash: "abc", subject: "feat: change" }]);
   assert.throws(
     () => normalizeContext({
       repository: "other/repo",
       number: 5,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
     }),
     /does not match/,
   );
   assert.throws(
     () => normalizeContext({
       number: 6,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
     }),
     /number does not match/,
   );
   assert.throws(
     () => normalizeContext({
       number: 5,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
       changedPaths: ["wiki/journal/../../other.md"],
     }),
     /without traversal/,
@@ -201,7 +201,7 @@ test("merged-PR contexts accept legacy field aliases and reject mismatched ident
   assert.throws(
     () => normalizeContext({
       number: 5,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
       changedPaths: [29],
     }),
     /string paths/,
@@ -209,7 +209,7 @@ test("merged-PR contexts accept legacy field aliases and reject mismatched ident
   assert.throws(
     () => normalizeContext({
       number: 5,
-      url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+      url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
       commits: [{ hash: "abc", subject: 29 }],
     }),
     /hash and subject/,
@@ -218,7 +218,7 @@ test("merged-PR contexts accept legacy field aliases and reject mismatched ident
     assert.throws(
       () => normalizeContext({
         number: 5,
-        url: "https://github.com/verndale/provision-sitecore-component/pull/5",
+        url: "https://github.com/verndale/provision-sitecore-ai-component/pull/5",
         ...override,
       }),
       /must be a (?:string|valid timestamp string)/,
@@ -243,11 +243,11 @@ test("manual replay merges closing issues into a journal that already cites the 
   t.after(() => fs.rmSync(wiki, { recursive: true, force: true }));
   fs.mkdirSync(path.join(wiki, "journal"));
   const journal = path.join(wiki, "journal", "change.md");
-  fs.writeFileSync(journal, "---\npr: https://github.com/verndale/provision-sitecore-component/pull/29\nissue: pending\ntopics: []\n---\n# Change\n");
-  const context = { schemaVersion: 1, repository: "verndale/provision-sitecore-component", number: 29, title: "Change", body: "Closes #29 and other/repo#12.", url: "https://github.com/verndale/provision-sitecore-component/pull/29", changedPaths: ["wiki/journal/change.md"], commits: [] };
+  fs.writeFileSync(journal, "---\npr: https://github.com/verndale/provision-sitecore-ai-component/pull/29\nissue: pending\ntopics: []\n---\n# Change\n");
+  const context = { schemaVersion: 1, repository: "verndale/provision-sitecore-ai-component", number: 29, title: "Change", body: "Closes #29 and other/repo#12.", url: "https://github.com/verndale/provision-sitecore-ai-component/pull/29", changedPaths: ["wiki/journal/change.md"], commits: [] };
   const first = await reconcileMerge(context, wiki);
   const text = fs.readFileSync(journal, "utf8");
-  assert.match(text, /^issue: https:\/\/github\.com\/verndale\/provision-sitecore-component\/issues\/29$/m);
+  assert.match(text, /^issue: https:\/\/github\.com\/verndale\/provision-sitecore-ai-component\/issues\/29$/m);
   assert.match(text, /https:\/\/github\.com\/other\/repo\/issues\/12/);
   const second = await reconcileMerge(context, wiki);
   assert.ok(first.changes.length > 0);
@@ -262,7 +262,7 @@ test("issue refresh touches only Open threads, deduplicates lookups, reopens, an
     "# Topic",
     "",
     "## Decisions",
-    "- Keep [issue](https://github.com/verndale/provision-sitecore-component/issues/29) here.",
+    "- Keep [issue](https://github.com/verndale/provision-sitecore-ai-component/issues/29) here.",
     "",
     "## Open threads",
     "```md",
@@ -278,8 +278,8 @@ test("issue refresh touches only Open threads, deduplicates lookups, reopens, an
     "- Nested fenced [issue](https://github.com/other/repo/issues/33)",
     "```",
     "````",
-    "- First [issue](https://github.com/verndale/provision-sitecore-component/issues/29)",
-    "- Duplicate [issue](https://github.com/verndale/provision-sitecore-component/issues/29)",
+    "- First [issue](https://github.com/verndale/provision-sitecore-ai-component/issues/29)",
+    "- Duplicate [issue](https://github.com/verndale/provision-sitecore-ai-component/issues/29)",
     "- Unavailable [issue](https://github.com/other/repo/issues/30)",
     "",
   ].join("\n"));
@@ -290,7 +290,7 @@ test("issue refresh touches only Open threads, deduplicates lookups, reopens, an
     return number === "29" ? "closed" : null;
   });
   assert.deepEqual(calls, [
-    "verndale/provision-sitecore-component#29",
+    "verndale/provision-sitecore-ai-component#29",
     "other/repo#30",
   ]);
   let content = fs.readFileSync(topic, "utf8");
@@ -308,7 +308,7 @@ test("issue refresh reconciles every ref on a line and preserves unknown mixed s
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "psc-multi-issues-"));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   const topic = path.join(dir, "topic.md");
-  const repo = "https://github.com/verndale/provision-sitecore-component/issues/";
+  const repo = "https://github.com/verndale/provision-sitecore-ai-component/issues/";
   const other = "https://github.com/other/repo/issues/44";
   const unknownLine = `- Unknown [three](${repo}43) and [four](${other}) — closed`;
   fs.writeFileSync(topic, [
@@ -324,9 +324,9 @@ test("issue refresh reconciles every ref on a line and preserves unknown mixed s
 
   const calls = [];
   const state = new Map([
-    ["verndale/provision-sitecore-component#41", "closed"],
-    ["verndale/provision-sitecore-component#42", "closed"],
-    ["verndale/provision-sitecore-component#43", "open"],
+    ["verndale/provision-sitecore-ai-component#41", "closed"],
+    ["verndale/provision-sitecore-ai-component#42", "closed"],
+    ["verndale/provision-sitecore-ai-component#43", "open"],
   ]);
   const changes = refresh(dir, (number, repository) => {
     const key = repository + "#" + number;
@@ -336,9 +336,9 @@ test("issue refresh reconciles every ref on a line and preserves unknown mixed s
   });
 
   assert.deepEqual(calls, [
-    "verndale/provision-sitecore-component#41",
-    "verndale/provision-sitecore-component#42",
-    "verndale/provision-sitecore-component#43",
+    "verndale/provision-sitecore-ai-component#41",
+    "verndale/provision-sitecore-ai-component#42",
+    "verndale/provision-sitecore-ai-component#43",
     "other/repo#44",
   ]);
   const lines = fs.readFileSync(topic, "utf8").split("\n");

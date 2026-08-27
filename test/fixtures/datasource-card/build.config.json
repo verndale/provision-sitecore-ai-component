@@ -1,7 +1,7 @@
 {
   "stackAdapter": "sitecore-ai",
   "artifactsRoot": "artifacts",
-  "sitecoreProvisioning": {
+  "sitecoreAiProvisioning": {
     "templateRoots": {
       "datasource": "/sitecore/templates/Project/CN/Components",
       "base": "/sitecore/templates/Project/CN/Pages/Base",

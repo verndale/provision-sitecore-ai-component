@@ -5,7 +5,7 @@ points into the canonical docs rather than restating them — follow the links f
 
 ## What this is
 
-`provision-sitecore-component` provisions a Sitecore XM Cloud component from **one reviewed
+`provision-sitecore-ai-component` provisions a SitecoreAI component from **one reviewed
 manifest**. The manifest — drafted from a BA functional spec in Confluence — drives both
 sides of setup from a single source of truth: the **CMS** items via the Authoring GraphQL API
 (templates, fields, rendering + datasource bindings, insert options, placeholder settings)
@@ -18,7 +18,7 @@ dependency-free CommonJS.
 
 - `src/` — the dependency-free CLI runtime (`.cjs`): `cli`, `validate-manifest`, `build-plan`,
   `executor`, `emit-tsx`, `type-map`, `util`.
-- `skills/provision-sitecore-component/` — the agent skill (`SKILL.md`) and its `references/`
+- `skills/provision-sitecore-ai-component/` — the agent skill (`SKILL.md`) and its `references/`
   docs; `skills/_meta/` holds vendored authoring templates (do not edit here).
 - `test/` — `node:test` suites plus golden fixtures under `test/fixtures/` (byte-compared
   plans + TSX). Regenerate goldens with the tool, never by hand.
@@ -37,7 +37,7 @@ pnpm 10.33.0 via Corepack, Node ≥ 24.14.0 (`corepack enable && pnpm install`).
   `wiki/connections*` pages) / serve the viewer at `localhost:4173`.
 - `bash setup.sh [claude] [codex] [cursor] [--uninstall]` — symlink the skill into your tool's
   user skills dir, register the PreToolUse guard for Claude Code/Codex, and offer the one-time
-  credential bootstrap (`~/.config/provision-sitecore-component/.env`).
+  credential bootstrap (`~/.config/provision-sitecore-ai-component/.env`).
 
 ## Context wiki navigation
 
@@ -59,13 +59,13 @@ The CLI needs no install: `node src/cli.cjs <plan|check|push> <manifest.json>` �
   `./build.config.json` (pipeline repos; requires `stackAdapter: "sitecore-ai"`) → none, in
   which case every path comes from `manifest.sitecorePaths`.
 - **Manifest** is the single reviewed contract for one component. Normative schema + semantics:
-  [manifest-contract.md](skills/provision-sitecore-component/references/manifest-contract.md);
+  [manifest-contract.md](skills/provision-sitecore-ai-component/references/manifest-contract.md);
   the Sitecore-type → TS → renderer table is
-  [type-mapping.md](skills/provision-sitecore-component/references/type-mapping.md).
-- **Auth** (only `check`/`push`): OAuth2 client-credentials for an XM Cloud automation client,
+  [type-mapping.md](skills/provision-sitecore-ai-component/references/type-mapping.md).
+- **Auth** (only `check`/`push`): OAuth2 client-credentials for a SitecoreAI automation client,
   via `SITECORE_AUTHORING_*` env vars in a gitignored `.env` (see `.env.example`). Missing required vars
   fail before any network call. Contract:
-  [authoring-api.md](skills/provision-sitecore-component/references/authoring-api.md).
+  [authoring-api.md](skills/provision-sitecore-ai-component/references/authoring-api.md).
 
 ## Hard boundaries
 
@@ -96,13 +96,13 @@ The CLI needs no install: `node src/cli.cjs <plan|check|push> <manifest.json>` �
 
 ## Where to look next
 
-- The skill: [SKILL.md](skills/provision-sitecore-component/SKILL.md) and its six references —
-  [confluence-import](skills/provision-sitecore-component/references/confluence-import.md),
-  [manifest-contract](skills/provision-sitecore-component/references/manifest-contract.md),
-  [type-mapping](skills/provision-sitecore-component/references/type-mapping.md),
-  [authoring-api](skills/provision-sitecore-component/references/authoring-api.md),
-  [tsx-template](skills/provision-sitecore-component/references/tsx-template.md),
-  [retry-contract](skills/provision-sitecore-component/references/retry-contract.md)
+- The skill: [SKILL.md](skills/provision-sitecore-ai-component/SKILL.md) and its six references —
+  [confluence-import](skills/provision-sitecore-ai-component/references/confluence-import.md),
+  [manifest-contract](skills/provision-sitecore-ai-component/references/manifest-contract.md),
+  [type-mapping](skills/provision-sitecore-ai-component/references/type-mapping.md),
+  [authoring-api](skills/provision-sitecore-ai-component/references/authoring-api.md),
+  [tsx-template](skills/provision-sitecore-ai-component/references/tsx-template.md),
+  [retry-contract](skills/provision-sitecore-ai-component/references/retry-contract.md)
   (`manifest-contract` and `authoring-api` are normative).
 - Repo history / wiring: [wiki/INDEX.md](wiki/INDEX.md), or
   `node scripts/wiki/navigate.cjs --intent why|wiring|impact`.

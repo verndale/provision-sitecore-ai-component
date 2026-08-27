@@ -1,6 +1,7 @@
 .DS_Store
 .env
 /node_modules
+.pnpm-store/
 
 # Per-developer IDE discovery dirs (local settings, skill symlinks, MCP config).
 # The checked-in guard configs are re-included; everything else stays per-dev.

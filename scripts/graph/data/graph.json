@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 85,
-    "edges": 173,
+    "nodes": 86,
+    "edges": 177,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -12,18 +12,18 @@
       "source": 7,
       "test": 12,
       "wiki-index": 3,
-      "wiki-journal": 10,
+      "wiki-journal": 11,
       "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 8,
       "invokes": 7,
-      "links-to": 73,
+      "links-to": 75,
       "plan": 9,
       "references": 6,
-      "requires": 55,
-      "topic": 15
+      "requires": 56,
+      "topic": 16
     }
   },
   "nodes": [
@@ -128,7 +128,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7348,
+      "bytes": 7381,
       "degree": 11
     },
     {
@@ -159,7 +159,7 @@
     },
     {
       "id": "README.md",
-      "label": "provision-sitecore-component",
+      "label": "provision-sitecore-ai-component",
       "type": "root-doc",
       "dir": ".",
       "topics": [],
@@ -167,7 +167,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 12723,
+      "bytes": 13961,
       "degree": 8
     },
     {
@@ -245,7 +245,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14719,
+      "bytes": 14744,
       "degree": 2
     },
     {
@@ -323,7 +323,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5663,
+      "bytes": 5672,
       "degree": 2
     },
     {
@@ -427,7 +427,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 16012,
+      "bytes": 16015,
       "degree": 7
     },
     {
@@ -440,7 +440,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3646,
+      "bytes": 3649,
       "degree": 3
     },
     {
@@ -453,7 +453,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5462,
+      "bytes": 5465,
       "degree": 2
     },
     {
@@ -466,40 +466,40 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6871,
+      "bytes": 6903,
       "degree": 0
     },
     {
-      "id": "skills/provision-sitecore-component/README.md",
-      "label": "provision-sitecore-component — operator docs",
+      "id": "skills/provision-sitecore-ai-component/README.md",
+      "label": "provision-sitecore-ai-component — operator docs",
       "type": "skill-readme",
-      "dir": "skills/provision-sitecore-component",
+      "dir": "skills/provision-sitecore-ai-component",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2459,
+      "bytes": 2464,
       "degree": 4
     },
     {
-      "id": "skills/provision-sitecore-component/references/authoring-api.md",
+      "id": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "label": "Authoring API contract",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6342,
+      "bytes": 6347,
       "degree": 5
     },
     {
-      "id": "skills/provision-sitecore-component/references/confluence-import.md",
+      "id": "skills/provision-sitecore-ai-component/references/confluence-import.md",
       "label": "Confluence spec import",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
@@ -509,49 +509,49 @@
       "degree": 2
     },
     {
-      "id": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "id": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "label": "Component manifest contract",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6981,
+      "bytes": 6983,
       "degree": 5
     },
     {
-      "id": "skills/provision-sitecore-component/references/retry-contract.md",
+      "id": "skills/provision-sitecore-ai-component/references/retry-contract.md",
       "label": "Bounded retry & self-correction contract (shared)",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7737,
+      "bytes": 2378,
       "degree": 3
     },
     {
-      "id": "skills/provision-sitecore-component/references/tsx-template.md",
+      "id": "skills/provision-sitecore-ai-component/references/tsx-template.md",
       "label": "TSX scaffold contract",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3823,
+      "bytes": 3825,
       "degree": 2
     },
     {
-      "id": "skills/provision-sitecore-component/references/type-mapping.md",
+      "id": "skills/provision-sitecore-ai-component/references/type-mapping.md",
       "label": "Field type mapping",
       "type": "reference",
-      "dir": "skills/provision-sitecore-component/references",
+      "dir": "skills/provision-sitecore-ai-component/references",
       "topics": [],
       "aliases": [],
       "prs": [],
@@ -561,16 +561,16 @@
       "degree": 3
     },
     {
-      "id": "skills/provision-sitecore-component/SKILL.md",
-      "label": "provision-sitecore-component",
+      "id": "skills/provision-sitecore-ai-component/SKILL.md",
+      "label": "provision-sitecore-ai-component",
       "type": "skill",
-      "dir": "skills/provision-sitecore-component",
+      "dir": "skills/provision-sitecore-ai-component",
       "topics": [],
       "aliases": [],
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7888,
+      "bytes": 7882,
       "degree": 13
     },
     {
@@ -596,8 +596,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10400,
-      "degree": 5
+      "bytes": 10418,
+      "degree": 6
     },
     {
       "id": "src/emit-tsx.cjs",
@@ -609,7 +609,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6644,
+      "bytes": 6653,
       "degree": 6
     },
     {
@@ -622,7 +622,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 22876,
+      "bytes": 22882,
       "degree": 4
     },
     {
@@ -635,7 +635,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4047,
+      "bytes": 4248,
       "degree": 2
     },
     {
@@ -661,7 +661,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14288,
+      "bytes": 14291,
       "degree": 4
     },
     {
@@ -713,7 +713,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6280,
+      "bytes": 6289,
       "degree": 4
     },
     {
@@ -739,7 +739,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 26357,
+      "bytes": 26487,
       "degree": 4
     },
     {
@@ -752,8 +752,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4570,
-      "degree": 4
+      "bytes": 5235,
+      "degree": 5
     },
     {
       "id": "test/push-gate.test.cjs",
@@ -765,7 +765,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4713,
+      "bytes": 5292,
       "degree": 1
     },
     {
@@ -791,7 +791,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3333,
+      "bytes": 3531,
       "degree": 3
     },
     {
@@ -804,7 +804,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 19196,
+      "bytes": 19325,
       "degree": 5
     },
     {
@@ -817,7 +817,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7423,
+      "bytes": 7432,
       "degree": 4
     },
     {
@@ -830,8 +830,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5290,
-      "degree": 17
+      "bytes": 5558,
+      "degree": 18
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1107,6 +1107,30 @@
       "degree": 4
     },
     {
+      "id": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "label": "SitecoreAI provisioner rename",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "32"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 32,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/32"
+        }
+      ],
+      "bytes": 2670,
+      "degree": 3
+    },
+    {
       "id": "wiki/MECHANICS.md",
       "label": "Wiki Mechanics",
       "type": "wiki-index",
@@ -1116,7 +1140,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 8464,
+      "bytes": 8473,
       "degree": 6
     },
     {
@@ -1496,11 +1520,12 @@
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
-      "label": "Sitecore component provisioning — Design History",
+      "label": "SitecoreAI component provisioning — Design History",
       "type": "wiki-topic",
       "dir": "wiki/topics",
       "topics": [],
       "aliases": [
+        "SitecoreAI component provisioning",
         "component provisioning",
         "manifest",
         "Authoring API push",
@@ -1518,11 +1543,18 @@
         "3"
       ],
       "issues": [
+        "32",
         "23",
         "20",
         "17"
       ],
       "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 32,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/32"
+        },
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-component",
@@ -1590,8 +1622,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 7264,
-      "degree": 30
+      "bytes": 8003,
+      "degree": 32
     }
   ],
   "edges": [
@@ -1612,7 +1644,7 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
-      "target": "skills/provision-sitecore-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/SKILL.md",
       "type": "covers"
     },
     {
@@ -1686,49 +1718,49 @@
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/authoring-api.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "links-to",
       "count": 2,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/confluence-import.md",
+      "target": "skills/provision-sitecore-ai-component/references/confluence-import.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
       "count": 2,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/retry-contract.md",
+      "target": "skills/provision-sitecore-ai-component/references/retry-contract.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/tsx-template.md",
+      "target": "skills/provision-sitecore-ai-component/references/tsx-template.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/references/type-mapping.md",
+      "target": "skills/provision-sitecore-ai-component/references/type-mapping.md",
       "type": "links-to",
       "count": 2,
       "anchors": []
     },
     {
       "source": "AGENTS.md",
-      "target": "skills/provision-sitecore-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/SKILL.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -1777,21 +1809,21 @@
     },
     {
       "source": "README.md",
-      "target": "skills/provision-sitecore-component/references/authoring-api.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
       "source": "README.md",
-      "target": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
       "source": "README.md",
-      "target": "skills/provision-sitecore-component/references/type-mapping.md",
+      "target": "skills/provision-sitecore-ai-component/references/type-mapping.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -1811,50 +1843,50 @@
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/README.md",
+      "source": "skills/provision-sitecore-ai-component/README.md",
       "target": "README.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/README.md",
-      "target": "skills/provision-sitecore-component/references/authoring-api.md",
+      "source": "skills/provision-sitecore-ai-component/README.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/README.md",
-      "target": "skills/provision-sitecore-component/SKILL.md",
+      "source": "skills/provision-sitecore-ai-component/README.md",
+      "target": "skills/provision-sitecore-ai-component/SKILL.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/README.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/README.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/authoring-api.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/retry-contract.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/retry-contract.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -1925,6 +1957,13 @@
     {
       "source": "wiki/INDEX.md",
       "target": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2092,7 +2131,7 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
-      "target": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2149,6 +2188,13 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-07-22-read-tool-env-guard.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2227,33 +2273,33 @@
       "type": "plan"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/authoring-api.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "references"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/confluence-import.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/confluence-import.md",
       "type": "references"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/manifest-contract.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "references"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/retry-contract.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/retry-contract.md",
       "type": "references"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/tsx-template.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/tsx-template.md",
       "type": "references"
     },
     {
-      "source": "skills/provision-sitecore-component/SKILL.md",
-      "target": "skills/provision-sitecore-component/references/type-mapping.md",
+      "source": "skills/provision-sitecore-ai-component/SKILL.md",
+      "target": "skills/provision-sitecore-ai-component/references/type-mapping.md",
       "type": "references"
     },
     {
@@ -2453,6 +2499,11 @@
     },
     {
       "source": "test/plan-emit.test.cjs",
+      "target": "src/cli.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/plan-emit.test.cjs",
       "target": "src/emit-tsx.cjs",
       "type": "requires"
     },
@@ -2574,6 +2625,11 @@
     {
       "source": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
       "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     },
     {
