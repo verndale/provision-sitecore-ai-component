@@ -9,8 +9,8 @@ Why this repo is the way it is: executed plans, decisions, and change history. R
 3. "Was plan X implemented / what plans exist" → [plans/INDEX.md](plans/INDEX.md) is the audit table; archived plan files sit next to it.
 4. Full plan detail behind a change → follow the plan link inside the journal entry or topic page.
 5. "How does X wire to the rest / what exercises or historically explains X" → [connections.md](connections.md), a small index over the generated wiring map; open the one section it routes to — [tests↔source](connections/tests-source.md), [skill→references](connections/skills-references.md), [topics↔runtime](connections/topics-runtime.md), [cross-subsystem seams](connections/seams.md), or [hooks↔scripts](connections/hooks.md). `pnpm graph:view` serves the interactive graph viewer.
-6. Cross-system "why", wiring, or impact question → agents silently use `scripts/wiki/navigate.cjs` (`--intent why|wiring|impact --query <term>`) before reading files; it returns a deterministic, minimal itinerary or reports an ambiguity. Developers do not need to run or remember this utility.
-7. No index hit or no route → grep `wiki/` for the term; then fall back to `git log` / `gh`. Never load the whole wiki.
+6. Cross-system "why", wiring, or impact question → agents silently use `scripts/wiki/navigate.cjs` (`--intent why|wiring|impact --query <term>`) before reading files; read only its deterministic itinerary and treat the per-page/total byte count as the reading budget.
+7. If navigation is ambiguous, choose only from its candidates or ask one focused question. With no match, use targeted `rg <term> wiki`, then `git log` / `gh`; never load the whole wiki or open `scripts/graph/data/graph.json` as reading context.
 
 Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHANICS.md).
 
@@ -25,6 +25,7 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
+- 2026-08-23 — [Wiki Actions and routing standard](journal/2026-08-23-wiki-actions-routing-standard.md) — five stable workflow identities, repo-qualified GitHub evidence, byte-counted routes, and contamination-safe hooks now match the canonical wiki contract while preserving owner handoff.
 - 2026-07-25 — [Removed the skill eval subsystem](journal/2026-07-25-remove-skill-evals.md) — the corpus-only eval layer, its validator, and both CI gates are gone; the topic page went with them while the original journal and archived plan stay as the record.
 - 2026-07-22 — [Plan-artifact edit guard](journal/2026-07-22-plan-artifact-edit-guard.md) — generated <slug>.plan.json is deny-on-edit in tool/provisioning repos to protect the step-6 gate review artifact; not a push bypass (push rebuilds from the manifest).
 - 2026-07-22 — [Read-tool .env guard](journal/2026-07-22-read-tool-env-guard.md) — the harness Read tool joins Bash readers and edit tools under the .env secret-read policy: consumer-repo .env and the central credential file deny via a new Claude Read matcher.

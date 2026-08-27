@@ -2,16 +2,5 @@
 # Deliver-and-handoff: refuse commits from agent shells (AGENTS.md, Hard boundaries).
 node scripts/hooks/agent-commit-guard.cjs || exit 1
 
-node scripts/wiki/pre-commit-journal.cjs
-
-# Keep the committed knowledge graph in sync with current repo state. The build is
-# deterministic and fast (a no-op diff when nothing indexed changed), so rebuild
-# unconditionally and stage the result. Non-blocking: on build failure, warn and let
-# the commit proceed — the graph-freshness test in CI is the drift backstop. Skipped in CI.
-if [ -z "$CI" ]; then
-  if node scripts/graph/build-graph.cjs >/dev/null 2>&1; then
-    git add scripts/graph/data/graph.json wiki/connections.md wiki/connections
-  else
-    echo "warning: knowledge graph rebuild failed; committed graph.json may be stale (run pnpm graph:build)" >&2
-  fi
-fi
+node scripts/wiki/pre-commit-journal.cjs || echo "warning: wiki journal reminder failed; continuing" >&2
+node scripts/graph/pre-commit.cjs || echo "warning: knowledge graph lifecycle failed; continuing" >&2

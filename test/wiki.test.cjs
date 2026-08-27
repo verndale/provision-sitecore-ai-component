@@ -140,5 +140,8 @@ test("merge sync fills pr: pending in this repo's seeded journal (temp copy)", a
   assert.equal(fm.readField(text, "pr"), ctx.url);
   // The filled entry names the archived plan → its INDEX row gains the PR evidence.
   const plansIndex = fs.readFileSync(path.join(dir, "wiki", "plans", "INDEX.md"), "utf8");
-  assert.ok(plansIndex.includes("[PR #1]"), "plans/INDEX.md evidence cell filled");
+  assert.ok(
+    plansIndex.includes("[verndale/provision-sitecore-component PR #1]"),
+    "plans/INDEX.md evidence cell filled with repo-qualified PR",
+  );
 });

@@ -3,6 +3,17 @@ name: Commit message lint
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: commitlint-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   commitlint:
@@ -12,6 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -19,14 +31,11 @@ jobs:
           node-version: "24.14.0"
 
       - name: Enable pnpm via Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@10.33.0 --activate
-          pnpm --version
+        run: corepack enable && corepack prepare pnpm@10.33.0 --activate
 
       - name: Get pnpm store path
         id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -39,16 +48,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint commit messages (PR range)
-        if: github.event_name == 'pull_request'
+      - name: Lint PR title (squash merge becomes the commit on main)
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          pnpm -s exec commitlint \
-            --config node_modules/@verndale/ai-commit/lib/commitlint-preset.cjs \
+          printf '%s\n' "$PR_TITLE" | pnpm exec commitlint --config commitlint.config.cjs --verbose
+
+      - name: Lint commit messages (PR range)
+        run: |
+          pnpm exec commitlint --config commitlint.config.cjs \
             --from "${{ github.event.pull_request.base.sha }}" \
             --to "${{ github.event.pull_request.head.sha }}" \
             --verbose
-
-      - name: Lint last commit (push)
-        if: github.event_name == 'push'
-        run: |
-          pnpm -s exec commitlint --config node_modules/@verndale/ai-commit/lib/commitlint-preset.cjs --from=HEAD~1 --to=HEAD --verbose

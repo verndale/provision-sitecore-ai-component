@@ -1,18 +1,13 @@
 name: Sync wiki issue state
 
-# Refreshes GitHub issue state cited in wiki topic pages: an issue listed under a
-# topic's `## Open threads` that has since closed gets a ` — closed` marker so the
-# section stops citing resolved issues. Opens a PR when anything changed; never
-# pushes to main. Runs daily and on demand.
-
 on:
   schedule:
-    - cron: "45 11 * * *" # 06:45 America/New_York (EST)
+    - cron: "30 11 * * *" # Daily at 11:30 UTC
   workflow_dispatch: {}
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  pull-requests: read
   issues: read
 
 concurrency:
@@ -21,17 +16,19 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  GRAPHIFY_SKIP_HOOK: "1"
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PR_BOT_TOKEN }}
-          persist-credentials: true
+          persist-credentials: false
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -43,7 +40,7 @@ jobs:
 
       - name: Get pnpm store path
         id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
       - name: Cache pnpm store
         uses: actions/cache@v4
@@ -56,33 +53,36 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Require bot token
+        run: |
+          test -n "$GH_TOKEN" || { echo 'PR_BOT_TOKEN is required'; exit 1; }
+          gh auth setup-git
+
       - name: Refresh issue state
         id: refresh
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -B bot/wiki-issue-sync origin/main
+          base="$(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name')"
+          git checkout -B bot/wiki-issue-sync "origin/${base}"
           node scripts/wiki/refresh-issue-state.cjs
-          # Topic pages are knowledge-graph nodes; rebuild the graph so the bot commit
-          # stays in sync. No-op diff when no issue state changed.
-          node scripts/graph/build-graph.cjs
-          git add wiki/topics wiki/connections.md wiki/connections scripts/graph/data/graph.json
+          pnpm run graph:build
+          pnpm run wiki:check
+          git add wiki scripts/graph/data/graph.json
           if git diff --cached --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             echo "No issue-state changes."
           else
-            git commit -m "docs(wiki): refresh cited issue state in topic pages"
-            git push --force origin bot/wiki-issue-sync
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "docs(wiki): refresh cited issue state"
+            git push --force-with-lease origin bot/wiki-issue-sync
+            echo "base_branch=${base}" >> "$GITHUB_OUTPUT"
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Open or update PR
         if: steps.refresh.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
-          PR_BASE_BRANCH: main
+          PR_BASE_BRANCH: ${{ steps.refresh.outputs.base_branch }}
           PR_HEAD_BRANCH: bot/wiki-issue-sync
           PR_DRAFT: "false"
           PR_AI: ${{ vars.PR_AI }}

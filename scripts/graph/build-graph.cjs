@@ -23,6 +23,7 @@
 const fs = require("fs");
 const path = require("path");
 const frontmatter = require("../wiki/lib/frontmatter.cjs");
+const { extractGithubRefs, withoutFencedCode } = require("../wiki/lib/github.cjs");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const OUT_FILE = path.join(__dirname, "data", "graph.json");
@@ -58,10 +59,7 @@ const REQUIRE_RE = /require\(\s*["'](\.{1,2}\/[^"']+)["']\s*\)/g;
 // .claude/settings.json). The captured repo path is resolved against known nodes, so an
 // `invokes` edge is grounded in the file — external tooling (ai-commit) yields no match.
 const HOOK_INVOKE_RE = /(scripts\/[A-Za-z0-9._/-]+\.cjs)/g;
-const FENCE_RE = /^```/;
 const H1_RE = /^#\s+(.+?)\s*$/;
-const PR_RE = /github\.com\/[^/]+\/[^/]+\/pull\/(\d+)/g;
-const ISSUE_RE = /github\.com\/[^/]+\/[^/]+\/issues\/(\d+)/g;
 
 const toPosix = (p) => p.split(path.sep).join("/");
 const rel = (abs) => toPosix(path.relative(REPO_ROOT, abs));
@@ -147,18 +145,16 @@ function uniqueMatches(text, re) {
   return out;
 }
 
+function legacyGithubNumbers(refs, kind) {
+  return [...new Set(refs.filter((ref) => ref.kind === kind).map((ref) => String(ref.number)))];
+}
+
 // Extract resolvable relative markdown-link targets (repo-relative posix), skipping
 // fenced code blocks and non-local targets.
 function extractLinks(absFile, text) {
   const targets = [];
-  const lines = text.split(/\r?\n/);
-  let fenced = false;
+  const lines = withoutFencedCode(text).split(/\r?\n/);
   for (const line of lines) {
-    if (FENCE_RE.test(line)) {
-      fenced = !fenced;
-      continue;
-    }
-    if (fenced) continue;
     LINK_RE.lastIndex = 0;
     let m;
     while ((m = LINK_RE.exec(line)) !== null) {
@@ -200,6 +196,7 @@ function build({ repoRoot = REPO_ROOT } = {}) {
     fileText.set(id, text);
     const isMd = id.endsWith(".md");
     const label = isMd ? extractLabel(id, type, text) : path.basename(id);
+    const githubRefs = isMd ? extractGithubRefs(text) : [];
     nodes.set(id, {
       id,
       label,
@@ -207,8 +204,9 @@ function build({ repoRoot = REPO_ROOT } = {}) {
       dir: toPosix(path.dirname(id)),
       topics: isMd ? frontmatter.readList(text, "topics") : [],
       aliases: isMd ? frontmatter.readList(text, "aliases") : [],
-      prs: isMd ? uniqueMatches(text, PR_RE) : [],
-      issues: isMd ? uniqueMatches(text, ISSUE_RE) : [],
+      prs: legacyGithubNumbers(githubRefs, "pull-request"),
+      issues: legacyGithubNumbers(githubRefs, "issue"),
+      githubRefs,
       bytes: Buffer.byteLength(text, "utf8"),
       degree: 0,
     });
@@ -550,4 +548,5 @@ module.exports = {
   CONNECTIONS_INDEX_ID,
   CONNECTIONS_DIR_ID,
   COVERABLE_TYPES,
+  legacyGithubNumbers,
 };

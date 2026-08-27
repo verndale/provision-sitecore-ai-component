@@ -6,10 +6,17 @@
 
 const fs = require("fs");
 const path = require("path");
+const { formatGithubRef, parseGithubQuery } = require("../wiki/lib/github.cjs");
 
 const POLICY_PATH = path.join(__dirname, "routing-policy.json");
 const STOP_WORDS = new Set(["a", "an", "and", "are", "as", "at", "does", "for", "from", "how", "i", "in", "is", "it", "of", "on", "or", "the", "this", "to", "what", "when", "where", "why", "with"]);
 const REQUIRED_INTENTS = ["why", "wiring", "impact"];
+const EVIDENCE_TYPE_PRIORITY = new Map([
+  ["wiki-journal", 5],
+  ["wiki-topic", 4],
+  ["wiki-plan", 3],
+  ["wiki-index", 2],
+]);
 
 function loadPolicy(policyPath = POLICY_PATH) {
   return JSON.parse(fs.readFileSync(policyPath, "utf8"));
@@ -23,12 +30,17 @@ function tokenize(value) {
 }
 
 function nodeHaystack(node) {
-  return [node.label, node.id, ...(node.topics || []), ...(node.aliases || [])].join(" ").toLowerCase();
+  const evidence = (node.githubRefs || []).flatMap((ref) => [
+    ref.url,
+    formatGithubRef(ref),
+    ref.repository + "#" + ref.number,
+  ]);
+  return [node.label, node.id, ...(node.topics || []), ...(node.aliases || []), ...evidence].join(" ").toLowerCase();
 }
 
 function scoreNode(node, query) {
   const normalized = String(query || "").trim().toLowerCase();
-  if (!normalized) return 0;
+  if (!normalized || /^#\d+$/.test(normalized)) return 0;
   const haystack = nodeHaystack(node);
   if (node.id.toLowerCase() === normalized) return 1000;
   if (node.label.toLowerCase() === normalized) return 900;
@@ -39,6 +51,34 @@ function scoreNode(node, query) {
   if (node.label.toLowerCase().includes(normalized)) score += 30;
   if (node.id.toLowerCase().includes(normalized)) score += 20;
   return score;
+}
+
+function resolveEvidenceNode(graph, query) {
+  const evidence = parseGithubQuery(query);
+  if (!evidence) return null;
+  const matchingRefs = graph.nodes.flatMap((node) => (node.githubRefs || [])
+    .filter((ref) =>
+      ref.repository === evidence.repository &&
+      ref.number === evidence.number &&
+      (!evidence.kind || ref.kind === evidence.kind))
+    .map((ref) => ({ node, ref })));
+  const kinds = new Set(matchingRefs.map(({ ref }) => ref.kind));
+  const matchedEvidence = evidence.kind ? evidence : kinds.size === 1 ? matchingRefs[0]?.ref || evidence : evidence;
+  const matches = [...new Map(matchingRefs.map(({ node }) => [node.id, node])).values()]
+    .sort((a, b) => {
+      const priority = (EVIDENCE_TYPE_PRIORITY.get(b.type) || 0) - (EVIDENCE_TYPE_PRIORITY.get(a.type) || 0);
+      return priority || a.id.localeCompare(b.id);
+    });
+  if (matches.length === 0) return { node: null, candidates: [], matchedEvidence, resolvedBy: "github-evidence" };
+  if (!evidence.kind && kinds.size > 1) return { node: null, candidates: matches, matchedEvidence, resolvedBy: "github-evidence" };
+  const bestPriority = EVIDENCE_TYPE_PRIORITY.get(matches[0].type) || 0;
+  const top = matches.filter((node) => (EVIDENCE_TYPE_PRIORITY.get(node.type) || 0) === bestPriority);
+  return {
+    node: top.length === 1 ? top[0] : null,
+    candidates: top,
+    matchedEvidence,
+    resolvedBy: "github-evidence",
+  };
 }
 
 function policyProblems(policy, graph = null, { checkNodeTypes = true } = {}) {
@@ -54,8 +94,13 @@ function policyProblems(policy, graph = null, { checkNodeTypes = true } = {}) {
   if (!Number.isFinite(policy.hubPenalty) || policy.hubPenalty < 0) {
     problems.push("hubPenalty must be a finite non-negative number");
   }
+  if (!Number.isFinite(policy.bytePenaltyPerKiB) || policy.bytePenaltyPerKiB < 0) {
+    problems.push("bytePenaltyPerKiB must be a finite non-negative number");
+  }
   if (!Array.isArray(policy.excludedIntermediateTypes)) {
     problems.push("excludedIntermediateTypes must be an array");
+  } else if (policy.excludedIntermediateTypes.some((type) => typeof type !== "string" || !type)) {
+    problems.push("excludedIntermediateTypes must contain non-empty strings");
   }
   if (!policy.intents || typeof policy.intents !== "object" || Array.isArray(policy.intents)) {
     problems.push("intents must be an object");
@@ -97,14 +142,16 @@ function policyProblems(policy, graph = null, { checkNodeTypes = true } = {}) {
 }
 
 function resolveNode(graph, query, preferredTypes = []) {
+  const evidenceResolution = resolveEvidenceNode(graph, query);
+  if (evidenceResolution) return evidenceResolution;
   const exact = graph.nodes.find((node) => node.id === query);
-  if (exact) return { node: exact, candidates: [exact] };
+  if (exact) return { node: exact, candidates: [exact], resolvedBy: "node-id" };
   const preference = new Map(preferredTypes.map((type, index) => [type, preferredTypes.length - index]));
   const scored = graph.nodes
     .map((node) => ({ node, textScore: scoreNode(node, query) }))
     .filter((entry) => entry.textScore > 0)
     .sort((a, b) => b.textScore - a.textScore || a.node.id.localeCompare(b.node.id));
-  if (scored.length === 0) return { node: null, candidates: [] };
+  if (scored.length === 0) return { node: null, candidates: [], resolvedBy: "text" };
   const bestTextScore = scored[0].textScore;
   const textMatches = scored.filter((entry) => entry.textScore === bestTextScore);
   const bestPreference = Math.max(...textMatches.map((entry) => preference.get(entry.node.type) || 0));
@@ -112,7 +159,7 @@ function resolveNode(graph, query, preferredTypes = []) {
     .filter((entry) => (preference.get(entry.node.type) || 0) === bestPreference)
     .map((entry) => entry.node)
     .sort((a, b) => a.id.localeCompare(b.id));
-  return { node: top.length === 1 ? top[0] : null, candidates: top };
+  return { node: top.length === 1 ? top[0] : null, candidates: top, resolvedBy: "text" };
 }
 
 function edgeKey(edge) {
@@ -132,7 +179,9 @@ function edgeCost(edge, destination, byId, policy) {
   const base = policy.edgeCosts[edge.type];
   if (typeof base !== "number") throw new Error(`Routing policy has no cost for edge type ${edge.type}`);
   const node = byId.get(destination);
-  return base + (policy.hubPenalty || 0) * Math.log2((node?.degree || 0) + 1);
+  return base
+    + policy.hubPenalty * Math.log2((node?.degree || 0) + 1)
+    + policy.bytePenaltyPerKiB * ((node?.bytes || 0) / 1024);
 }
 
 function shortestPaths(graph, sourceId, policy, targetId = null) {
@@ -233,22 +282,30 @@ function route(graph, { intent, query, from, to, policy = loadPolicy() }) {
   const result = reconstructRoute(source.id, target.id, paths.previous);
   if (!result) return { status: "no-route", intent, source, target, candidates: [] };
   const byId = new Map(graph.nodes.map((node) => [node.id, node]));
+  const itinerary = result.nodes.map((id, index) => ({
+    id,
+    label: byId.get(id).label,
+    type: byId.get(id).type,
+    bytes: Number(byId.get(id).bytes || 0),
+    relation: index === 0
+      ? sourceResolution.resolvedBy === "github-evidence" ? "evidence citation" : "query match"
+      : edgeDescription(result.steps[index - 1]),
+    authority: index === 0
+      ? sourceResolution.resolvedBy === "github-evidence"
+        ? "included because it cites " + formatGithubRef(sourceResolution.matchedEvidence)
+        : "included because it is the strongest textual match for the selected intent"
+      : authorityReason(result.steps[index - 1]),
+  }));
   return {
     status: "ok",
     intent,
     source,
     target,
     cost: Number((paths.distances.get(target.id) || 0).toFixed(3)),
+    matchedEvidence: sourceResolution.matchedEvidence || null,
     candidates: [],
-    itinerary: result.nodes.map((id, index) => ({
-      id,
-      label: byId.get(id).label,
-      type: byId.get(id).type,
-      relation: index === 0 ? "query match" : edgeDescription(result.steps[index - 1]),
-      authority: index === 0
-        ? "included because it is the strongest textual match for the selected intent"
-        : authorityReason(result.steps[index - 1]),
-    })),
+    totalBytes: itinerary.reduce((sum, item) => sum + item.bytes, 0),
+    itinerary,
     steps: result.steps,
   };
 }
@@ -259,11 +316,11 @@ function formatRoute(result) {
     const problems = result.problems?.map((problem) => `- ${problem}`).join("\n");
     return [`Route unavailable: ${result.status}.`, problems || "", candidates || ""].filter(Boolean).join("\n") + "\n";
   }
-  const lines = [`Route (${result.intent}, cost ${result.cost}):`];
+  const lines = ["Route " + result.intent + " · cost " + result.cost + " · " + result.totalBytes + " B to read:"];
   for (const [index, item] of result.itinerary.entries()) {
-    lines.push(`${index + 1}. ${item.id} — ${item.relation}; ${item.authority}`);
+    lines.push((index + 1) + ". " + item.id + " [" + item.bytes + " B] — " + item.relation + " — authority: " + item.authority);
   }
   return lines.join("\n") + "\n";
 }
 
-module.exports = { POLICY_PATH, REQUIRED_INTENTS, loadPolicy, policyProblems, tokenize, scoreNode, resolveNode, shortestPaths, reconstructRoute, route, formatRoute, edgeKey };
+module.exports = { POLICY_PATH, REQUIRED_INTENTS, loadPolicy, policyProblems, tokenize, scoreNode, resolveEvidenceNode, resolveNode, shortestPaths, reconstructRoute, route, formatRoute, edgeKey };

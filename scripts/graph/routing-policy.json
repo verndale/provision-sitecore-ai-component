@@ -9,6 +9,7 @@
     "links-to": 3
   },
   "hubPenalty": 0.5,
+  "bytePenaltyPerKiB": 0.05,
   "excludedIntermediateTypes": ["root-doc", "wiki-index"],
   "intents": {
     "why": {

@@ -105,6 +105,19 @@ function nodeSize(degree) {
   return 3 + Math.sqrt(degree) * 1.7;
 }
 
+function refLabel(ref) {
+  return ref.repository + " " + (ref.kind === "pull-request" ? "PR" : "issue") + " #" + ref.number;
+}
+
+function searchKey(node) {
+  const refs = (node.githubRefs || []).flatMap((ref) => [
+    ref.url,
+    refLabel(ref),
+    ref.repository + "#" + ref.number,
+  ]);
+  return [node.label, node.id, ...(node.topics || []), ...(node.aliases || []), ...refs].join(" ").toLowerCase();
+}
+
 function buildModel() {
   const graph = new graphology.MultiGraph();
   for (const n of state.graph.nodes) {
@@ -113,7 +126,7 @@ function buildModel() {
       size: nodeSize(n.degree),
       color: TYPE_COLORS[n.type] || "#888",
       nodeType: n.type,
-      searchKey: `${n.label} ${n.id}`.toLowerCase(),
+      searchKey: searchKey(n),
       x: 0,
       y: 0,
     });
@@ -189,7 +202,7 @@ function applyView() {
   if (state.query) {
     state.matched = new Set();
     for (const n of state.graph.nodes) {
-      if (n.label.toLowerCase().includes(state.query) || n.id.toLowerCase().includes(state.query)) {
+      if (searchKey(n).includes(state.query)) {
         state.matched.add(n.id);
       }
     }
@@ -269,7 +282,7 @@ function showRoute() {
     status.textContent = "Choose a source and target.";
     return;
   }
-  if (!window.KGRouting.hasSafeNumericPolicy(state.policy)) {
+  if (!window.KGRouting.hasSafeNumericPolicy(state.policy, state.graph)) {
     status.textContent = "Routing policy is invalid; rebuild the graph policy before routing.";
     return;
   }
@@ -294,7 +307,7 @@ function showRoute() {
 
 function wireControls() {
   $("#search").addEventListener("input", (e) => {
-    state.query = e.target.value.trim().toLowerCase();
+    state.query = window.KGRouting.normalizeGithubQuery(e.target.value);
     applyView();
   });
   $("#reset").addEventListener("click", () => {
@@ -360,12 +373,38 @@ function renderPanel(id) {
 
   const meta = $("#p-meta");
   meta.innerHTML = "";
-  const row = (dt, ddHtml) => meta.insertAdjacentHTML("beforeend", `<dt>${dt}</dt><dd>${ddHtml}</dd>`);
-  row("Path", `<code>${n.id}</code>`);
-  row("Connections", String(n.degree));
-  if (n.topics.length) row("Topics", n.topics.join(", "));
-  if (n.prs.length) row("PRs", n.prs.map((p) => `#${p}`).join(", "));
-  if (n.issues.length) row("Issues", n.issues.map((p) => `#${p}`).join(", "));
+  const row = (label, content) => {
+    const dt = document.createElement("dt");
+    const dd = document.createElement("dd");
+    dt.textContent = label;
+    if (content instanceof Node) dd.appendChild(content);
+    else dd.textContent = String(content);
+    meta.append(dt, dd);
+    return dd;
+  };
+  const pathCode = document.createElement("code");
+  pathCode.textContent = n.id;
+  row("Path", pathCode);
+  row("Connections", n.degree);
+  if ((n.topics || []).length) row("Topics", n.topics.join(", "));
+
+  const refs = n.githubRefs || [];
+  if (refs.length) {
+    const container = document.createElement("span");
+    for (const [index, ref] of refs.entries()) {
+      if (index) container.appendChild(document.createTextNode(", "));
+      const link = document.createElement("a");
+      link.href = ref.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = refLabel(ref);
+      container.appendChild(link);
+    }
+    row("GitHub", container);
+  } else {
+    if ((n.prs || []).length) row("PRs", n.prs.map((p) => "#" + p).join(", "));
+    if ((n.issues || []).length) row("Issues", n.issues.map((p) => "#" + p).join(", "));
+  }
 
   const neighbors = [...state.adjacency.get(id)]
     .map((nid) => state.raw.get(nid))
@@ -375,9 +414,15 @@ function renderPanel(id) {
   list.innerHTML = "";
   for (const nb of neighbors) {
     const li = document.createElement("li");
-    li.innerHTML =
-      `<span class="swatch" style="background:${TYPE_COLORS[nb.type] || "#888"}"></span>` +
-      `<span>${nb.label}</span><span class="rel">${TYPE_LABELS[nb.type] || nb.type}</span>`;
+    const swatch = document.createElement("span");
+    const label = document.createElement("span");
+    const relation = document.createElement("span");
+    swatch.className = "swatch";
+    swatch.style.background = TYPE_COLORS[nb.type] || "#888";
+    label.textContent = nb.label;
+    relation.className = "rel";
+    relation.textContent = TYPE_LABELS[nb.type] || nb.type;
+    li.append(swatch, label, relation);
     li.addEventListener("click", () => selectNode(nb.id));
     list.appendChild(li);
   }

@@ -1,37 +1,23 @@
-name: Create or update PR
+name: Quality
 
 on:
+  pull_request:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      base_branch:
-        description: "Target base branch"
-        required: true
-        default: "main"
-      draft:
-        description: "Create PR as draft"
-        required: true
-        default: "true"
-  push:
-    branches-ignore:
-      - main
-      - "bot/wiki-**"
 
 permissions:
   contents: read
-  pull-requests: write
 
 concurrency:
-  group: pr-${{ github.ref }}
+  group: quality-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  pr:
-    if: ${{ !startsWith(github.ref_name, 'bot/wiki-') }}
+  quality:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,14 +47,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Create or update PR
-        env:
-          GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
-          PR_BASE_BRANCH: ${{ github.event.inputs.base_branch || 'main' }}
-          PR_HEAD_BRANCH: ${{ github.ref_name }}
-          PR_DRAFT: ${{ github.event.inputs.draft || 'true' }}
-          PR_AI: ${{ vars.PR_AI }}
-          PR_AI_ENDPOINT: ${{ vars.PR_AI_ENDPOINT }}
-          PR_AI_MODEL: ${{ vars.PR_AI_MODEL }}
-          PR_AI_API_KEY: ${{ secrets.PR_AI_API_KEY }}
-        run: pnpm run pr:create
+      - name: Verify repository
+        run: pnpm run verify:ci
