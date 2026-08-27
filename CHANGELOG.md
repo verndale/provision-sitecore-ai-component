@@ -1,3 +1,60 @@
+# v2.0.0 — 2026-08-27
+
+## Summary (AI, bounded)
+- Renamed provisioning component to SitecoreAI to improve clarity and integration (commit 03f92a7)
+- Updated GitHub Actions workflows for improved continuous integration experience (commit 48c781a)
+- Removed deprecated evaluation scenarios and related files to clean up the codebase (commit 2aedc90)
+- Synced and reconciled extensive wiki documentation including journals, topics, and plans (commits c1393bb, 2972460, f96a4a4)
+- Merged updates from multiple pull requests improving wiki parity and Sitecore AI provisioner (commit 21603e4)
+
+## Highlights
+- commit: Merge pull request #33 from verndale/codex/32-sitecore-ai-provisioner (21603e4)
+- commit: feat(provision-sitecore-ai-component)!: Rename for SitecoreAI (03f92a7)
+- commit: Merge pull request #31 from verndale/bot/wiki-sync/30 (145a709)
+- docs(wiki): reconcile merged PR #30 (c1393bb)
+- commit: Merge pull request #30 from verndale/codex/29-wiki-parity (5d3d234)
+- build(ci): Update GitHub Actions workflows for improved (48c781a)
+- commit: Merge pull request #28 from verndale/bot/wiki-sync/27 (4c929a4)
+- docs(wiki): sync journal, topics, and plans for #27 (2972460)
+
+## Breaking changes
+- The package, CLI, skill, config key, and credential
+
+## Changes by type
+### Docs
+- docs(wiki): reconcile merged PR #30 (c1393bb)
+- docs(wiki): sync journal, topics, and plans for #24 (f96a4a4)
+- docs(wiki): sync journal, topics, and plans for #27 (2972460)
+
+### Build
+- build(ci): Update GitHub Actions workflows for improved (48c781a)
+
+### Chore
+- chore(ci): Remove deprecated eval scenarios and related files (2aedc90)
+
+### Other (unknown)
+- commit: feat(provision-sitecore-ai-component)!: Rename for SitecoreAI (03f92a7)
+- commit: Merge pull request #25 from verndale/bot/wiki-sync/24 (4e0f8e6)
+- commit: Merge pull request #27 from verndale/claude/issue-26-remove-skill-evals (119c881)
+- commit: Merge pull request #28 from verndale/bot/wiki-sync/27 (4c929a4)
+- commit: Merge pull request #30 from verndale/codex/29-wiki-parity (5d3d234)
+- commit: Merge pull request #31 from verndale/bot/wiki-sync/30 (145a709)
+- commit: Merge pull request #33 from verndale/codex/32-sitecore-ai-provisioner (21603e4)
+
+## Full commit list
+- 21603e4 commit: Merge pull request #33 from verndale/codex/32-sitecore-ai-provisioner
+- 03f92a7 commit: feat(provision-sitecore-ai-component)!: Rename for SitecoreAI
+- 145a709 commit: Merge pull request #31 from verndale/bot/wiki-sync/30
+- c1393bb docs(wiki): reconcile merged PR #30
+- 5d3d234 commit: Merge pull request #30 from verndale/codex/29-wiki-parity
+- 48c781a build(ci): Update GitHub Actions workflows for improved
+- 4c929a4 commit: Merge pull request #28 from verndale/bot/wiki-sync/27
+- 2972460 docs(wiki): sync journal, topics, and plans for #27
+- 119c881 commit: Merge pull request #27 from verndale/claude/issue-26-remove-skill-evals
+- 2aedc90 chore(ci): Remove deprecated eval scenarios and related files
+- 4e0f8e6 commit: Merge pull request #25 from verndale/bot/wiki-sync/24
+- f96a4a4 docs(wiki): sync journal, topics, and plans for #24
+
 # v1.8.0 — 2026-07-23
 
 ## Summary (AI, bounded)
