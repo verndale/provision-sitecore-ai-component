@@ -1083,11 +1083,19 @@
         "knowledge-graph"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "30"
+      ],
       "issues": [
         "29"
       ],
       "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 30,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/30"
+        },
         {
           "kind": "issue",
           "repository": "verndale/provision-sitecore-component",
@@ -1095,7 +1103,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
         }
       ],
-      "bytes": 2680,
+      "bytes": 2737,
       "degree": 4
     },
     {
@@ -1326,7 +1334,9 @@
         "knowledge-graph"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "30"
+      ],
       "issues": [
         "29"
       ],
@@ -1336,9 +1346,15 @@
           "repository": "verndale/provision-sitecore-component",
           "number": 29,
           "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 30,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/30"
         }
       ],
-      "bytes": 1633,
+      "bytes": 1771,
       "degree": 4
     },
     {
@@ -1349,6 +1365,7 @@
       "topics": [],
       "aliases": [],
       "prs": [
+        "30",
         "7",
         "3",
         "5",
@@ -1367,6 +1384,12 @@
           "repository": "verndale/provision-sitecore-component",
           "number": 29,
           "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 30,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/30"
         },
         {
           "kind": "pull-request",
@@ -1417,7 +1440,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
         }
       ],
-      "bytes": 3224,
+      "bytes": 3338,
       "degree": 11
     },
     {
@@ -1485,6 +1508,7 @@
         "CMS template creation"
       ],
       "prs": [
+        "30",
         "27",
         "24",
         "21",
@@ -1499,6 +1523,12 @@
         "17"
       ],
       "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-component",
+          "number": 30,
+          "url": "https://github.com/verndale/provision-sitecore-component/pull/30"
+        },
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-component",
@@ -1560,7 +1590,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 7076,
+      "bytes": 7264,
       "degree": 30
     }
   ],
