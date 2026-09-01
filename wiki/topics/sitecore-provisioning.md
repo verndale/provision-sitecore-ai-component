@@ -10,15 +10,21 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 - The manifest ([contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)) is drafted from the Confluence functional spec by the skill, reviewed by a human, and is the single source for both sides.
 - The current distribution identity is `provision-sitecore-ai-component`: repository/package links, CLI, skill slug, generated banners, central credential directory, and `sitecoreAiProvisioning` config all use that exact name without legacy aliases or fallback reads.
+- Global skill installs use a native directory junction on Windows and a directory symlink elsewhere; the installer reuses correct links and refuses ordinary directories rather than overwriting them ([scripts/install-skill-link.cjs](../../scripts/install-skill-link.cjs)).
+- Authoring credentials resolve per key from process environment, project `.env`, then the per-machine bootstrap file; blank placeholders are treated as unset so a copied `.env.example` does not mask the machine default ([src/cli.cjs](../../src/cli.cjs)).
 - `plan` is offline and byte-deterministic; the plan JSON embeds the GraphQL documents verbatim with `__PLACEHOLDER__` ids bound from preflights at run time — no hardcoded GUIDs ([src/build-plan.cjs](../../src/build-plan.cjs)).
 - `check` is read-only (a hard guard refuses mutations outside push mode); `push` reconciles add-only — extra CMS fields, type mismatches, and mislocated fields become follow-ups, never deletions or retypes ([src/executor.cjs](../../src/executor.cjs)) — and is confirmation-gated at the CLI (TTY y/N, or `--yes` recording the skill's step-6 approval).
 - The shared PreToolUse policy is platform-adapted: Claude Code can ask on push, while Codex denies the command until `--yes` records the skill gate; Codex hooks use canonical `Bash`/`apply_patch` payloads and require exact-hash trust after updates ([scripts/hooks/pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)).
 - Required fields attach the standard Required rule (resolved by path) to the Validate Button and Workflow bars; list fields (`__Masters`, Allowed Controls, validation bars) merge append-only with brace/case-insensitive de-duplication.
+- Live-compatible preflight resolves items by path, loads templates by ID, uses own fields for template reconciliation and inherited fields for Json Rendering verification, and treats an absent template as a create decision instead of a GraphQL failure.
 - The emitted pair (`Component.types.ts` + `Component.tsx`) matches the eng team's handoff contract and the ai-orchestration sitecore-ai adapter's boundary rules; page-driven components (no datasource) emit a typed contract with a marked TODO for the page-item access ([src/emit-tsx.cjs](../../src/emit-tsx.cjs)).
 - Golden fixtures pin plans and TSX byte-for-byte, modeled on the CN Related Content Card (datasource, two templates, restricted Droptree) and People Detail Masthead (existing page template, rendering without datasource) specs.
 
 ## Decisions
 
+- 2026-08-31 — Aligned read-only preflight with the live SitecoreAI schema after the first development-environment check: item paths resolve template IDs, inherited rendering fields are verified, and the Required rule uses its actual system path ([journal](../journal/2026-08-31-live-authoring-check-compatibility.md)).
+- 2026-08-31 — Replaced Git Bash `ln -s` with a Node-managed Windows junction / Unix symlink because copy-like Windows results became stale and broke idempotent setup; existing ordinary directories remain an explicit migration instead of being deleted automatically ([journal](../journal/2026-08-31-windows-skill-junctions.md)).
+- 2026-08-31 — Credential precedence now selects the first non-empty value rather than the first declared key, preserving explicit project overrides while allowing blank template placeholders to fall through to the machine bootstrap ([journal](../journal/2026-08-31-blank-credential-fallback.md)).
 - 2026-08-27 — chore(pr): codex/32-sitecore-ai-provisioner ([verndale/provision-sitecore-ai-component PR #33](https://github.com/verndale/provision-sitecore-ai-component/pull/33))
 - 2026-08-27 — Renamed the provisioner around the canonical SitecoreAI identity as a tracked breaking migration; runtime aliases and legacy credential/config fallbacks were ruled out so every consumer converges on one package, CLI, skill, and config contract ([issue #32](https://github.com/verndale/provision-sitecore-ai-component/issues/32), [journal](../journal/2026-08-27-sitecore-ai-provisioner-rename.md)).
 - 2026-08-27 — build(ci): Update GitHub Actions workflows for improved ([verndale/provision-sitecore-component PR #30](https://github.com/verndale/provision-sitecore-component/pull/30))
@@ -40,6 +46,6 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Open threads
 
-- Live `check`/`push` not yet validated against a dev SitecoreAI environment (template-field item shapes, Required-rule wiring, `createItemTemplate` input variants).
+- Live `check` is validated against the Training App Router development environment; `push` and the mutation input variants remain unverified until an explicitly approved provisioning run.
 - Available Renderings registration and rendering-parameters templates remain manual follow-ups (candidate v2 scope).
 - Content SDK 2 reference-field types (Droptree/Multilist) are conservatively `unknown` pending SDK-surface verification.

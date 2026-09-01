@@ -25,7 +25,7 @@ const SYSTEM_PATHS = {
   jsonRenderingTemplate: "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
   templateSectionTemplate: "/sitecore/templates/System/Templates/Template section",
   templateFieldTemplate: "/sitecore/templates/System/Templates/Template field",
-  requiredFieldRule: "/sitecore/system/Settings/Validation Rules/Field Rules/System/Required",
+  requiredFieldRule: "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
   placeholderSettingsTemplate: "/sitecore/templates/System/Layout/Placeholder",
 };
 
@@ -34,9 +34,9 @@ const VALIDATION_BAR_FIELDS = ["Validate Button", "Workflow"];
 
 const GRAPHQL = {
   ITEM_BY_PATH:
-    'query GetItem($path: String!) { item(where: { database: "master", path: $path }) { itemId name path templateId } }',
+    'query GetItem($path: String!) { item(where: { database: "master", path: $path }) { itemId name path } }',
   TEMPLATE_BY_PATH:
-    'query GetTemplate($path: String!) { item(where: { database: "master", path: $path }) { itemId name ownFields { nodes { name type } } } }',
+    'query GetTemplate($templateId: ID!) { itemTemplate(where: { database: "master", templateId: $templateId }) { itemId: templateId name ownFields { nodes { name type } } allFields: fields { nodes { name type } } } }',
   FIELD_VALUE:
     'query GetFieldValue($path: String!, $field: String!) { item(where: { database: "master", path: $path }) { itemId field(name: $field) { value } } }',
   CREATE_ITEM_TEMPLATE:

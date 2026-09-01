@@ -30,7 +30,7 @@ function scratchFixture(t) {
 function runCli(args, { home, work, env = {} }) {
   return spawnSync(process.execPath, [CLI, ...args], {
     cwd: work,
-    env: { PATH: process.env.PATH, HOME: home, ...env },
+    env: { PATH: process.env.PATH, HOME: home, USERPROFILE: home, ...env },
     encoding: "utf8",
   });
 }
@@ -63,17 +63,16 @@ test("the central credential file fills unset keys (resolution order)", (t) => {
   assert.doesNotMatch(run.stderr, /SITECORE_AUTHORING_CLIENT_ID/, "central file must satisfy CLIENT_ID");
 });
 
-test("a repo-root .env overrides the central file", (t) => {
+test("blank repo-root values fall through to the central credential file", (t) => {
   const { home, work } = scratchFixture(t);
   const centralDir = path.join(home, ".config", "provision-sitecore-ai-component");
   fs.mkdirSync(centralDir, { recursive: true });
   fs.writeFileSync(path.join(centralDir, ".env"), "SITECORE_AUTHORING_CLIENT_ID=from-central\n");
   fs.writeFileSync(path.join(work, ".env"), "SITECORE_AUTHORING_CLIENT_ID=\n");
-  // The repo .env sets CLIENT_ID to empty → readEnv reports it missing again,
-  // proving ./.env took precedence over the central value.
   const run = runCli(["push", "manifest.json", "--yes"], { home, work });
   assert.equal(run.status, 2);
-  assert.match(run.stderr, /SITECORE_AUTHORING_CLIENT_ID/);
+  assert.match(run.stderr, /Missing environment variable\(s\): SITECORE_AUTHORING_CLIENT_SECRET, SITECORE_AUTHORING_ENDPOINT/);
+  assert.doesNotMatch(run.stderr, /SITECORE_AUTHORING_CLIENT_ID/, "blank repo value must not mask central CLIENT_ID");
 });
 
 test("the former credential directory is not read as a fallback", (t) => {

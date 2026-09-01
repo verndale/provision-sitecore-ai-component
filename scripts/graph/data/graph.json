@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 86,
-    "edges": 177,
+    "nodes": 90,
+    "edges": 187,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -10,20 +10,20 @@
       "reference": 6,
       "skill": 1,
       "source": 7,
-      "test": 12,
+      "test": 13,
       "wiki-index": 3,
-      "wiki-journal": 11,
+      "wiki-journal": 14,
       "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 8,
       "invokes": 7,
-      "links-to": 75,
+      "links-to": 82,
       "plan": 9,
       "references": 6,
       "requires": 56,
-      "topic": 16
+      "topic": 19
     }
   },
   "nodes": [
@@ -37,7 +37,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 890,
+      "bytes": 930,
       "degree": 2
     },
     {
@@ -50,7 +50,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 551,
+      "bytes": 575,
       "degree": 2
     },
     {
@@ -63,7 +63,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 55,
+      "bytes": 57,
       "degree": 0
     },
     {
@@ -76,7 +76,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 364,
+      "bytes": 370,
       "degree": 3
     },
     {
@@ -89,7 +89,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 155,
+      "bytes": 158,
       "degree": 1
     },
     {
@@ -102,7 +102,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 67,
+      "bytes": 69,
       "degree": 0
     },
     {
@@ -115,7 +115,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 1617,
+      "bytes": 1681,
       "degree": 1
     },
     {
@@ -128,7 +128,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7381,
+      "bytes": 7490,
       "degree": 11
     },
     {
@@ -141,7 +141,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 88,
+      "bytes": 93,
       "degree": 1
     },
     {
@@ -154,7 +154,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3015,
+      "bytes": 3046,
       "degree": 5
     },
     {
@@ -167,7 +167,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13961,
+      "bytes": 14317,
       "degree": 8
     },
     {
@@ -180,7 +180,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 23531,
+      "bytes": 24083,
       "degree": 7
     },
     {
@@ -193,7 +193,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3026,
+      "bytes": 3110,
       "degree": 2
     },
     {
@@ -206,7 +206,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14910,
+      "bytes": 15236,
       "degree": 5
     },
     {
@@ -219,7 +219,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 1871,
+      "bytes": 1931,
       "degree": 1
     },
     {
@@ -232,7 +232,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2014,
+      "bytes": 2065,
       "degree": 3
     },
     {
@@ -245,7 +245,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14744,
+      "bytes": 15091,
       "degree": 2
     },
     {
@@ -258,7 +258,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4456,
+      "bytes": 4569,
       "degree": 2
     },
     {
@@ -271,7 +271,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6490,
+      "bytes": 6664,
       "degree": 5
     },
     {
@@ -284,7 +284,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7507,
+      "bytes": 7755,
       "degree": 1
     },
     {
@@ -297,7 +297,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7293,
+      "bytes": 7463,
       "degree": 3
     },
     {
@@ -310,7 +310,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 1592,
+      "bytes": 1638,
       "degree": 1
     },
     {
@@ -323,7 +323,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5672,
+      "bytes": 5809,
       "degree": 2
     },
     {
@@ -336,7 +336,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5231,
+      "bytes": 5357,
       "degree": 1
     },
     {
@@ -349,7 +349,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5117,
+      "bytes": 5263,
       "degree": 2
     },
     {
@@ -362,7 +362,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3801,
+      "bytes": 3899,
       "degree": 3
     },
     {
@@ -375,7 +375,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4913,
+      "bytes": 5054,
       "degree": 5
     },
     {
@@ -388,7 +388,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2044,
+      "bytes": 2098,
       "degree": 4
     },
     {
@@ -401,7 +401,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3921,
+      "bytes": 4013,
       "degree": 2
     },
     {
@@ -414,7 +414,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 1292,
+      "bytes": 1329,
       "degree": 2
     },
     {
@@ -427,7 +427,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 16015,
+      "bytes": 16366,
       "degree": 7
     },
     {
@@ -440,7 +440,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3649,
+      "bytes": 3747,
       "degree": 3
     },
     {
@@ -453,7 +453,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5465,
+      "bytes": 5603,
       "degree": 2
     },
     {
@@ -466,7 +466,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6903,
+      "bytes": 6644,
       "degree": 0
     },
     {
@@ -479,7 +479,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2464,
+      "bytes": 2512,
       "degree": 4
     },
     {
@@ -492,7 +492,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6347,
+      "bytes": 6705,
       "degree": 5
     },
     {
@@ -505,7 +505,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3884,
+      "bytes": 3926,
       "degree": 2
     },
     {
@@ -518,7 +518,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6983,
+      "bytes": 7133,
       "degree": 5
     },
     {
@@ -531,7 +531,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2378,
+      "bytes": 2436,
       "degree": 3
     },
     {
@@ -544,7 +544,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3825,
+      "bytes": 3909,
       "degree": 2
     },
     {
@@ -557,7 +557,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3294,
+      "bytes": 3345,
       "degree": 3
     },
     {
@@ -570,7 +570,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7882,
+      "bytes": 7951,
       "degree": 13
     },
     {
@@ -583,7 +583,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13544,
+      "bytes": 13910,
       "degree": 6
     },
     {
@@ -596,8 +596,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10418,
-      "degree": 6
+      "bytes": 10827,
+      "degree": 7
     },
     {
       "id": "src/emit-tsx.cjs",
@@ -609,7 +609,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6653,
+      "bytes": 6809,
       "degree": 6
     },
     {
@@ -622,7 +622,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 22882,
+      "bytes": 23772,
       "degree": 4
     },
     {
@@ -635,7 +635,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4248,
+      "bytes": 4354,
       "degree": 2
     },
     {
@@ -648,7 +648,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 790,
+      "bytes": 818,
       "degree": 4
     },
     {
@@ -661,7 +661,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14291,
+      "bytes": 14517,
       "degree": 4
     },
     {
@@ -674,7 +674,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14257,
+      "bytes": 15562,
       "degree": 4
     },
     {
@@ -687,7 +687,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 1065,
+      "bytes": 1094,
       "degree": 1
     },
     {
@@ -700,7 +700,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5260,
+      "bytes": 5377,
       "degree": 2
     },
     {
@@ -713,7 +713,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6289,
+      "bytes": 6697,
       "degree": 4
     },
     {
@@ -726,7 +726,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6202,
+      "bytes": 6353,
       "degree": 1
     },
     {
@@ -739,7 +739,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 26487,
+      "bytes": 27167,
       "degree": 4
     },
     {
@@ -752,7 +752,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5235,
+      "bytes": 5352,
       "degree": 5
     },
     {
@@ -765,8 +765,21 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5292,
+      "bytes": 5471,
       "degree": 1
+    },
+    {
+      "id": "test/skill-link-install.test.cjs",
+      "label": "skill-link-install.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 2323,
+      "degree": 0
     },
     {
       "id": "test/skills-lint.test.cjs",
@@ -778,7 +791,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4932,
+      "bytes": 5048,
       "degree": 0
     },
     {
@@ -791,7 +804,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3531,
+      "bytes": 3612,
       "degree": 3
     },
     {
@@ -804,7 +817,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 19325,
+      "bytes": 19748,
       "degree": 5
     },
     {
@@ -817,7 +830,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7432,
+      "bytes": 7579,
       "degree": 4
     },
     {
@@ -830,8 +843,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5558,
-      "degree": 18
+      "bytes": 6363,
+      "degree": 21
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -855,7 +868,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/5"
         }
       ],
-      "bytes": 2200,
+      "bytes": 2229,
       "degree": 4
     },
     {
@@ -887,7 +900,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/17"
         }
       ],
-      "bytes": 2470,
+      "bytes": 2504,
       "degree": 4
     },
     {
@@ -911,7 +924,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
         }
       ],
-      "bytes": 3002,
+      "bytes": 3032,
       "degree": 4
     },
     {
@@ -937,7 +950,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 3141,
+      "bytes": 3176,
       "degree": 6
     },
     {
@@ -961,7 +974,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 2573,
+      "bytes": 2606,
       "degree": 2
     },
     {
@@ -985,7 +998,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
         }
       ],
-      "bytes": 4801,
+      "bytes": 4840,
       "degree": 4
     },
     {
@@ -1017,7 +1030,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/23"
         }
       ],
-      "bytes": 2100,
+      "bytes": 2129,
       "degree": 4
     },
     {
@@ -1049,7 +1062,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/20"
         }
       ],
-      "bytes": 2099,
+      "bytes": 2131,
       "degree": 4
     },
     {
@@ -1071,7 +1084,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/27"
         }
       ],
-      "bytes": 2156,
+      "bytes": 2185,
       "degree": 1
     },
     {
@@ -1103,7 +1116,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/29"
         }
       ],
-      "bytes": 2737,
+      "bytes": 2774,
       "degree": 4
     },
     {
@@ -1135,7 +1148,52 @@
           "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/32"
         }
       ],
-      "bytes": 2730,
+      "bytes": 2768,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "label": "Blank credential values fall through to the machine default",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1533,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "label": "Live SitecoreAI authoring check compatibility",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1781,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "label": "Windows skill installs use native directory junctions",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1475,
       "degree": 3
     },
     {
@@ -1148,7 +1206,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 8473,
+      "bytes": 8609,
       "degree": 6
     },
     {
@@ -1180,7 +1238,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/2"
         }
       ],
-      "bytes": 8937,
+      "bytes": 9112,
       "degree": 2
     },
     {
@@ -1212,7 +1270,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/issues/1"
         }
       ],
-      "bytes": 13049,
+      "bytes": 13194,
       "degree": 2
     },
     {
@@ -1236,7 +1294,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/18"
         }
       ],
-      "bytes": 4026,
+      "bytes": 4079,
       "degree": 4
     },
     {
@@ -1258,7 +1316,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/13"
         }
       ],
-      "bytes": 10494,
+      "bytes": 10606,
       "degree": 3
     },
     {
@@ -1282,7 +1340,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 18957,
+      "bytes": 19273,
       "degree": 4
     },
     {
@@ -1306,7 +1364,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/10"
         }
       ],
-      "bytes": 16786,
+      "bytes": 16927,
       "degree": 3
     },
     {
@@ -1330,7 +1388,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/21"
         }
       ],
-      "bytes": 6662,
+      "bytes": 6781,
       "degree": 4
     },
     {
@@ -1354,7 +1412,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
         }
       ],
-      "bytes": 5635,
+      "bytes": 5738,
       "degree": 4
     },
     {
@@ -1386,7 +1444,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/30"
         }
       ],
-      "bytes": 1771,
+      "bytes": 1802,
       "degree": 4
     },
     {
@@ -1472,7 +1530,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
         }
       ],
-      "bytes": 3338,
+      "bytes": 3365,
       "degree": 11
     },
     {
@@ -1523,7 +1581,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 5300,
+      "bytes": 5329,
       "degree": 15
     },
     {
@@ -1637,8 +1695,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 8185,
-      "degree": 32
+      "bytes": 9981,
+      "degree": 39
     }
   ],
   "edges": [
@@ -1985,6 +2043,27 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2160,6 +2239,13 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/cli.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/emit-tsx.cjs",
       "type": "links-to",
       "count": 1,
@@ -2210,6 +2296,27 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-windows-skill-junctions.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2644,6 +2751,21 @@
     },
     {
       "source": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-windows-skill-junctions.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     },

@@ -49,6 +49,16 @@ function buildPlan(manifest = MANIFEST, config = CONFIG) {
   return buildMutationPlan(manifest, resolved, "manifest.json");
 }
 
+test("read queries use the current SitecoreAI Item and ItemTemplate schema", () => {
+  const plan = buildPlan();
+  assert.doesNotMatch(plan.graphql.ITEM_BY_PATH, /\btemplateId\b/, "Item no longer exposes a flat templateId field");
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /itemTemplate\s*\(/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /itemId:\s*templateId/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /templateId:\s*\$templateId/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /allFields:\s*fields/);
+  assert.equal(SYSTEM_PATHS.requiredFieldRule, "/sitecore/system/Settings/Validation Rules/Field Rules/Required");
+});
+
 /** System + root items every scenario needs. */
 function baseItems() {
   return [
@@ -168,6 +178,14 @@ test("check mode issues zero mutations and reports per-op decisions", async () =
   assert.equal(cms.mutations.length, 0);
   assert.ok(outcome.results.some((r) => r.id === "ensure-template-0" && r.action === "create"));
   assert.ok(outcome.results.some((r) => r.id === "set-rendering-bindings" && r.action === "update"));
+  const templateLookups = cms.calls
+    .filter((c) => !String(c.url).includes("/oauth/token") && JSON.parse(c.init.body).query.includes("GetTemplate"))
+    .map((c) => JSON.parse(c.init.body).variables.templateId);
+  assert.deepEqual(
+    templateLookups,
+    ["json-rendering"],
+    "the absent component template must stop after GetItem; only the existing Json Rendering template reaches itemTemplate"
+  );
 });
 
 test("existing:true template that is absent aborts with a conflict", async () => {
