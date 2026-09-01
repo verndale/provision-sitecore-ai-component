@@ -23,5 +23,6 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [Component manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [build-plan.cjs](../../src/build-plan.cjs)
+- [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [cli.cjs](../../src/cli.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [emit-tsx.cjs](../../src/emit-tsx.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [executor.cjs](../../src/executor.cjs)

@@ -1,17 +1,13 @@
 {
   "version": 1,
-  "component": "PeopleDetailMasthead",
-  "slug": "people-detail-masthead",
-  "generatedFrom": "manifest.json",
+  "component": "RichTextField",
+  "slug": "rich-text-field",
+  "generatedFrom": "rich-text-field.manifest.json",
   "resolvedPaths": {
-    "templateRoots": {
-      "datasource": "/sitecore/templates/Project/CN/Components",
-      "base": "/sitecore/templates/Project/CN/Pages/Base",
-      "page": "/sitecore/templates/Project/CN/Pages"
-    },
-    "renderingRoot": "/sitecore/layout/Renderings/Project/CN",
-    "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/CN",
-    "datasourceLocation": "query:$site/*[@@name='Data']"
+    "templateRoots": {},
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router",
+    "placeholderSettingsRoot": null,
+    "datasourceLocation": null
   },
   "systemPaths": {
     "jsonRenderingTemplate": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
@@ -43,17 +39,39 @@
     {
       "id": "ensure-template-0",
       "kind": "ensureTemplate",
-      "templateName": "People Detail Page",
-      "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page",
-      "existing": true,
+      "templateName": "Rich Text Field",
+      "targetPath": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field",
+      "existing": false,
       "preflight": {
         "query": "TEMPLATE_BY_PATH",
         "variables": {
-          "path": "/sitecore/templates/Project/CN/Pages/People Detail Page"
+          "path": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field"
         }
       },
       "whenAbsent": {
-        "error": "Template marked existing was not found at /sitecore/templates/Project/CN/Pages/People Detail Page. Fix the manifest (existing/parent root) or create the template first."
+        "mutation": "CREATE_ITEM_TEMPLATE",
+        "variables": {
+          "input": {
+            "name": "Rich Text Field",
+            "parent": "__TEMPLATE_0_PARENT_ID__",
+            "sections": [
+              {
+                "name": "Content",
+                "fields": [
+                  {
+                    "name": "copy",
+                    "type": "Rich Text"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "resolveParent": {
+          "query": "ITEM_BY_PATH",
+          "path": "/sitecore/templates/Project/Training App Router/Hackathon",
+          "into": "__TEMPLATE_0_PARENT_ID__"
+        }
       },
       "resolves": {
         "__TEMPLATE_0_ID__": "itemId"
@@ -62,30 +80,14 @@
     {
       "id": "ensure-template-fields-0",
       "kind": "ensureTemplateFields",
-      "templatePath": "/sitecore/templates/Project/CN/Pages/People Detail Page",
+      "templatePath": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field",
       "sections": [
         {
-          "name": "Masthead",
-          "path": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead",
+          "name": "Content",
+          "path": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field/Content",
           "fields": [
             {
-              "name": "personName",
-              "type": "Single-Line Text"
-            },
-            {
-              "name": "personJobTitle",
-              "type": "Single-Line Text"
-            },
-            {
-              "name": "profileImage",
-              "type": "Image"
-            },
-            {
-              "name": "roleStartDate",
-              "type": "Date"
-            },
-            {
-              "name": "biographyText",
+              "name": "copy",
               "type": "Rich Text"
             }
           ]
@@ -125,130 +127,9 @@
       }
     },
     {
-      "id": "configure-field-0-Masthead-personName",
+      "id": "configure-field-0-Content-copy",
       "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personName",
-      "set": {
-        "mutation": "UPDATE_ITEM",
-        "variables": {
-          "input": {
-            "itemId": "__FIELD_ITEM_ID__",
-            "language": "en",
-            "fields": [
-              {
-                "name": "Type",
-                "value": "Single-Line Text"
-              },
-              {
-                "name": "Title",
-                "value": "Person Name"
-              }
-            ]
-          }
-        }
-      },
-      "required": {
-        "appendRuleTo": [
-          "Validate Button",
-          "Workflow"
-        ],
-        "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
-      }
-    },
-    {
-      "id": "configure-field-0-Masthead-personJobTitle",
-      "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personJobTitle",
-      "set": {
-        "mutation": "UPDATE_ITEM",
-        "variables": {
-          "input": {
-            "itemId": "__FIELD_ITEM_ID__",
-            "language": "en",
-            "fields": [
-              {
-                "name": "Type",
-                "value": "Single-Line Text"
-              },
-              {
-                "name": "Title",
-                "value": "Person Job Title"
-              }
-            ]
-          }
-        }
-      },
-      "required": {
-        "appendRuleTo": [
-          "Validate Button",
-          "Workflow"
-        ],
-        "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
-      }
-    },
-    {
-      "id": "configure-field-0-Masthead-profileImage",
-      "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/profileImage",
-      "set": {
-        "mutation": "UPDATE_ITEM",
-        "variables": {
-          "input": {
-            "itemId": "__FIELD_ITEM_ID__",
-            "language": "en",
-            "fields": [
-              {
-                "name": "Type",
-                "value": "Image"
-              },
-              {
-                "name": "Title",
-                "value": "Profile Image"
-              }
-            ]
-          }
-        }
-      },
-      "required": {
-        "appendRuleTo": [
-          "Validate Button",
-          "Workflow"
-        ],
-        "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
-      }
-    },
-    {
-      "id": "configure-field-0-Masthead-roleStartDate",
-      "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/roleStartDate",
-      "set": {
-        "mutation": "UPDATE_ITEM",
-        "variables": {
-          "input": {
-            "itemId": "__FIELD_ITEM_ID__",
-            "language": "en",
-            "fields": [
-              {
-                "name": "Type",
-                "value": "Date"
-              },
-              {
-                "name": "Title",
-                "value": "Role Start Date"
-              }
-            ]
-          }
-        }
-      },
-      "required": null
-    },
-    {
-      "id": "configure-field-0-Masthead-biographyText",
-      "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/biographyText",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field/Content/copy",
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -262,7 +143,11 @@
               },
               {
                 "name": "Title",
-                "value": "Biography Text"
+                "value": "Copy"
+              },
+              {
+                "name": "__Short description",
+                "value": "Single rich text field supporting headings, body text, bold/italic, inline links, numbered and bulleted lists, blockquotes, tables, and images with optional captions. If empty, the component does not render."
               }
             ]
           }
@@ -280,11 +165,11 @@
     {
       "id": "ensure-rendering",
       "kind": "ensureRendering",
-      "targetPath": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/Rich Text Field",
       "preflight": {
         "query": "ITEM_BY_PATH",
         "variables": {
-          "path": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead"
+          "path": "/sitecore/layout/Renderings/Project/Training App Router/Rich Text Field"
         }
       },
       "resolveTemplate": {
@@ -302,7 +187,7 @@
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "People Detail Masthead",
+            "name": "Rich Text Field",
             "templateId": "__JSON_RENDERING_TEMPLATE_ID__",
             "parent": "__RENDERING_ROOT_ID__",
             "language": "en"
@@ -310,7 +195,7 @@
         },
         "resolveParent": {
           "query": "ITEM_BY_PATH",
-          "path": "/sitecore/layout/Renderings/Project/CN",
+          "path": "/sitecore/layout/Renderings/Project/Training App Router",
           "into": "__RENDERING_ROOT_ID__"
         }
       },
@@ -330,7 +215,11 @@
             "fields": [
               {
                 "name": "componentName",
-                "value": "PeopleDetailMasthead"
+                "value": "RichTextField"
+              },
+              {
+                "name": "Datasource Template",
+                "value": "/sitecore/templates/Project/Training App Router/Hackathon/Rich Text Field"
               }
             ]
           }

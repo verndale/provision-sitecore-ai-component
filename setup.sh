@@ -5,8 +5,9 @@
 #
 # Per tool, three steps (all idempotent, all printed as they land):
 #
-#   1. Symlink skills/provision-sitecore-ai-component into the tool's user-level
-#      skills directory, so the skill is available in every project:
+#   1. Link skills/provision-sitecore-ai-component into the tool's user-level
+#      skills directory, so the skill is available in every project (a native
+#      directory junction on Windows, a symbolic link elsewhere):
 #
 #        Claude Code -> ~/.claude/skills/provision-sitecore-ai-component
 #        Codex       -> ~/.codex/skills/provision-sitecore-ai-component
@@ -28,11 +29,11 @@
 #   bash setup.sh [claude] [codex] [cursor] [--uninstall]
 #
 # With no tool args, wires every tool whose config dir already exists
-# (~/.claude / ~/.codex / ~/.cursor). Re-running is safe: symlinks are
-# recreated in place and hook entries are updated in place. A non-symlink
-# already sitting where the symlink belongs aborts rather than being
-# overwritten. --uninstall removes only the symlinks and hook entries that
-# belong to this skill; the credential file is kept (path printed).
+# (~/.claude / ~/.codex / ~/.cursor). Re-running is safe: skill links and hook
+# entries are updated in place. An ordinary file or directory already sitting
+# where the link belongs aborts rather than being overwritten. --uninstall
+# removes only links and hook entries that belong to this skill; the credential
+# file is kept (path printed).
 #
 # The skill drives this clone's CLI and guard — keep the clone where you ran
 # setup from (git pull updates everyone's copy).
@@ -80,32 +81,12 @@ skills_dir_for() {
 
 install_link() {
   local link="$1"
-  mkdir -p "$(dirname "$link")"
-  if [ -L "$link" ]; then rm "$link"; fi
-  if [ -e "$link" ]; then
-    echo "error: $link exists and is not a symlink — refusing to overwrite" >&2
-    exit 1
-  fi
-  ln -s "$SKILL_SRC" "$link"
-  echo "  symlinked $link -> $SKILL_SRC"
+  node "$REPO_ROOT/scripts/install-skill-link.cjs" "$SKILL_SRC" "$link"
 }
 
 uninstall_link() {
   local link="$1"
-  if [ -L "$link" ]; then
-    local target
-    target="$(readlink "$link")"
-    if [ "$target" = "$SKILL_SRC" ]; then
-      rm "$link"
-      echo "  removed $link"
-    else
-      echo "  skipped $link (points elsewhere: $target)"
-    fi
-  elif [ -e "$link" ]; then
-    echo "  skipped $link (not a symlink)"
-  else
-    echo "  not installed: $link"
-  fi
+  node "$REPO_ROOT/scripts/install-skill-link.cjs" --uninstall "$SKILL_SRC" "$link"
 }
 
 credential_bootstrap() {

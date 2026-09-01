@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 86,
-    "edges": 177,
+    "nodes": 90,
+    "edges": 187,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -10,20 +10,20 @@
       "reference": 6,
       "skill": 1,
       "source": 7,
-      "test": 12,
+      "test": 13,
       "wiki-index": 3,
-      "wiki-journal": 11,
+      "wiki-journal": 14,
       "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 8,
       "invokes": 7,
-      "links-to": 75,
+      "links-to": 82,
       "plan": 9,
       "references": 6,
       "requires": 56,
-      "topic": 16
+      "topic": 19
     }
   },
   "nodes": [
@@ -167,7 +167,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13961,
+      "bytes": 14158,
       "degree": 8
     },
     {
@@ -466,7 +466,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6903,
+      "bytes": 6496,
       "degree": 0
     },
     {
@@ -492,7 +492,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6347,
+      "bytes": 6630,
       "degree": 5
     },
     {
@@ -583,7 +583,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13544,
+      "bytes": 13602,
       "degree": 6
     },
     {
@@ -596,8 +596,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10418,
-      "degree": 6
+      "bytes": 10576,
+      "degree": 7
     },
     {
       "id": "src/emit-tsx.cjs",
@@ -622,7 +622,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 22882,
+      "bytes": 23288,
       "degree": 4
     },
     {
@@ -674,7 +674,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14257,
+      "bytes": 15304,
       "degree": 4
     },
     {
@@ -713,7 +713,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6289,
+      "bytes": 6560,
       "degree": 4
     },
     {
@@ -765,8 +765,21 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5292,
+      "bytes": 5380,
       "degree": 1
+    },
+    {
+      "id": "test/skill-link-install.test.cjs",
+      "label": "skill-link-install.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 2323,
+      "degree": 0
     },
     {
       "id": "test/skills-lint.test.cjs",
@@ -830,8 +843,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5558,
-      "degree": 18
+      "bytes": 6322,
+      "degree": 21
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1136,6 +1149,51 @@
         }
       ],
       "bytes": 2730,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "label": "Blank credential values fall through to the machine default",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1533,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "label": "Live SitecoreAI authoring check compatibility",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1781,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "label": "Windows skill installs use native directory junctions",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1475,
       "degree": 3
     },
     {
@@ -1637,8 +1695,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 8185,
-      "degree": 32
+      "bytes": 9944,
+      "degree": 39
     }
   ],
   "edges": [
@@ -1985,6 +2043,27 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2160,6 +2239,13 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/cli.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/emit-tsx.cjs",
       "type": "links-to",
       "count": 1,
@@ -2210,6 +2296,27 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-08-31-windows-skill-junctions.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2644,6 +2751,21 @@
     },
     {
       "source": "wiki/journal/2026-08-27-sitecore-ai-provisioner-rename.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-blank-credential-fallback.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-live-authoring-check-compatibility.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-08-31-windows-skill-junctions.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     },

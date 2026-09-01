@@ -178,8 +178,13 @@ function createClient(plan, options) {
       return data.item || null;
     },
     async templateByPath(path) {
-      const data = await graphql("TEMPLATE_BY_PATH", { path });
-      return data.item || null;
+      // itemTemplate(where: { path }) raises a GraphQL error when the template is
+      // absent in current SitecoreAI environments. Probe the ordinary item first
+      // so check mode can report a create decision instead of failing preflight.
+      const itemData = await graphql("ITEM_BY_PATH", { path });
+      if (!itemData.item) return null;
+      const data = await graphql("TEMPLATE_BY_PATH", { templateId: itemData.item.itemId });
+      return data.itemTemplate || null;
     },
     async fieldValue(path, field) {
       const data = await graphql("FIELD_VALUE", { path, field });
@@ -399,7 +404,9 @@ async function runPlan(plan, options) {
         if (!jsonRenderingTemplate) {
           throw new ExecutorError("conflict", `Json Rendering template not found at ${op.resolveTemplate.path}.`, "This environment's headless rendering template lives elsewhere; adjust the plan's systemPaths and re-run.");
         }
-        const templateFieldNames = new Set((jsonRenderingTemplate.ownFields ? jsonRenderingTemplate.ownFields.nodes : []).map((f) => f.name.toLowerCase()));
+        const templateFieldNames = new Set(
+          (jsonRenderingTemplate.allFields ? jsonRenderingTemplate.allFields.nodes : []).map((f) => f.name.toLowerCase())
+        );
         const missingBindingFields = op.resolveTemplate.verifyFields.filter((f) => !templateFieldNames.has(f.toLowerCase()));
         if (missingBindingFields.length > 0) {
           throw new ExecutorError(

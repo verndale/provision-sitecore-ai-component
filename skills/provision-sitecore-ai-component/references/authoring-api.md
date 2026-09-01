@@ -23,7 +23,7 @@ OAuth2 client credentials against Sitecore Cloud. Create an automation client fo
 - `SITECORE_AUTHORING_TOKEN_URL` — optional; default `https://auth.sitecorecloud.io/oauth/token`.
 - `SITECORE_AUTHORING_AUDIENCE` — optional; default `https://api.sitecorecloud.io`.
 
-The CLI fills unset keys in this order: exported environment variables → `./.env` at the invocation cwd (per-project override) → the per-machine `~/.config/provision-sitecore-ai-component/.env` written by `setup.sh`'s one-time credential bootstrap (chmod 600). Missing variables fail before any network call (exit 2). Values are never echoed into output, plans, or logs.
+The CLI fills non-empty values in this order: exported environment variables → `./.env` at the invocation cwd (per-project override) → the per-machine `~/.config/provision-sitecore-ai-component/.env` written by `setup.sh`'s one-time credential bootstrap (chmod 600). Blank entries are treated as unset, so a copied `.env.example` does not mask central credentials. Missing variables fail before any network call (exit 2). Values are never echoed into output, plans, or logs.
 
 `push` is confirmation-gated at the CLI: on a terminal it asks y/N before loading credentials; in a non-interactive shell it refuses without `--yes`, which records the skill's step-6 gate approval.
 
@@ -33,7 +33,7 @@ All GraphQL traffic posts to `SITECORE_AUTHORING_ENDPOINT` with a bearer token. 
 
 ## Operations
 
-The plan carries six documents (see `plan.graphql`): three queries — item by path, template by path with `ownFields { nodes { name type } }`, single field value — and three mutations — `createItemTemplate` (name, parent, sections with `{ name, type }` fields), `createItem` (name, templateId, parent, language, fields), `updateItem` (itemId, language, fields). Everything the tool does composes from these; there is no delete, rename, or move operation in the set by design.
+The plan carries six documents (see `plan.graphql`): three queries — item by path, template by ID with both own and inherited field surfaces, single field value — and three mutations — `createItemTemplate` (name, parent, sections with `{ name, type }` fields), `createItem` (name, templateId, parent, language, fields), `updateItem` (itemId, language, fields). Template lookup first resolves the item by path, then uses its ID because current SitecoreAI returns an error rather than `null` for an absent `itemTemplate` path lookup. Everything the tool does composes from these; there is no delete, rename, or move operation in the set by design.
 
 ## Placeholder binding
 
@@ -51,11 +51,11 @@ Plan variables contain `__NAME__` placeholders (`__TEMPLATE_0_ID__`, `__RENDERIN
 
 ## Required-field validation
 
-`required: true` appends the standard Required field rule — resolved by path from `/sitecore/system/Settings/Validation Rules/Field Rules/System/Required` — to the field item's `Validate Button` and `Workflow` validation bars. Existing rules on those bars are preserved. Other bars (`Quick Action Bar`, `Validation Rules`) are intentionally untouched in v1; add them manually if the project's authoring policy needs them.
+`required: true` appends the standard Required field rule — resolved by path from `/sitecore/system/Settings/Validation Rules/Field Rules/Required` — to the field item's `Validate Button` and `Workflow` validation bars. Existing rules on those bars are preserved. Other bars (`Quick Action Bar`, `Validation Rules`) are intentionally untouched in v1; add them manually if the project's authoring policy needs them.
 
 ## System items resolved by path
 
-- Json Rendering template: `/sitecore/templates/Foundation/JavaScript Services/Json Rendering` — resolved and **introspected** before any rendering mutation: its `ownFields` must contain `componentName`, `Datasource Template`, and `Datasource Location`, or the run aborts with the mismatch named.
+- Json Rendering template: `/sitecore/templates/Foundation/JavaScript Services/Json Rendering` — resolved and **introspected** before any rendering mutation: its inherited `fields` surface must contain `componentName`, `Datasource Template`, and `Datasource Location`, or the run aborts with the mismatch named.
 - Template section / Template field: `/sitecore/templates/System/Templates/Template section` and `…/Template field`.
 - Placeholder settings template: `/sitecore/templates/System/Layout/Placeholder`.
 - Required rule: path above.

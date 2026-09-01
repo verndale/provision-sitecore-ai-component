@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "component": "RichTextField",
+  "slug": "rich-text-field",
+  "output": "artifacts/rich-text-field",
+  "confluence": {
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6768361487/CN+-+Rich+Text+Field",
+    "pageId": "6768361487"
+  },
+  "templates": [
+    {
+      "role": "datasource",
+      "parentPath": "/sitecore/templates/Project/Training App Router/Hackathon",
+      "name": "Rich Text Field",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "copy",
+              "title": "Copy",
+              "sitecoreType": "Rich Text",
+              "required": true,
+              "helpText": "Single rich text field supporting headings, body text, bold/italic, inline links, numbered and bulleted lists, blockquotes, tables, and images with optional captions. If empty, the component does not render."
+            }
+          ]
+        }
+      ],
+      "insertOptions": []
+    }
+  ],
+  "rendering": {
+    "name": "Rich Text Field",
+    "componentName": "RichTextField",
+    "datasourceTemplate": "Rich Text Field"
+  },
+  "sitecorePaths": {
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router"
+  }
+}

@@ -75,11 +75,21 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
 
     if (/mutation\s/.test(query)) mutations.push({ query, variables });
 
-    if (query.includes("GetTemplate") || query.includes("GetItem")) {
+    if (query.includes("GetTemplate")) {
+      const item = byId(variables.templateId);
+      if (!item) return json(200, { data: { itemTemplate: null } });
+      const payload = {
+        itemId: item.itemId,
+        name: item.name,
+        ownFields: { nodes: item.ownFields || [] },
+        allFields: { nodes: item.allFields || item.ownFields || [] },
+      };
+      return json(200, { data: { itemTemplate: payload } });
+    }
+    if (query.includes("GetItem")) {
       const item = byPath(variables.path);
       if (!item) return json(200, { data: { item: null } });
-      const payload = { itemId: item.itemId, name: item.name, path: item.path, templateId: item.templateId || null };
-      if (query.includes("ownFields")) payload.ownFields = { nodes: item.ownFields || [] };
+      const payload = { itemId: item.itemId, name: item.name, path: item.path };
       return json(200, { data: { item: payload } });
     }
     if (query.includes("GetFieldValue")) {

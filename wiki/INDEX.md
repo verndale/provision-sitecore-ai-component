@@ -25,6 +25,9 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
+- 2026-08-31 — [Live SitecoreAI authoring check compatibility](journal/2026-08-31-live-authoring-check-compatibility.md) — the first real development check aligned item/template queries, inherited rendering-field verification, and the Required-rule path with the current schema.
+- 2026-08-31 — [Windows skill installs use native directory junctions](journal/2026-08-31-windows-skill-junctions.md) — setup now creates testable live links on Windows instead of copy-like Git Bash directories while preserving collision safety.
+- 2026-08-31 — [Blank credential values fall through to the machine default](journal/2026-08-31-blank-credential-fallback.md) — empty project placeholders no longer mask non-empty process or per-machine SitecoreAI credentials.
 - 2026-08-27 — [SitecoreAI provisioner rename](journal/2026-08-27-sitecore-ai-provisioner-rename.md) — package, CLI, skill, setup, config, credentials, generated banners, and live repository references now share one breaking SitecoreAI identity without aliases.
 - 2026-08-23 — [Wiki Actions and routing standard](journal/2026-08-23-wiki-actions-routing-standard.md) — five stable workflow identities, repo-qualified GitHub evidence, byte-counted routes, and contamination-safe hooks now match the canonical wiki contract while preserving owner handoff.
 - 2026-07-25 — [Removed the skill eval subsystem](journal/2026-07-25-remove-skill-evals.md) — the corpus-only eval layer, its validator, and both CI gates are gone; the topic page went with them while the original journal and archived plan stay as the record.
