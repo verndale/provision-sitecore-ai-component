@@ -1,6 +1,6 @@
 ---
 aliases: [SitecoreAI component provisioning, component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation]
-covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs]
+covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs, src/field-source.cjs, src/validate-manifest.cjs]
 ---
 # SitecoreAI component provisioning — Design History
 
@@ -16,14 +16,17 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 - `check` is read-only (a hard guard refuses mutations outside push mode); `push` reconciles add-only — extra CMS fields, type mismatches, and mislocated fields become follow-ups, never deletions or retypes ([src/executor.cjs](../../src/executor.cjs)) — and is confirmation-gated at the CLI (TTY y/N, or `--yes` recording the skill's step-6 approval).
 - The shared PreToolUse policy is platform-adapted: Claude Code can ask on push, while Codex denies the command until `--yes` records the skill gate; Codex hooks use canonical `Bash`/`apply_patch` payloads and require exact-hash trust after updates ([scripts/hooks/pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)).
 - Required fields attach the standard Required rule (resolved by path) to the Validate Button and Workflow bars; list fields (`__Masters`, Allowed Controls, validation bars) merge append-only with brace/case-insensitive de-duplication.
+- Rich Text, Image, and General Link fields use deterministic house Source defaults (`query:$xaRichTextProfile`, `query:$siteMedia`, and `query:$linkableHomes`); an explicit reviewed Source overrides the default ([src/field-source.cjs](../../src/field-source.cjs)).
 - Live-compatible preflight resolves items by path, loads templates by ID, uses own fields for template reconciliation and inherited fields for Json Rendering verification, and treats an absent template as a create decision instead of a GraphQL failure.
-- Clone-equivalent SXA topology is explicit rather than inferred: content/folder/parameters templates and Standard Values, complete rendering bindings, optional reusable future-site branches/setup actions, and only the existing sites listed in `sxa.sites` ([manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)).
+- Clone-equivalent SXA topology is explicit rather than inferred: content/folder/parameters templates and Standard Values, complete rendering bindings, optional reusable future-site branches/setup actions, and only the existing sites listed in `sxa.sites`; each listed site creates that manifest's `<siteRoot>/Data/<Rendering>` folder by default ([manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)).
 - The consolidated preflight validates actual template dependencies and every discoverable manifest-template, rendering, or SXA item collision before the first mutation; existing list values and unrelated rendering properties are preserved add-only.
-- The emitted pair (`Component.types.ts` + `Component.tsx`) matches the eng team's handoff contract and the ai-orchestration sitecore-ai adapter's boundary rules; page-driven components (no datasource) emit a typed contract with a marked TODO for the page-item access ([src/emit-tsx.cjs](../../src/emit-tsx.cjs)).
+- Parent/child families keep one reviewed manifest per component and use a staged child-first workflow: provision the child rendering, then preflight and provision the parent whose placeholder names that rendering in `allowedControls`. Reconcile appends child IDs to `Allowed Controls` and appends the placeholder-settings ID to the parent's raw JSON Rendering `Placeholders` field without removing live entries.
+- The emitted pair (`Component.types.ts` + `Component.tsx`) matches the eng team's handoff contract and the ai-orchestration sitecore-ai adapter's boundary rules; placeholder owners emit Content SDK `AppPlaceholder` slots, while page-driven components (no datasource) emit a typed contract with a marked TODO for the page-item access ([src/emit-tsx.cjs](../../src/emit-tsx.cjs)).
 - Golden fixtures pin plans and TSX byte-for-byte, modeled on the CN Related Content Card (datasource, two templates, restricted Droptree) and People Detail Masthead (existing page template, rendering without datasource) specs.
 
 ## Decisions
 
+- 2026-09-02 — Kept one component per manifest and made family order explicit because child rendering existence is a real parent preflight dependency; CN Labeled Content Section is the canonical slot model, while contradictory General Image Card Row materials remain a review question rather than an inferred convention ([journal](../journal/2026-09-02-placeholder-component-families.md)).
 - 2026-09-01 — Modeled clone-equivalent SXA topology in the reviewed manifest instead of discovering the live tree, keeping offline plans deterministic and separating future-site scaffolding from explicit existing-site backfill ([journal](../journal/2026-09-01-clone-equivalent-sxa-provisioning.md)).
 - 2026-08-31 — Aligned read-only preflight with the live SitecoreAI schema after the first development-environment check: item paths resolve template IDs, inherited rendering fields are verified, and the Required rule uses its actual system path ([journal](../journal/2026-08-31-live-authoring-check-compatibility.md)).
 - 2026-08-31 — Replaced Git Bash `ln -s` with a Node-managed Windows junction / Unix symlink because copy-like Windows results became stale and broke idempotent setup; existing ordinary directories remain an explicit migration instead of being deleted automatically ([journal](../journal/2026-08-31-windows-skill-junctions.md)).
@@ -49,5 +52,5 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Open threads
 
-- Live `check` and the Training App Router SXA topology are validated against the development environment; the new template-metadata and SXA mutation paths remain unverified until an explicitly approved provisioning run.
+- Live `check` and the Training App Router SXA topology are validated against the development environment; the new template-metadata, placeholder-family, and SXA mutation paths remain unverified until an explicitly approved provisioning run. The placeholder field name `Placeholders` was confirmed through a read-only live schema probe; no family item was mutated.
 - Content SDK 2 reference-field types (Droptree/Multilist) are conservatively `unknown` pending SDK-surface verification.

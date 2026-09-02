@@ -144,7 +144,8 @@
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
           "requiredFields": [
             "Type",
-            "Title"
+            "Title",
+            "Source"
           ]
         },
         {
@@ -213,7 +214,18 @@
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
           "requiredFields": [
             "Type",
-            "Title"
+            "Title",
+            "Source"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/layout/Placeholder Settings/Project/CN/related-content-row",
+          "createIfMissing": true,
+          "expectedTemplateId": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Layout/Placeholder",
+          "requiredFields": [
+            "Placeholder Key",
+            "Allowed Controls"
           ]
         },
         {
@@ -451,6 +463,10 @@
               {
                 "name": "Title",
                 "value": "CTA Link"
+              },
+              {
+                "name": "Source",
+                "value": "query:$linkableHomes"
               }
             ]
           }
@@ -717,6 +733,10 @@
               {
                 "name": "Title",
                 "value": "Thumbnail Image"
+              },
+              {
+                "name": "Source",
+                "value": "query:$siteMedia"
               }
             ]
           }
@@ -817,10 +837,19 @@
           }
         }
       },
+      "key": {
+        "field": "Placeholder Key",
+        "value": "related-content-row"
+      },
+      "resolves": {
+        "__PLACEHOLDER_0_ID__": "itemId"
+      },
       "allowedControls": {
         "field": "Allowed Controls",
-        "append": "__RENDERING_ID__",
-        "note": "The rendering id is appended to Allowed Controls only when missing."
+        "append": [
+          "__RENDERING_ID__"
+        ],
+        "note": "Each reviewed rendering id is appended to Allowed Controls only when missing."
       }
     }
   ],

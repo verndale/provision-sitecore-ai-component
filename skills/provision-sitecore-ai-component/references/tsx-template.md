@@ -7,6 +7,7 @@ The exact shape of the emitted handoff pair — `<Component>.types.ts` + `<Compo
 - Why a pair
 - Datasource mode
 - Page-driven mode
+- Placeholder-owner mode
 - Rules the emitter follows
 - Overwrite behavior
 
@@ -63,14 +64,37 @@ export default AwardCard;
 
 Emitted when the component has no datasource-backed rendering (fields live on the page item). The types file still carries the full field contract; the `.tsx` declares `const fields: <C>Fields | undefined = undefined;` under a `TODO(provision)` block — the page-item access pattern is app-specific and is wired during Implement. The scaffold compiles either way.
 
+## Placeholder-owner mode
+
+When a manifest placeholder has `emitInComponent: true`, the owner scaffold uses the Sitecore Content SDK 2.x `AppPlaceholder`, not the legacy `Placeholder`. The component map is a default import from provisioning config `componentMapImport` (default `.sitecore/component-map`), and the slot passes the app runtime context explicitly:
+
+```tsx
+import { AppPlaceholder } from '@sitecore-content-sdk/nextjs';
+import componentMap from '.sitecore/component-map';
+
+const placeholderKey0 = "product-cards-" + props.params.DynamicPlaceholderId + "";
+
+<AppPlaceholder
+  name={placeholderKey0}
+  rendering={props.rendering}
+  page={props.page}
+  componentMap={componentMap}
+/>
+```
+
+A static key is emitted verbatim. For a key containing `{*}`, the emitter replaces that one token with `params.DynamicPlaceholderId`; manifest validation requires `rendering.dynamicPlaceholders: true` and a `rendering.parametersTemplate` (in SXA, inheriting `IDynamicPlaceholder`). Each `emitInComponent` entry emits one slot, in manifest order. The CMS plan separately links the placeholder-settings item through the parent rendering's raw `Placeholders` field.
+
+A placeholder owner must stay renderable when its datasource fields are absent so nested child renderings can still render. Its scaffold therefore does not use the field-only component guard solely on `!fields`; editing state still controls SDK field editability.
+
 ## Rules the emitter follows
 
 - Field order, names, and `?` optionality come from the manifest (required → no `?`).
 - Only the SDK types and renderers actually used are imported, alphabetically.
 - `ComponentProps` imports from the config `componentPropsImport` (default `lib/component-props`).
+- Placeholder owners import the generated component map from config `componentMapImport` (default `.sitecore/component-map`) and pass `page`, `rendering`, and `componentMap` to every `AppPlaceholder`.
 - The `.tsx` imports its types with `import type` from `./<Component>.types`.
 - Root element is a neutral `<div data-component="<slug>">` — landmark/semantic element choice belongs to Implement.
-- Editing awareness via `page.mode.isEditing` from the props-supplied `page`; every SDK renderer gets `editable={isEditing}`; the component-level guard is `if (!fields && !isEditing) return null;`.
+- Editing awareness uses `page.mode.isEditing` from the props-supplied `page`, and every SDK renderer gets `editable={isEditing}`. Field-only scaffolds use `if (!fields && !isEditing) return null;`; placeholder owners omit that guard so an empty parent datasource cannot suppress nested renderings.
 - SDK renderers render directly — no per-field ternaries or show-booleans (SDK fields self-null); `RichText` carries `className="rtf"`.
 - Field types with no SDK renderer (Date, Checkbox, Number, references, unknown) appear as `{/* TODO(provision): … */}` comments naming the field and what to resolve.
 - Every generated TODO is grep-able by the `TODO(provision)` prefix.

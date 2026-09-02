@@ -1,17 +1,17 @@
 {
   "version": 1,
-  "component": "RichTextField",
-  "slug": "rich-text-field",
-  "output": "artifacts/rich-text-field",
+  "component": "GeneralImageCard",
+  "slug": "general-image-card",
+  "output": "artifacts/general-image-card",
   "confluence": {
-    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6768361487/CN+-+Rich+Text+Field",
-    "pageId": "6768361487"
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6784221476/CN+-+General+Image+Card",
+    "pageId": "6784221476"
   },
   "templates": [
     {
       "role": "datasource",
       "kind": "content",
-      "name": "Rich Text Field",
+      "name": "General Image Card",
       "standardValues": true,
       "baseTemplates": [
         "/sitecore/templates/System/Templates/Standard template",
@@ -23,12 +23,32 @@
           "name": "Content",
           "fields": [
             {
-              "name": "copy",
-              "title": "Copy",
-              "sitecoreType": "Rich Text",
+              "name": "generalImageCardImage",
+              "title": "General Image Card Image",
+              "sitecoreType": "Image",
+              "source": "query:$siteMedia",
+              "helpText": "Optional thumbnail image. When empty, the card renders as text only; alt text comes from the selected media asset."
+            },
+            {
+              "name": "generalImageCardHeading",
+              "title": "General Image Card Heading",
+              "sitecoreType": "Single-Line Text",
               "required": true,
-              "source": "query:$xaRichTextProfile",
-              "helpText": "Single rich text field supporting headings, body text, bold/italic, inline links, numbered and bulleted lists, blockquotes, tables, and images with optional captions. If empty, the component does not render."
+              "helpText": "Required card title. The card does not render on the live site when this value is empty."
+            },
+            {
+              "name": "generalImageCardDescription",
+              "title": "General Image Card Description",
+              "sitecoreType": "Multi-Line Text",
+              "helpText": "Optional supporting text displayed below the card heading."
+            },
+            {
+              "name": "generalImageCardLink",
+              "title": "General Image Card Link",
+              "sitecoreType": "General Link",
+              "required": true,
+              "source": "query:$linkableHomes",
+              "helpText": "Required internal or external destination used by the entire clickable card."
             }
           ]
         }
@@ -37,21 +57,21 @@
     {
       "role": "datasource",
       "kind": "folder",
-      "name": "Rich Text Field Folder",
+      "name": "General Image Card Folder",
       "standardValues": true,
       "baseTemplates": [
         "/sitecore/templates/System/Templates/Standard template"
       ],
       "icon": "Office/32x32/folder_window.png",
       "insertOptions": [
-        "Rich Text Field",
-        "Rich Text Field Folder"
+        "General Image Card",
+        "General Image Card Folder"
       ]
     },
     {
       "role": "renderingParameters",
       "kind": "renderingParameters",
-      "name": "Rich Text Field Parameters",
+      "name": "General Image Card Parameters",
       "standardValues": true,
       "baseTemplates": [
         "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
@@ -63,22 +83,22 @@
     }
   ],
   "rendering": {
-    "name": "Rich Text Field",
-    "componentName": "RichTextField",
-    "datasourceTemplate": "Rich Text Field",
-    "parametersTemplate": "Rich Text Field Parameters",
-    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='Rich Text Field Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Rich Text Field Folder']",
+    "name": "General Image Card",
+    "componentName": "GeneralImageCard",
+    "datasourceTemplate": "General Image Card",
+    "parametersTemplate": "General Image Card Parameters",
+    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='General Image Card Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='General Image Card Folder']",
     "openPropertiesAfterAdd": false,
     "enableDatasourceQuery": true,
     "icon": "SXA_MDI/16x16/Promo.png"
   },
   "sxa": {
-    "folderTemplate": "Rich Text Field Folder",
+    "folderTemplate": "General Image Card Folder",
     "siteScaffolding": {
       "branchRoot": "/sitecore/templates/Branches/Project/Training App Router",
       "setupRoot": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
       "moduleName": "Training App Router",
-      "dataActionName": "Add Rich Text Field Data Item"
+      "dataActionName": "Add General Image Card Data Item"
     },
     "sites": [
       {
@@ -92,7 +112,7 @@
   },
   "sitecorePaths": {
     "templateRoots": {
-      "datasource": "/sitecore/templates/Project/Training App Router/Hackathon",
+      "datasource": "/sitecore/templates/Project/Training App Router",
       "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
     },
     "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router"

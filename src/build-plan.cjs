@@ -9,6 +9,7 @@
  */
 
 const { joinItemPath, isPlainObject } = require("./util.cjs");
+const { effectiveFieldSource } = require("./field-source.cjs");
 
 /** Well-known system items, always resolved by path at run time (never by GUID). */
 const SYSTEM_PATHS = {
@@ -97,11 +98,22 @@ function itemField(name, value) {
   return { name, value };
 }
 
+function placeholderKey(placeholder) {
+  return placeholder.key === undefined ? placeholder.name : placeholder.key;
+}
+
+function placeholderAllowsSelf(placeholder) {
+  if (typeof placeholder.allowedControlsAdd === "boolean") return placeholder.allowedControlsAdd;
+  return !Array.isArray(placeholder.allowedControls);
+}
+
 function buildMutationPlan(manifest, resolved, manifestBasename) {
   const ops = [];
   const rendering = isPlainObject(manifest.rendering) ? manifest.rendering : null;
   const sxa = isPlainObject(manifest.sxa) ? manifest.sxa : null;
   const sxaSites = sxa && Array.isArray(sxa.sites) ? sxa.sites : [];
+  const placeholders = Array.isArray(manifest.placeholders) ? manifest.placeholders : [];
+  const emittedPlaceholders = placeholders.filter((placeholder) => placeholder.emitInComponent === true);
   const manualFollowUps = [];
 
   if (rendering && sxaSites.length === 0) {
@@ -164,9 +176,14 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
   if (rendering && rendering.datasourceTemplate && rendering.datasourceTemplate.startsWith("/sitecore/")) {
     templateResolves.__DATASOURCE_TEMPLATE_CHECK_ID__ = rendering.datasourceTemplate;
   }
-  if (Array.isArray(manifest.placeholders) && manifest.placeholders.length > 0) {
+  if (placeholders.length > 0) {
     dependencyResolves.__PLACEHOLDER_ROOT_ID__ = resolved.placeholderSettingsRoot;
   }
+  placeholders.forEach((placeholder, placeholderIndex) => {
+    (placeholder.allowedControls || []).forEach((path, controlIndex) => {
+      dependencyResolves[`__PLACEHOLDER_${placeholderIndex}_ALLOWED_CONTROL_${controlIndex}_ID__`] = path;
+    });
+  });
 
   const itemChecks = [];
   const templateTargets = manifest.templates.map((template) => ({
@@ -185,8 +202,9 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
         requiredFields: [],
       });
       for (const field of section.fields) {
+        const source = effectiveFieldSource(field);
         const requiredFields = ["Type", "Title"];
-        if (field.source) requiredFields.push("Source");
+        if (source) requiredFields.push("Source");
         if (field.helpText) requiredFields.push("__Short description");
         if (field.required === true) requiredFields.push(...VALIDATION_BAR_FIELDS);
         itemChecks.push({
@@ -198,6 +216,24 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
         });
       }
     }
+  });
+  placeholders.forEach((placeholder, placeholderIndex) => {
+    itemChecks.push({
+      targetPath: joinItemPath(resolved.placeholderSettingsRoot, placeholder.name),
+      createIfMissing: true,
+      expectedTemplateId: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+      expectedTemplatePath: SYSTEM_PATHS.placeholderSettingsTemplate,
+      requiredFields: ["Placeholder Key", "Allowed Controls"],
+    });
+    (placeholder.allowedControls || []).forEach((path) => {
+      itemChecks.push({
+        targetPath: path,
+        createIfMissing: false,
+        expectedTemplateId: "__JSON_RENDERING_TEMPLATE_ID__",
+        expectedTemplatePath: SYSTEM_PATHS.jsonRenderingTemplate,
+        requiredFields: [],
+      });
+    });
   });
   if (sxa && isPlainObject(sxa.siteScaffolding)) {
     dependencyResolves.__SXA_BRANCH_ROOT_ID__ = sxa.siteScaffolding.branchRoot;
@@ -217,7 +253,7 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
   const templateFieldSurface = new Set(["Type", "Title"]);
   manifest.templates.forEach((template) => {
     flattenFields(template).forEach(({ field }) => {
-      if (field.source) templateFieldSurface.add("Source");
+      if (effectiveFieldSource(field)) templateFieldSurface.add("Source");
       if (field.helpText) templateFieldSurface.add("__Short description");
       if (field.required === true) VALIDATION_BAR_FIELDS.forEach((name) => templateFieldSurface.add(name));
     });
@@ -226,12 +262,14 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
     { path: SYSTEM_PATHS.templateSectionTemplate, into: "__TEMPLATE_SECTION_TEMPLATE_ID__", fields: [] },
     { path: SYSTEM_PATHS.templateFieldTemplate, into: "__TEMPLATE_FIELD_TEMPLATE_ID__", fields: [...templateFieldSurface] },
   ];
-  if (Array.isArray(manifest.placeholders) && manifest.placeholders.length > 0) {
+  if (placeholders.length > 0) {
     templateChecks.push({ path: SYSTEM_PATHS.placeholderSettingsTemplate, into: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__", fields: ["Placeholder Key", "Allowed Controls"] });
   }
-  if (rendering) {
-    const jsonFields = renderingBindingFields.map((field) => field.name);
-    if (typeof rendering.dynamicPlaceholders === "boolean") jsonFields.push("OtherProperties");
+  const needsJsonRenderingTemplate = Boolean(rendering) || placeholders.some((placeholder) => Array.isArray(placeholder.allowedControls));
+  if (needsJsonRenderingTemplate) {
+    const jsonFields = rendering ? renderingBindingFields.map((field) => field.name) : [];
+    if (rendering && typeof rendering.dynamicPlaceholders === "boolean") jsonFields.push("OtherProperties");
+    if (emittedPlaceholders.length > 0) jsonFields.push("Placeholders");
     templateChecks.push({ path: SYSTEM_PATHS.jsonRenderingTemplate, into: "__JSON_RENDERING_TEMPLATE_ID__", fields: jsonFields });
   }
   if (sxa && (isPlainObject(sxa.siteScaffolding) || sxaSites.length > 0)) {
@@ -340,7 +378,8 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
     flattenFields(template).forEach(({ section, field }) => {
       const fieldPath = joinItemPath(joinItemPath(path, section), field.name);
       const values = [itemField("Type", field.sitecoreType), itemField("Title", field.title)];
-      if (field.source) values.push(itemField("Source", field.source));
+      const source = effectiveFieldSource(field);
+      if (source) values.push(itemField("Source", source));
       if (field.helpText) values.push(itemField("__Short description", field.helpText));
       ops.push({
         id: `configure-field-${index}-${section}-${field.name}`,
@@ -396,7 +435,11 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       createIfMissing: true,
       expectedTemplateId: "__JSON_RENDERING_TEMPLATE_ID__",
       expectedTemplatePath: SYSTEM_PATHS.jsonRenderingTemplate,
-      requiredFields: [...renderingBindingFields.map((field) => field.name), ...(typeof rendering.dynamicPlaceholders === "boolean" ? ["OtherProperties"] : [])],
+      requiredFields: [
+        ...renderingBindingFields.map((field) => field.name),
+        ...(typeof rendering.dynamicPlaceholders === "boolean" ? ["OtherProperties"] : []),
+        ...(emittedPlaceholders.length > 0 ? ["Placeholders"] : []),
+      ],
     });
     ops.push({
       id: "set-rendering-bindings",
@@ -600,9 +643,11 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
     });
   }
 
-  if (Array.isArray(manifest.placeholders)) {
-    manifest.placeholders.forEach((placeholder, index) => {
+  if (placeholders.length > 0) {
+    placeholders.forEach((placeholder, index) => {
       const placeholderPath = joinItemPath(resolved.placeholderSettingsRoot, placeholder.name);
+      const allowedControls = (placeholder.allowedControls || []).map((_, controlIndex) => `__PLACEHOLDER_${index}_ALLOWED_CONTROL_${controlIndex}_ID__`);
+      if (rendering && placeholderAllowsSelf(placeholder)) allowedControls.push("__RENDERING_ID__");
       ops.push({
         id: `ensure-placeholder-settings-${index}`,
         kind: "ensurePlaceholderSettings",
@@ -617,18 +662,34 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
               templateId: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
               parent: "__PLACEHOLDER_ROOT_ID__",
               language: "en",
-              fields: [itemField("Placeholder Key", placeholder.name)],
+              fields: [itemField("Placeholder Key", placeholderKey(placeholder))],
             },
           },
         },
-        allowedControls: placeholder.allowedControlsAdd === false || !rendering
+        key: { field: "Placeholder Key", value: placeholderKey(placeholder) },
+        resolves: { [`__PLACEHOLDER_${index}_ID__`]: "itemId" },
+        allowedControls: allowedControls.length === 0
           ? null
           : {
               field: "Allowed Controls",
-              append: "__RENDERING_ID__",
-              note: "The rendering id is appended to Allowed Controls only when missing.",
+              append: allowedControls,
+              note: "Each reviewed rendering id is appended to Allowed Controls only when missing.",
             },
       });
+    });
+  }
+
+  if (rendering && emittedPlaceholders.length > 0) {
+    ops.push({
+      id: "link-rendering-placeholders",
+      kind: "linkRenderingPlaceholders",
+      targetPath: renderingPath,
+      field: "Placeholders",
+      append: placeholders
+        .map((placeholder, index) => ({ placeholder, index }))
+        .filter(({ placeholder }) => placeholder.emitInComponent === true)
+        .map(({ index }) => `__PLACEHOLDER_${index}_ID__`),
+      note: "Each emitted placeholder settings item is linked to the parent rendering add-only.",
     });
   }
 
@@ -660,6 +721,8 @@ module.exports = {
   SYSTEM_PATHS,
   GRAPHQL,
   VALIDATION_BAR_FIELDS,
+  placeholderKey,
+  placeholderAllowsSelf,
   templatePath,
   flattenFields,
 };

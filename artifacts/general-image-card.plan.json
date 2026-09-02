@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "component": "FullWidthImageCtaRow",
-  "slug": "full-width-image-cta-row",
-  "generatedFrom": "full-width-image-cta-row.manifest.json",
+  "component": "GeneralImageCard",
+  "slug": "general-image-card",
+  "generatedFrom": "general-image-card.manifest.json",
   "resolvedPaths": {
     "templateRoots": {
       "datasource": "/sitecore/templates/Project/Training App Router",
@@ -101,8 +101,7 @@
             "Parameters Template",
             "Open Properties after Add",
             "Enable Datasource Query",
-            "__Icon",
-            "OtherProperties"
+            "__Icon"
           ]
         },
         {
@@ -147,28 +146,28 @@
       ],
       "templateTargets": [
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card",
           "mustExist": false
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Folder",
           "mustExist": false
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters",
+          "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters",
           "mustExist": false
         }
       ],
       "itemChecks": [
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template section",
           "requiredFields": []
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/desktopBackgroundImage",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardImage",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
@@ -180,19 +179,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/mobileBackgroundImage",
-          "createIfMissing": true,
-          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
-          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
-          "requiredFields": [
-            "Type",
-            "Title",
-            "Source",
-            "__Short description"
-          ]
-        },
-        {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/heading",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardHeading",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
@@ -205,7 +192,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/copy",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardDescription",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
@@ -216,7 +203,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/primaryLink",
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardLink",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
@@ -230,7 +217,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/Full Width Image CTA Row",
+          "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card",
           "createIfMissing": true,
           "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
@@ -241,26 +228,25 @@
             "Parameters Template",
             "Open Properties after Add",
             "Enable Datasource Query",
-            "__Icon",
-            "OtherProperties"
+            "__Icon"
           ]
         },
         {
-          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant",
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/System/Branches/Branch",
           "requiredFields": []
         },
         {
-          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant/$name",
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant/$name",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
           "requiredFields": []
         },
         {
-          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant/$name/Default",
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant/$name/Default",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
@@ -283,7 +269,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add Full Width Image CTA Row Data Item",
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add General Image Card Data Item",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
@@ -312,7 +298,7 @@
           "requiredFields": []
         },
         {
-          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/Full Width Image CTA Row",
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/General Image Card",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
@@ -324,10 +310,10 @@
           ]
         },
         {
-          "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/Full Width Image CTA Row",
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/General Image Card",
           "createIfMissing": true,
           "expectedTemplateId": "__TEMPLATE_1_ID__",
-          "expectedTemplatePath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder",
+          "expectedTemplatePath": "/sitecore/templates/Project/Training App Router/General Image Card Folder",
           "requiredFields": []
         },
         {
@@ -340,7 +326,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/Full Width Image CTA Row",
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
@@ -349,7 +335,7 @@
           ]
         },
         {
-          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/Full Width Image CTA Row/Default",
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card/Default",
           "createIfMissing": true,
           "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
           "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
@@ -361,13 +347,13 @@
     {
       "id": "ensure-template-0",
       "kind": "ensureTemplate",
-      "templateName": "Full Width Image CTA Row",
-      "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row",
+      "templateName": "General Image Card",
+      "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card",
       "existing": false,
       "preflight": {
         "query": "TEMPLATE_BY_PATH",
         "variables": {
-          "path": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row"
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card"
         }
       },
       "desired": {
@@ -388,30 +374,26 @@
         "mutation": "CREATE_ITEM_TEMPLATE",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row",
+            "name": "General Image Card",
             "parent": "__TEMPLATE_0_PARENT_ID__",
             "sections": [
               {
                 "name": "Content",
                 "fields": [
                   {
-                    "name": "desktopBackgroundImage",
+                    "name": "generalImageCardImage",
                     "type": "Image"
                   },
                   {
-                    "name": "mobileBackgroundImage",
-                    "type": "Image"
-                  },
-                  {
-                    "name": "heading",
+                    "name": "generalImageCardHeading",
                     "type": "Single-Line Text"
                   },
                   {
-                    "name": "copy",
+                    "name": "generalImageCardDescription",
                     "type": "Multi-Line Text"
                   },
                   {
-                    "name": "primaryLink",
+                    "name": "generalImageCardLink",
                     "type": "General Link"
                   }
                 ]
@@ -436,30 +418,26 @@
     {
       "id": "ensure-template-fields-0",
       "kind": "ensureTemplateFields",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card",
       "sections": [
         {
           "name": "Content",
-          "path": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content",
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card/Content",
           "fields": [
             {
-              "name": "desktopBackgroundImage",
+              "name": "generalImageCardImage",
               "type": "Image"
             },
             {
-              "name": "mobileBackgroundImage",
-              "type": "Image"
-            },
-            {
-              "name": "heading",
+              "name": "generalImageCardHeading",
               "type": "Single-Line Text"
             },
             {
-              "name": "copy",
+              "name": "generalImageCardDescription",
               "type": "Multi-Line Text"
             },
             {
-              "name": "primaryLink",
+              "name": "generalImageCardLink",
               "type": "General Link"
             }
           ]
@@ -499,9 +477,9 @@
       }
     },
     {
-      "id": "configure-field-0-Content-desktopBackgroundImage",
+      "id": "configure-field-0-Content-generalImageCardImage",
       "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/desktopBackgroundImage",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardImage",
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -515,7 +493,7 @@
               },
               {
                 "name": "Title",
-                "value": "Desktop Background Image"
+                "value": "General Image Card Image"
               },
               {
                 "name": "Source",
@@ -523,7 +501,7 @@
               },
               {
                 "name": "__Short description",
-                "value": "Optional desktop background image. When populated, it visually overrides the background color on desktop."
+                "value": "Optional thumbnail image. When empty, the card renders as text only; alt text comes from the selected media asset."
               }
             ]
           }
@@ -532,42 +510,9 @@
       "required": null
     },
     {
-      "id": "configure-field-0-Content-mobileBackgroundImage",
+      "id": "configure-field-0-Content-generalImageCardHeading",
       "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/mobileBackgroundImage",
-      "set": {
-        "mutation": "UPDATE_ITEM",
-        "variables": {
-          "input": {
-            "itemId": "__FIELD_ITEM_ID__",
-            "language": "en",
-            "fields": [
-              {
-                "name": "Type",
-                "value": "Image"
-              },
-              {
-                "name": "Title",
-                "value": "Mobile Background Image"
-              },
-              {
-                "name": "Source",
-                "value": "query:$siteMedia"
-              },
-              {
-                "name": "__Short description",
-                "value": "Optional mobile-specific image. When empty, mobile falls back to the desktop background image."
-              }
-            ]
-          }
-        }
-      },
-      "required": null
-    },
-    {
-      "id": "configure-field-0-Content-heading",
-      "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/heading",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardHeading",
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -581,11 +526,11 @@
               },
               {
                 "name": "Title",
-                "value": "Heading"
+                "value": "General Image Card Heading"
               },
               {
                 "name": "__Short description",
-                "value": "Required section heading. The component does not render when this field is empty."
+                "value": "Required card title. The card does not render on the live site when this value is empty."
               }
             ]
           }
@@ -601,9 +546,9 @@
       }
     },
     {
-      "id": "configure-field-0-Content-copy",
+      "id": "configure-field-0-Content-generalImageCardDescription",
       "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/copy",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardDescription",
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -617,11 +562,11 @@
               },
               {
                 "name": "Title",
-                "value": "Copy"
+                "value": "General Image Card Description"
               },
               {
                 "name": "__Short description",
-                "value": "Optional supporting copy displayed below the heading."
+                "value": "Optional supporting text displayed below the card heading."
               }
             ]
           }
@@ -630,9 +575,9 @@
       "required": null
     },
     {
-      "id": "configure-field-0-Content-primaryLink",
+      "id": "configure-field-0-Content-generalImageCardLink",
       "kind": "configureField",
-      "fieldPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/Content/primaryLink",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/General Image Card/Content/generalImageCardLink",
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -646,7 +591,7 @@
               },
               {
                 "name": "Title",
-                "value": "Primary Link"
+                "value": "General Image Card Link"
               },
               {
                 "name": "Source",
@@ -654,7 +599,7 @@
               },
               {
                 "name": "__Short description",
-                "value": "Required CTA. The link renders only when both link text and a destination are configured."
+                "value": "Required internal or external destination used by the entire clickable card."
               }
             ]
           }
@@ -672,13 +617,13 @@
     {
       "id": "ensure-template-1",
       "kind": "ensureTemplate",
-      "templateName": "Full Width Image CTA Row Folder",
-      "targetPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder",
+      "templateName": "General Image Card Folder",
+      "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Folder",
       "existing": false,
       "preflight": {
         "query": "TEMPLATE_BY_PATH",
         "variables": {
-          "path": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder"
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card Folder"
         }
       },
       "desired": {
@@ -695,7 +640,7 @@
         "mutation": "CREATE_ITEM_TEMPLATE",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row Folder",
+            "name": "General Image Card Folder",
             "parent": "__TEMPLATE_1_PARENT_ID__",
             "baseTemplates": [
               "__TEMPLATE_1_BASE_0_ID__"
@@ -715,7 +660,7 @@
     {
       "id": "ensure-template-fields-1",
       "kind": "ensureTemplateFields",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Folder",
       "sections": [],
       "reconcile": {
         "addMissingSection": {
@@ -753,13 +698,13 @@
     {
       "id": "ensure-template-2",
       "kind": "ensureTemplate",
-      "templateName": "Full Width Image CTA Row Parameters",
-      "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters",
+      "templateName": "General Image Card Parameters",
+      "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters",
       "existing": false,
       "preflight": {
         "query": "TEMPLATE_BY_PATH",
         "variables": {
-          "path": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters"
+          "path": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters"
         }
       },
       "desired": {
@@ -788,7 +733,7 @@
         "mutation": "CREATE_ITEM_TEMPLATE",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row Parameters",
+            "name": "General Image Card Parameters",
             "parent": "__TEMPLATE_2_PARENT_ID__",
             "baseTemplates": [
               "__TEMPLATE_2_BASE_0_ID__",
@@ -811,7 +756,7 @@
     {
       "id": "ensure-template-fields-2",
       "kind": "ensureTemplateFields",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters",
+      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters",
       "sections": [],
       "reconcile": {
         "addMissingSection": {
@@ -849,8 +794,8 @@
     {
       "id": "ensure-standard-values-0",
       "kind": "ensureStandardValues",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row",
-      "standardValuesPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row/__Standard Values",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/General Image Card/__Standard Values",
       "insertOptions": {
         "field": "__Masters",
         "paths": [],
@@ -860,13 +805,13 @@
     {
       "id": "ensure-standard-values-1",
       "kind": "ensureStandardValues",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder",
-      "standardValuesPath": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder/__Standard Values",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Folder",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/General Image Card Folder/__Standard Values",
       "insertOptions": {
         "field": "__Masters",
         "paths": [
-          "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row",
-          "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row Folder"
+          "/sitecore/templates/Project/Training App Router/General Image Card",
+          "/sitecore/templates/Project/Training App Router/General Image Card Folder"
         ],
         "note": "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved."
       }
@@ -874,8 +819,8 @@
     {
       "id": "ensure-standard-values-2",
       "kind": "ensureStandardValues",
-      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters",
-      "standardValuesPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/Full Width Image CTA Row Parameters/__Standard Values",
+      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Parameters/__Standard Values",
       "insertOptions": {
         "field": "__Masters",
         "paths": [],
@@ -885,13 +830,13 @@
     {
       "id": "ensure-rendering",
       "kind": "ensureRendering",
-      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/Full Width Image CTA Row",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card",
       "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row",
+            "name": "General Image Card",
             "templateId": "__JSON_RENDERING_TEMPLATE_ID__",
             "parent": "__RENDERING_ROOT_ID__",
             "language": "en"
@@ -905,7 +850,7 @@
     {
       "id": "set-rendering-bindings",
       "kind": "setRenderingBindings",
-      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/Full Width Image CTA Row",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card",
       "always": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -915,15 +860,15 @@
             "fields": [
               {
                 "name": "componentName",
-                "value": "FullWidthImageCtaRow"
+                "value": "GeneralImageCard"
               },
               {
                 "name": "Datasource Template",
-                "value": "/sitecore/templates/Project/Training App Router/Full Width Image CTA Row"
+                "value": "/sitecore/templates/Project/Training App Router/General Image Card"
               },
               {
                 "name": "Datasource Location",
-                "value": "./Data|query:$site/*[@@name='Data']/*[@@templatename='Full Width Image CTA Row Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Full Width Image CTA Row Folder']"
+                "value": "./Data|query:$site/*[@@name='Data']/*[@@templatename='General Image Card Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='General Image Card Folder']"
               },
               {
                 "name": "Parameters Template",
@@ -945,20 +890,19 @@
           }
         }
       },
-      "dynamicPlaceholders": true,
       "note": "Idempotent set of the reviewed rendering contract."
     },
     {
       "id": "ensure-sxa-default-variant-branch",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant",
       "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Default Full Width Image CTA Row Variant",
+            "name": "Default General Image Card Variant",
             "templateId": "__SXA_BRANCH_TEMPLATE_ID__",
             "parent": "__SXA_BRANCH_ROOT_ID__",
             "language": "en"
@@ -975,7 +919,7 @@
     {
       "id": "ensure-sxa-default-variant-branch-root",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant/$name",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant/$name",
       "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
@@ -999,7 +943,7 @@
     {
       "id": "ensure-sxa-default-variant-branch-default",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default Full Width Image CTA Row Variant/$name/Default",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Variant/$name/Default",
       "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
@@ -1076,14 +1020,14 @@
     {
       "id": "ensure-sxa-setup-add-data",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add Full Width Image CTA Row Data Item",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add General Image Card Data Item",
       "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Add Full Width Image CTA Row Data Item",
+            "name": "Add General Image Card Data Item",
             "templateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
             "parent": "__SXA_SETUP_ROOT_ID__",
             "language": "en",
@@ -1098,7 +1042,7 @@
               },
               {
                 "name": "Name",
-                "value": "Full Width Image CTA Row"
+                "value": "General Image Card"
               }
             ]
           }
@@ -1115,7 +1059,7 @@
         },
         {
           "name": "Name",
-          "value": "Full Width Image CTA Row"
+          "value": "General Image Card"
         }
       ],
       "listFields": [],
@@ -1196,14 +1140,14 @@
     {
       "id": "ensure-sxa-setup-rendering-variant",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/Full Width Image CTA Row",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/General Image Card",
       "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row",
+            "name": "General Image Card",
             "templateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
             "parent": "__SXA_SETUP_RENDERING_VARIANTS_FOLDER_ID__",
             "language": "en",
@@ -1218,7 +1162,7 @@
               },
               {
                 "name": "Name",
-                "value": "Full Width Image CTA Row"
+                "value": "General Image Card"
               },
               {
                 "name": "Fields",
@@ -1239,7 +1183,7 @@
         },
         {
           "name": "Name",
-          "value": "Full Width Image CTA Row"
+          "value": "General Image Card"
         },
         {
           "name": "Fields",
@@ -1252,14 +1196,14 @@
     {
       "id": "ensure-sxa-site-0-data-folder",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/Full Width Image CTA Row",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/General Image Card",
       "expectedTemplateId": "__TEMPLATE_1_ID__",
       "createIfMissing": true,
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row",
+            "name": "General Image Card",
             "templateId": "__TEMPLATE_1_ID__",
             "parent": "__SXA_SITE_0_DATA_ROOT_ID__",
             "language": "en"
@@ -1305,14 +1249,14 @@
     {
       "id": "ensure-sxa-site-0-variant",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/Full Width Image CTA Row",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card",
       "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
           "input": {
-            "name": "Full Width Image CTA Row",
+            "name": "General Image Card",
             "templateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
             "parent": "__SXA_SITE_0_VARIANTS_ROOT_ID__",
             "language": "en",
@@ -1340,7 +1284,7 @@
     {
       "id": "ensure-sxa-site-0-variant-default",
       "kind": "ensureItem",
-      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/Full Width Image CTA Row/Default",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card/Default",
       "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
       "createIfMissing": true,
       "whenAbsent": {

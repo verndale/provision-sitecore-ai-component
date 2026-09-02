@@ -11,6 +11,7 @@ Schema and semantics for the component manifest — the single reviewed artifact
 - Fields
 - rendering
 - sxa
+- Parent/child component families
 - placeholders[]
 - sitecorePaths
 - Validation failures
@@ -37,9 +38,12 @@ Config shape (all keys optional at the file level; completeness is checked again
   "renderingRoot": "/sitecore/layout/Renderings/Project/<tenant>/<site>",
   "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/<tenant>/<site>",
   "datasourceLocation": "query:$site/*[@@name='Data']",
-  "componentPropsImport": "lib/component-props"
+  "componentPropsImport": "lib/component-props",
+  "componentMapImport": ".sitecore/component-map"
 }
 ```
+
+`componentMapImport` is the module imported by an emitted placeholder owner; it defaults to `.sitecore/component-map`. `componentPropsImport` defaults to `lib/component-props`.
 
 ## Full example
 
@@ -81,7 +85,7 @@ Config shape (all keys optional at the file level; completeness is checked again
           "fields": [
             { "name": "PageTitle", "title": "Page Title", "sitecoreType": "Single-Line Text", "required": true },
             { "name": "PageSummary", "title": "Page Summary", "sitecoreType": "Multi-Line Text" },
-            { "name": "ThumbnailImage", "title": "Thumbnail Image", "sitecoreType": "Image" }
+            { "name": "ThumbnailImage", "title": "Thumbnail Image", "sitecoreType": "Image", "source": "query:$siteMedia" }
           ]
         }
       ]
@@ -125,7 +129,7 @@ At least one `kind: "content"` entry is required because the TSX contract is der
 - `title` — the author-facing label, written to the field item's `Title`.
 - `sitecoreType` — written to the CMS verbatim (`Single-Line Text`, `Rich Text`, `Image`, `General Link`, `Droptree`, …). Unknown values are allowed — they provision verbatim and surface as TODOs in the scaffold.
 - `required` — optional boolean; attaches the standard Required field rule to the field's validation bars (add-only).
-- `source` — optional; the field's `Source` (selection restriction for list/tree/link/image fields), written verbatim. The concrete string is a review decision — see `confluence-import.md`.
+- `source` — the field's `Source`. Newly drafted manifests should state the house value explicitly for review: `Rich Text` → `query:$xaRichTextProfile`, `Image` → `query:$siteMedia`, and `General Link` → `query:$linkableHomes`. For v1 compatibility, omission on one of those three types deterministically resolves to that same house value in the plan; an explicit non-blank value is preserved verbatim and is valid only when the spec or project review chose it. No default applies to other selection/list/tree field types; their Sources remain explicit review decisions — see `confluence-import.md`.
 - `helpText` — optional; written to the field item's short help description.
 
 ## rendering
@@ -189,11 +193,45 @@ Paths are exact reviewed values and are never trimmed (a live root may intention
 }
 ```
 
-The first two creation flags default to `true`. Category creation defaults to `false`; a missing category is a preflight conflict unless explicit creation was reviewed. The rendering is appended to the category's `Renderings` field without removing existing entries. Direct existing-site projection creates the functional Data/category/variant items, not branch provenance metadata such as `BranchID`/`__Originator`. The tool never discovers other tenant sites.
+The first two creation flags default to `true`. With `createDataFolder: true`, the CLI creates `<siteRoot>/Data/<Rendering name>` using the manifest's `<Rendering name> Folder` template. A family member gets this folder only when its own manifest explicitly lists the site; there is no tenant-wide site discovery. Category creation defaults to `false`; a missing category is a preflight conflict unless explicit creation was reviewed. The rendering is appended to the category's `Renderings` field without removing existing entries. Direct existing-site projection creates the functional Data/category/variant items, not branch provenance metadata such as `BranchID`/`__Originator`.
+
+## Parent/child component families
+
+The manifest contract remains intentionally one component per manifest. Model a row that owns a card placeholder as two reviewed manifests, not as one compound manifest:
+
+1. The child manifest provisions the card template, rendering, SXA registration, scaffold, and its explicitly reviewed site Data folder.
+2. The parent manifest provisions the row and declares the owned placeholder plus the child rendering's absolute path in `allowedControls`.
+3. Run `plan` for both and review the pair as one family. In a clean environment, run `check` for the child first; the parent cannot yet preflight a brand-new allowed rendering.
+4. After one explicit step-6 approval covering both plans and naming the child-before-parent order, run `push --yes` for the child, run `check` for the parent now that the dependency exists, then run `push --yes` for the parent if that check is acceptable.
+
+The two pushes share an approval but remain separately reported add-only reconciliations. A failed child push stops the family run; do not push the parent against an unresolved child.
 
 ## placeholders[]
 
-Optional. Each `{ name, allowedControlsAdd? }` ensures a placeholder-settings item named `name` under the config `placeholderSettingsRoot` and (default `true`, when a rendering exists) appends the rendering to its `Allowed Controls` — add-only, never removing existing controls.
+Optional placeholder-settings items owned or referenced by this component. Each entry supports:
+
+- `name` — required placeholder-settings item name under `placeholderSettingsRoot`.
+- `key` — exact Layout Service placeholder key; defaults to `name`.
+- `emitInComponent` — optional boolean, default `false`. `true` emits an `AppPlaceholder` in this component's TSX scaffold and links the placeholder-settings item to the parent rendering's raw `Placeholders` field (the Layout Service placeholder link in the UI/docs).
+- `allowedControls` — optional non-empty array of absolute `/sitecore/layout/Renderings/…` paths. Each rendering is preflight-resolved and appended to `Allowed Controls`; a missing or wrong-template child is a conflict before mutation.
+- `allowedControlsAdd` — legacy self-registration switch. When `allowedControls` is absent, omission preserves the original default and appends this manifest's rendering to `Allowed Controls`; `false` disables that self-add. When `allowedControls` is present, omission means **do not** add self; set `true` only when both the listed children and this rendering are intentionally allowed.
+
+Example parent slot:
+
+```json
+{
+  "name": "Product Cards",
+  "key": "product-cards-{*}",
+  "emitInComponent": true,
+  "allowedControls": [
+    "/sitecore/layout/Renderings/Project/<tenant>/<site>/Product Card"
+  ]
+}
+```
+
+An emitted key containing one `{*}` is translated with `params.DynamicPlaceholderId`; it requires `rendering.dynamicPlaceholders: true` and `rendering.parametersTemplate` (which must inherit `IDynamicPlaceholder` for clone-equivalent SXA). More than one wildcard is invalid.
+
+Reconcile is add-only across all three surfaces: an empty placeholder key may be filled, but a different non-empty key is preserved and reported; requested `Allowed Controls` are appended without removing existing controls; and the placeholder-settings item is appended to the parent's `Placeholders` field without removing existing links.
 
 ## sitecorePaths
 

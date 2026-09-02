@@ -161,7 +161,7 @@ function emitTsxPair(manifest, resolved, cwd, { forceTsx }) {
   fs.mkdirSync(outDir, { recursive: true });
   const files = [
     { name: `${manifest.component}.types.ts`, content: emitTypes(manifest, resolved) },
-    { name: `${manifest.component}.tsx`, content: emitComponent(manifest) },
+    { name: `${manifest.component}.tsx`, content: emitComponent(manifest, resolved) },
   ];
   const lines = [];
   for (const file of files) {

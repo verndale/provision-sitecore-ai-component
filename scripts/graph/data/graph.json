@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 92,
-    "edges": 192,
+    "nodes": 95,
+    "edges": 206,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -9,21 +9,21 @@
       "skill-readme": 1,
       "reference": 6,
       "skill": 1,
-      "source": 7,
-      "test": 14,
+      "source": 8,
+      "test": 15,
       "wiki-index": 3,
-      "wiki-journal": 15,
+      "wiki-journal": 16,
       "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
-      "covers": 8,
+      "covers": 10,
       "invokes": 7,
-      "links-to": 84,
+      "links-to": 87,
       "plan": 9,
       "references": 6,
-      "requires": 58,
-      "topic": 20
+      "requires": 66,
+      "topic": 21
     }
   },
   "nodes": [
@@ -167,7 +167,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 15928,
+      "bytes": 18333,
       "degree": 8
     },
     {
@@ -492,7 +492,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7846,
+      "bytes": 9873,
       "degree": 5
     },
     {
@@ -505,7 +505,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5047,
+      "bytes": 7198,
       "degree": 2
     },
     {
@@ -518,7 +518,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 11247,
+      "bytes": 14992,
       "degree": 5
     },
     {
@@ -544,7 +544,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3825,
+      "bytes": 5580,
       "degree": 2
     },
     {
@@ -557,7 +557,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3294,
+      "bytes": 3730,
       "degree": 3
     },
     {
@@ -570,7 +570,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 8472,
+      "bytes": 10627,
       "degree": 13
     },
     {
@@ -583,8 +583,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 31139,
-      "degree": 6
+      "bytes": 34013,
+      "degree": 9
     },
     {
       "id": "src/cli.cjs",
@@ -596,7 +596,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10576,
+      "bytes": 10586,
       "degree": 7
     },
     {
@@ -609,8 +609,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6764,
-      "degree": 7
+      "bytes": 8165,
+      "degree": 8
     },
     {
       "id": "src/executor.cjs",
@@ -622,7 +622,20 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 37230,
+      "bytes": 40346,
+      "degree": 5
+    },
+    {
+      "id": "src/field-source.cjs",
+      "label": "field-source.cjs",
+      "type": "source",
+      "dir": "src",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 447,
       "degree": 4
     },
     {
@@ -661,8 +674,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 33041,
-      "degree": 5
+      "bytes": 38121,
+      "degree": 8
     },
     {
       "id": "test/executor.test.cjs",
@@ -674,7 +687,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 36072,
+      "bytes": 36284,
       "degree": 4
     },
     {
@@ -714,7 +727,7 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 9495,
-      "degree": 4
+      "degree": 5
     },
     {
       "id": "test/hooks-install.test.cjs",
@@ -741,6 +754,19 @@
       "githubRefs": [],
       "bytes": 26487,
       "degree": 4
+    },
+    {
+      "id": "test/placeholder-family.test.cjs",
+      "label": "placeholder-family.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 15092,
+      "degree": 5
     },
     {
       "id": "test/plan-emit.test.cjs",
@@ -804,8 +830,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13810,
-      "degree": 2
+      "bytes": 15667,
+      "degree": 3
     },
     {
       "id": "test/validate.test.cjs",
@@ -856,8 +882,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6619,
-      "degree": 22
+      "bytes": 6905,
+      "degree": 23
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1222,6 +1248,21 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 2235,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-09-02-placeholder-component-families.md",
+      "label": "Placeholder component families",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 3089,
       "degree": 3
     },
     {
@@ -1723,8 +1764,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 10768,
-      "degree": 41
+      "bytes": 12188,
+      "degree": 46
     }
   ],
   "edges": [
@@ -1766,6 +1807,16 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/executor.cjs",
+      "type": "covers"
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/field-source.cjs",
+      "type": "covers"
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/validate-manifest.cjs",
       "type": "covers"
     },
     {
@@ -1919,8 +1970,10 @@
       "source": "README.md",
       "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
-      "count": 1,
-      "anchors": []
+      "count": 2,
+      "anchors": [
+        "placeholders"
+      ]
     },
     {
       "source": "README.md",
@@ -2093,6 +2146,13 @@
     {
       "source": "wiki/INDEX.md",
       "target": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2295,6 +2355,13 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/field-source.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-07-21-codex-pretooluse-compatibility.md",
       "type": "links-to",
       "count": 1,
@@ -2359,6 +2426,13 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2558,6 +2632,11 @@
     },
     {
       "source": "src/build-plan.cjs",
+      "target": "src/field-source.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/build-plan.cjs",
       "target": "src/util.cjs",
       "type": "requires"
     },
@@ -2589,6 +2668,11 @@
     {
       "source": "src/emit-tsx.cjs",
       "target": "src/util.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/validate-manifest.cjs",
+      "target": "src/field-source.cjs",
       "type": "requires"
     },
     {
@@ -2657,6 +2741,31 @@
       "type": "requires"
     },
     {
+      "source": "test/placeholder-family.test.cjs",
+      "target": "src/build-plan.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/placeholder-family.test.cjs",
+      "target": "src/emit-tsx.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/placeholder-family.test.cjs",
+      "target": "src/executor.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/placeholder-family.test.cjs",
+      "target": "src/validate-manifest.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/placeholder-family.test.cjs",
+      "target": "test/helpers.cjs",
+      "type": "requires"
+    },
+    {
       "source": "test/plan-emit.test.cjs",
       "target": "src/build-plan.cjs",
       "type": "requires"
@@ -2684,6 +2793,11 @@
     {
       "source": "test/push-gate.test.cjs",
       "target": "test/helpers.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/sxa-manifest-validation.test.cjs",
+      "target": "src/build-plan.cjs",
       "type": "requires"
     },
     {
@@ -2823,6 +2937,11 @@
     },
     {
       "source": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     },
