@@ -4,6 +4,7 @@ const { test } = require("node:test");
 const assert = require("node:assert/strict");
 
 const { emitTypes, resolveContract } = require("../src/emit-tsx.cjs");
+const { buildMutationPlan } = require("../src/build-plan.cjs");
 const { validateManifest } = require("../src/validate-manifest.cjs");
 
 const CONFIG = {
@@ -110,6 +111,34 @@ test("SXA manifest accepts structural templates and selects only the content tem
   assert.match(types, /heading\?: Field<string>;/);
   assert.doesNotMatch(types, /Codex Component Folder/);
   assert.doesNotMatch(types, /Codex Component Parameters/);
+});
+
+test("Rich Text, Image, and General Link fields receive deterministic Source defaults while preserving overrides", () => {
+  const conventions = new Map([
+    ["Rich Text", "query:$xaRichTextProfile"],
+    ["Image", "query:$siteMedia"],
+    ["General Link", "query:$linkableHomes"],
+  ]);
+
+  for (const [sitecoreType, source] of conventions) {
+    const missing = clone(VALID);
+    missing.templates[1].sections[0].fields[0].sitecoreType = sitecoreType;
+    const validation = validateManifest(missing, CONFIG);
+    assert.equal(validation.ok, true, `${sitecoreType} may omit Source`);
+    const defaultPlan = buildMutationPlan(missing, validation.resolved, "manifest.json");
+    const defaultConfigure = defaultPlan.ops.find((op) => op.kind === "configureField" && op.fieldPath.endsWith("/heading"));
+    const defaultSource = defaultConfigure.set.variables.input.fields.find((field) => field.name === "Source");
+    assert.equal(defaultSource.value, source, `${sitecoreType} uses the house Source default`);
+
+    const reviewedOverride = clone(missing);
+    reviewedOverride.templates[1].sections[0].fields[0].source = "query:$reviewedProjectSource";
+    const overrideValidation = validateManifest(reviewedOverride, CONFIG);
+    assert.equal(overrideValidation.ok, true, `${sitecoreType} reviewed override`);
+    const overridePlan = buildMutationPlan(reviewedOverride, overrideValidation.resolved, "manifest.json");
+    const overrideConfigure = overridePlan.ops.find((op) => op.kind === "configureField" && op.fieldPath.endsWith("/heading"));
+    const overrideSource = overrideConfigure.set.variables.input.fields.find((field) => field.name === "Source");
+    assert.equal(overrideSource.value, "query:$reviewedProjectSource", `${sitecoreType} preserves an explicit override`);
+  }
 });
 
 test("template kind defaults to content while structural templates may omit sections", () => {

@@ -11,6 +11,7 @@ Provision SitecoreAI components from one reviewed manifest. The manifest — dra
 - [Subcommands and exit codes](#subcommands-and-exit-codes)
 - [Configuration](#configuration)
 - [The manifest](#the-manifest)
+- [Parent/child component families](#parentchild-component-families)
 - [Clone-equivalent SXA provisioning](#clone-equivalent-sxa-provisioning)
 - [Authentication (check/push)](#authentication-checkpush)
 - [Safety model](#safety-model)
@@ -96,7 +97,8 @@ Resolution order: `--config <path>` → `./provision.config.json` → `./build.c
   "renderingRoot": "/sitecore/layout/Renderings/Project/<tenant>/<site>",
   "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/<tenant>/<site>",
   "datasourceLocation": "query:$site/*[@@name='Data']",
-  "componentPropsImport": "lib/component-props"
+  "componentPropsImport": "lib/component-props",
+  "componentMapImport": ".sitecore/component-map"
 }
 ```
 
@@ -104,7 +106,30 @@ Resolution order: `--config <path>` → `./provision.config.json` → `./build.c
 
 The reviewed contract for one component: content and structural templates, each field's authoring contract, the rendering and its bindings, insert options, placeholder settings, and optional explicit SXA scaffolding/site targets. Full schema with semantics: [skills/provision-sitecore-ai-component/references/manifest-contract.md](skills/provision-sitecore-ai-component/references/manifest-contract.md). The Sitecore-type → TypeScript → renderer table: [references/type-mapping.md](skills/provision-sitecore-ai-component/references/type-mapping.md).
 
+For review clarity, drafted manifests should carry the house Source explicitly for each `Rich Text` (`query:$xaRichTextProfile`), `Image` (`query:$siteMedia`), and `General Link` (`query:$linkableHomes`) field. For v1-manifest compatibility, the planner deterministically applies that same house value when one of those fields omits `source`; an explicit non-blank Source is preserved verbatim. Use another exact Source only when the functional spec or project review explicitly chose it. No default applies to other list/tree/reference field types.
+
 The generated `<slug>.plan.json` is the human-reviewable push artifact: it embeds every GraphQL document verbatim, the resolved paths, and `__PLACEHOLDER__` ids that the executor binds from preflight results at run time — no hardcoded GUIDs anywhere.
+
+## Parent/child component families
+
+One manifest still means one component. A row/card family is therefore two reviewed manifests. Plan and review both as one bundle, then use this staged workflow on a clean environment: run `check` for the child first; obtain one explicit step-6 approval naming both manifests and their order; push the child; run `check` for the parent now that its allowed child rendering exists; then push the parent. A pre-push parent `check` cannot resolve a brand-new child and is not a useful clean-environment gate. The parent manifest owns the placeholder settings:
+
+```json
+{
+  "placeholders": [
+    {
+      "name": "Product Cards",
+      "key": "product-cards-{*}",
+      "emitInComponent": true,
+      "allowedControls": [
+        "/sitecore/layout/Renderings/Project/<tenant>/<site>/Product Card"
+      ]
+    }
+  ]
+}
+```
+
+This creates or reconciles the placeholder item, appends the child rendering to `Allowed Controls`, links the placeholder through the parent rendering's raw `Placeholders` field (the Layout Service placeholder link in the UI/docs), and emits the owner slot with the Content SDK 2.x `AppPlaceholder`. All list changes are add-only. A `{*}` key additionally requires `rendering.dynamicPlaceholders: true` and a reviewed `rendering.parametersTemplate` that inherits `IDynamicPlaceholder` under SXA. See the [manifest placeholder contract](skills/provision-sitecore-ai-component/references/manifest-contract.md#placeholders) for defaults and legacy compatibility.
 
 ## Clone-equivalent SXA provisioning
 
@@ -136,7 +161,7 @@ Each reviewed existing site/
   Presentation/Headless Variants/<Component>/Default
 ```
 
-`sxa.siteScaffolding` defines reusable branch/setup items for future sites. `sxa.sites` backfills only the explicitly listed existing sites; the CLI never discovers and fans out across a tenant. Missing Available Renderings categories are created only when `createAvailableRenderingsCategory: true` was reviewed. Direct existing-site projection creates the functional items but does not claim branch `BranchID`/`__Originator` history.
+`sxa.siteScaffolding` defines reusable branch/setup items for future sites. `sxa.sites` backfills only the explicitly listed existing sites; the CLI never discovers and fans out across a tenant. For each site, `createDataFolder` defaults to `true` and creates `<siteRoot>/Data/<Rendering>` from `<Rendering> Folder`, so every member of a row/card family gets its own Data folder when each manifest lists that site. Missing Available Renderings categories are created only when `createAvailableRenderingsCategory: true` was reviewed. Direct existing-site projection creates the functional items but does not claim branch `BranchID`/`__Originator` history.
 
 ## Authentication (check/push)
 

@@ -46,6 +46,8 @@ Specs vary in vocabulary. Map common phrasings; anything not clearly one of thes
 
 Specs state selection restrictions as intent — "Restrict to eligible page templates inheriting the shared base template". The manifest `source` value must be the concrete Sitecore Source string (a path, a `query:…`, or parameterized syntax with template filters). Translating intent → string is a review decision:
 
+Three house field types have deterministic planner defaults for v1 compatibility: `Rich Text` → `query:$xaRichTextProfile`, `Image` → `query:$siteMedia`, and `General Link` → `query:$linkableHomes`. Newly drafted manifests still write those values explicitly for review. An explicit non-blank override is preserved verbatim and must be backed by the spec or project review; no default applies to other list/tree/reference types.
+
 ✅ Surface the spec's restriction sentence as a review question and record the developer's exact answer in `source`.
 
 ❌ Invent a plausible `query:`/`Datasource=` string from the intent sentence and push it.

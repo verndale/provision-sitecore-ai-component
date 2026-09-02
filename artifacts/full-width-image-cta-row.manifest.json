@@ -26,12 +26,14 @@
               "name": "desktopBackgroundImage",
               "title": "Desktop Background Image",
               "sitecoreType": "Image",
+              "source": "query:$siteMedia",
               "helpText": "Optional desktop background image. When populated, it visually overrides the background color on desktop."
             },
             {
               "name": "mobileBackgroundImage",
               "title": "Mobile Background Image",
               "sitecoreType": "Image",
+              "source": "query:$siteMedia",
               "helpText": "Optional mobile-specific image. When empty, mobile falls back to the desktop background image."
             },
             {
@@ -52,6 +54,7 @@
               "title": "Primary Link",
               "sitecoreType": "General Link",
               "required": true,
+              "source": "query:$linkableHomes",
               "helpText": "Required CTA. The link renders only when both link text and a destination are configured."
             }
           ]

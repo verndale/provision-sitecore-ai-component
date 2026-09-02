@@ -13,6 +13,7 @@
  */
 
 const { pascalToKebab, isPlainObject } = require("./util.cjs");
+const { DEFAULT_FIELD_SOURCES } = require("./field-source.cjs");
 
 const ROLES = ["datasource", "base", "page", "renderingParameters"];
 const TEMPLATE_KINDS = ["content", "folder", "renderingParameters"];
@@ -63,6 +64,7 @@ function resolvePaths(manifest, config) {
     placeholderSettingsRoot: overrides.placeholderSettingsRoot || cfg.placeholderSettingsRoot || null,
     datasourceLocation: overrides.datasourceLocation || cfg.datasourceLocation || null,
     componentPropsImport: cfg.componentPropsImport || "lib/component-props",
+    componentMapImport: cfg.componentMapImport || ".sitecore/component-map",
   };
 }
 
@@ -410,13 +412,69 @@ function validateManifest(manifest, config) {
 
   if (manifest.placeholders !== undefined) {
     if (!Array.isArray(manifest.placeholders)) {
-      errors.push(err("placeholders must be an array.", "placeholders lists placeholder settings items to create/update (Allowed Controls, add-only).", "Use an array of { name, allowedControlsAdd? } entries."));
+      errors.push(err("placeholders must be an array.", "placeholders lists placeholder settings items to create/update and optionally emit from this rendering.", "Use an array of { name, key?, emitInComponent?, allowedControls?, allowedControlsAdd? } entries."));
     } else {
+      const names = new Set();
+      const keys = new Set();
       manifest.placeholders.forEach((p, pi) => {
         if (!isPlainObject(p) || !isItemName(p.name)) {
-          errors.push(err(`placeholders[${pi}].name is missing.`, "Each placeholder entry needs the placeholder settings item name (the placeholder key).", "Set the name, or remove the entry."));
-        } else if (p.allowedControlsAdd !== undefined && typeof p.allowedControlsAdd !== "boolean") {
-          errors.push(err(`placeholders[${pi}].allowedControlsAdd must be a boolean.`, "allowedControlsAdd controls whether this rendering is appended to the placeholder's Allowed Controls.", "Set true/false or omit it (defaults to true)."));
+          errors.push(err(`placeholders[${pi}].name is missing.`, "Each placeholder entry needs the placeholder-settings item name.", "Set the item name, or remove the entry."));
+          return;
+        }
+        const nameKey = p.name.toLowerCase();
+        if (names.has(nameKey)) {
+          errors.push(err(`placeholders[${pi}].name ("${p.name}") duplicates another placeholder.`, "Two entries would reconcile the same placeholder-settings item ambiguously.", "Keep one entry per placeholder settings item."));
+        }
+        names.add(nameKey);
+
+        const placeholderKey = p.key === undefined ? p.name : p.key;
+        if (!isNonEmptyString(placeholderKey) || placeholderKey !== placeholderKey.trim() || /[\u0000-\u001f]/.test(placeholderKey)) {
+          errors.push(err(`placeholders[${pi}].key is invalid.`, "The Placeholder Key must be a non-empty trimmed string without control characters.", "Set the exact static key or dynamic wildcard key from the reviewed spec, such as \"product-cards-{*}\"."));
+        } else {
+          const normalizedKey = placeholderKey.toLowerCase();
+          if (keys.has(normalizedKey)) {
+            errors.push(err(`placeholders[${pi}].key ("${placeholderKey}") duplicates another placeholder key.`, "Duplicate keys would create ambiguous component slots.", "Keep one entry per placeholder key."));
+          }
+          keys.add(normalizedKey);
+        }
+        if (p.allowedControlsAdd !== undefined && typeof p.allowedControlsAdd !== "boolean") {
+          errors.push(err(`placeholders[${pi}].allowedControlsAdd must be a boolean.`, "allowedControlsAdd controls whether this rendering is appended to the placeholder's Allowed Controls.", "Set true/false, or omit it (legacy entries without allowedControls default to true; entries with allowedControls default to false)."));
+        }
+        if (p.emitInComponent !== undefined && typeof p.emitInComponent !== "boolean") {
+          errors.push(err(`placeholders[${pi}].emitInComponent must be a boolean.`, "emitInComponent marks a slot owned and rendered by this component.", "Set true/false or omit it."));
+        }
+        if (p.allowedControls !== undefined) {
+          if (!Array.isArray(p.allowedControls) || p.allowedControls.length === 0) {
+            errors.push(err(`placeholders[${pi}].allowedControls must be a non-empty array.`, "allowedControls lists existing child JSON rendering paths to append to the placeholder restriction.", "Add absolute /sitecore/layout/Renderings/… paths, or omit allowedControls."));
+          } else {
+            const controls = new Set();
+            p.allowedControls.forEach((control, ci) => {
+              if (!isSitecorePath(control) || !/^\/sitecore\/layout\/Renderings\//i.test(control)) {
+                errors.push(err(`placeholders[${pi}].allowedControls[${ci}] is not an absolute rendering path.`, "Allowed controls are resolved as JSON rendering items before any mutation.", "Set the full /sitecore/layout/Renderings/… path."));
+                return;
+              }
+              const normalized = control.toLowerCase();
+              if (controls.has(normalized)) {
+                errors.push(err(`placeholders[${pi}].allowedControls[${ci}] duplicates another rendering path.`, "Allowed Controls additions must be unique within one placeholder entry.", "Remove the duplicate path."));
+              }
+              controls.add(normalized);
+            });
+          }
+        }
+        if (p.emitInComponent === true && !isPlainObject(rendering)) {
+          errors.push(err(`placeholders[${pi}].emitInComponent requires a rendering.`, "Only a JSON rendering can own and emit a nested component placeholder.", "Add the rendering object, or remove emitInComponent."));
+        }
+        const wildcardCount = typeof placeholderKey === "string" ? placeholderKey.split("{*}").length - 1 : 0;
+        if (wildcardCount > 1) {
+          errors.push(err(`placeholders[${pi}].key contains more than one {*} wildcard.`, "One DynamicPlaceholderId can replace one wildcard in the Sitecore placeholder key.", "Keep exactly one {*} token."));
+        }
+        if (p.emitInComponent === true && wildcardCount === 1 && isPlainObject(rendering)) {
+          if (rendering.dynamicPlaceholders !== true) {
+            errors.push(err(`placeholders[${pi}] uses a dynamic key but rendering.dynamicPlaceholders is not true.`, "Sitecore resolves {*} only for renderings marked IsRenderingsWithDynamicPlaceholders=true.", "Set rendering.dynamicPlaceholders to true."));
+          }
+          if (!isNonEmptyString(rendering.parametersTemplate)) {
+            errors.push(err(`placeholders[${pi}] uses a dynamic key but rendering.parametersTemplate is missing.`, "Dynamic placeholders require rendering parameters that inherit IDynamicPlaceholder.", "Reference the reviewed rendering-parameters template."));
+          }
         }
       });
     }
@@ -440,8 +498,15 @@ function validateManifest(manifest, config) {
   if (Array.isArray(manifest.placeholders) && manifest.placeholders.length > 0 && !isSitecorePath(resolved.placeholderSettingsRoot)) {
     errors.push(err("No placeholderSettingsRoot configured.", "The manifest declares placeholders but no placeholderSettingsRoot is available from config or manifest.sitecorePaths.", "Add placeholderSettingsRoot (an absolute /sitecore/layout/Placeholder Settings/… path)."));
   }
+  if (
+    Array.isArray(manifest.placeholders)
+    && manifest.placeholders.some((placeholder) => isPlainObject(placeholder) && placeholder.emitInComponent === true)
+    && !isNonEmptyString(resolved.componentMapImport)
+  ) {
+    errors.push(err("componentMapImport is invalid.", "An emitted AppPlaceholder needs the generated component-map module.", "Set config.componentMapImport to a non-empty import path, or omit it to use .sitecore/component-map."));
+  }
 
   return { ok: errors.length === 0, errors, resolved: errors.length === 0 ? resolved : null };
 }
 
-module.exports = { validateManifest, resolvePaths, ROLES, TEMPLATE_KINDS, FIELD_NAME_RE };
+module.exports = { validateManifest, resolvePaths, ROLES, TEMPLATE_KINDS, FIELD_NAME_RE, DEFAULT_FIELD_SOURCES };

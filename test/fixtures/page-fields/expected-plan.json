@@ -69,7 +69,8 @@
             "Type",
             "Title",
             "Validate Button",
-            "Workflow"
+            "Workflow",
+            "Source"
           ]
         },
         {
@@ -126,6 +127,7 @@
           "requiredFields": [
             "Type",
             "Title",
+            "Source",
             "Validate Button",
             "Workflow"
           ]
@@ -148,6 +150,7 @@
           "requiredFields": [
             "Type",
             "Title",
+            "Source",
             "Validate Button",
             "Workflow"
           ]
@@ -338,6 +341,10 @@
               {
                 "name": "Title",
                 "value": "Profile Image"
+              },
+              {
+                "name": "Source",
+                "value": "query:$siteMedia"
               }
             ]
           }
@@ -395,6 +402,10 @@
               {
                 "name": "Title",
                 "value": "Biography Text"
+              },
+              {
+                "name": "Source",
+                "value": "query:$xaRichTextProfile"
               }
             ]
           }

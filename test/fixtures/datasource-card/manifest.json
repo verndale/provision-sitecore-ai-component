@@ -29,7 +29,7 @@
               "sitecoreType": "Single-Line Text",
               "helpText": "Overrides the referenced page title for this card only."
             },
-            { "name": "ctaLink", "title": "CTA Link", "sitecoreType": "General Link" },
+            { "name": "ctaLink", "title": "CTA Link", "sitecoreType": "General Link", "source": "query:$linkableHomes" },
             { "name": "featured", "title": "Featured", "sitecoreType": "Checkbox" },
             { "name": "displayOrder", "title": "Display Order", "sitecoreType": "Number" },
             { "name": "customBadge", "title": "Custom Badge", "sitecoreType": "Custom Badge Picker" }
@@ -47,7 +47,7 @@
           "fields": [
             { "name": "PageTitle", "title": "Page Title", "sitecoreType": "Single-Line Text", "required": true },
             { "name": "PageSummary", "title": "Page Summary", "sitecoreType": "Multi-Line Text" },
-            { "name": "ThumbnailImage", "title": "Thumbnail Image", "sitecoreType": "Image" }
+            { "name": "ThumbnailImage", "title": "Thumbnail Image", "sitecoreType": "Image", "source": "query:$siteMedia" }
           ]
         }
       ]

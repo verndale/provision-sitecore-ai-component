@@ -69,7 +69,7 @@ const SXA_MANIFEST = {
         "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
       ],
       icon: "Office/32x32/window_dialog.png",
-      sections: [{ name: "Content", fields: [{ name: "copy", title: "Copy", sitecoreType: "Rich Text" }] }],
+      sections: [{ name: "Content", fields: [{ name: "copy", title: "Copy", sitecoreType: "Rich Text", source: "query:$xaRichTextProfile" }] }],
     },
     {
       role: "datasource",
@@ -251,7 +251,13 @@ function provisionedItems() {
       templateId: "json-rendering",
       fieldNames: ["componentName", "Datasource Template", "Datasource Location"],
     },
-    { itemId: "ph-cards", name: "cards", path: PLACEHOLDER_PATH },
+    {
+      itemId: "ph-cards",
+      name: "cards",
+      path: PLACEHOLDER_PATH,
+      templateId: "sys-placeholder",
+      fieldNames: ["Placeholder Key", "Allowed Controls"],
+    },
   ];
 }
 
@@ -292,6 +298,7 @@ test("push against a fully provisioned CMS is a no-op apart from idempotent conf
     fieldValues: {
       [`${TEMPLATE_PATH}/Content/heading::Validate Button`]: "{RULE-REQ}",
       [`${TEMPLATE_PATH}/Content/heading::Workflow`]: "{RULE-REQ}",
+      [`${PLACEHOLDER_PATH}::Placeholder Key`]: "cards",
       [`${PLACEHOLDER_PATH}::Allowed Controls`]: "{REND-AWARD}",
     },
   });

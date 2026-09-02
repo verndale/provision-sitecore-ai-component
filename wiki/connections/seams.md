@@ -14,7 +14,7 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
 - [Agent guide](../../AGENTS.md) → [Context Wiki](../../wiki/INDEX.md) (×2)
 - [Contributing](../../CONTRIBUTING.md) → [Wiki Mechanics](../../wiki/MECHANICS.md)
 - [provision-sitecore-ai-component](../../README.md) → [Authoring API contract](../../skills/provision-sitecore-ai-component/references/authoring-api.md)
-- [provision-sitecore-ai-component](../../README.md) → [Component manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)
+- [provision-sitecore-ai-component](../../README.md) → [Component manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md) (×2)
 - [provision-sitecore-ai-component](../../README.md) → [Field type mapping](../../skills/provision-sitecore-ai-component/references/type-mapping.md)
 - [provision-sitecore-ai-component](../../README.md) → [Context Wiki](../../wiki/INDEX.md) (×2)
 - [provision-sitecore-ai-component](../../README.md) → [Wiki Mechanics](../../wiki/MECHANICS.md)
@@ -26,3 +26,4 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [cli.cjs](../../src/cli.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [emit-tsx.cjs](../../src/emit-tsx.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [executor.cjs](../../src/executor.cjs)
+- [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [field-source.cjs](../../src/field-source.cjs)

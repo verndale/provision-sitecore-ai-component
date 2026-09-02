@@ -705,36 +705,102 @@ async function runPlan(plan, options) {
       case "ensurePlaceholderSettings": {
         let found = await client.itemByPath(op.targetPath);
         if (mode === "check") {
-          record(op.id, found ? (op.allowedControls ? "update" : "no-op") : "create", op.allowedControls ? "would append rendering to Allowed Controls" : "placeholder settings only");
-          break;
+          if (!found) {
+            record(op.id, "create", "placeholder settings item, key, and reviewed restrictions");
+            break;
+          }
         }
         if (!found) {
           found = await client.createItem(substitute(op.whenAbsent.variables.input, bindings));
         }
+        for (const placeholder of Object.keys(op.resolves || {})) bindings[placeholder] = found.itemId;
+
+        const updates = [];
+        const conflicts = [];
+        const keyField = await client.fieldValue(op.targetPath, op.key.field);
+        const desiredKey = substitute(op.key.value, bindings);
+        if (!keyField.exists) {
+          conflicts.push(`${op.key.field} is not exposed by the item template`);
+        } else if (!scalarValuesMatch(keyField.value, desiredKey)) {
+          if (String(keyField.value || "") === "") updates.push({ name: op.key.field, value: desiredKey });
+          else conflicts.push(`${op.key.field} already has a different value`);
+        }
+
         if (op.allowedControls) {
-          const renderingId = bindings[op.allowedControls.append];
-          if (!renderingId) {
-            followUps.push(`Placeholder ${op.targetPath}: rendering id unavailable, Allowed Controls not updated.`);
-            record(op.id, "conflict", "rendering id unavailable");
-            break;
-          }
           const field = await client.fieldValue(op.targetPath, op.allowedControls.field);
           if (!field.exists) {
-            followUps.push(`Placeholder ${op.targetPath} does not expose ${op.allowedControls.field}; Allowed Controls was not changed.`);
-            record(op.id, "conflict", `${op.allowedControls.field} field unavailable`);
+            conflicts.push(`${op.allowedControls.field} is not exposed by the item template`);
+          } else {
+            let mergedValue = field.value;
+            let changed = false;
+            let unresolved = false;
+            for (const reference of op.allowedControls.append) {
+              const renderingId = substitute(reference, bindings);
+              if (isUnresolvedPlaceholder(renderingId)) {
+                unresolved = true;
+                continue;
+              }
+              const merged = listMerge(mergedValue, renderingId);
+              if (merged !== null) {
+                mergedValue = merged;
+                changed = true;
+              }
+            }
+            if (unresolved && mode === "push") {
+              throw new ExecutorError("conflict", `Could not resolve an allowed rendering for ${op.targetPath}.`, "Create/check the referenced rendering first, then re-run the reviewed plan.");
+            }
+            if (changed || unresolved) updates.push({ name: op.allowedControls.field, value: mergedValue });
+          }
+        }
+
+        for (const conflict of conflicts) followUps.push(`${op.targetPath}: ${conflict} — left untouched.`);
+        if (mode === "push" && updates.length > 0) await client.updateItem(found.itemId, updates);
+        if (updates.length > 0) {
+          record(op.id, mode === "push" ? "updated" : "update", updates.map((field) => field.name).join(", "));
+        } else if (conflicts.length > 0) {
+          record(op.id, "conflict", `${conflicts.length} field conflict(s)`);
+        } else {
+          record(op.id, "no-op", "placeholder key and restrictions already match");
+        }
+        break;
+      }
+
+      case "linkRenderingPlaceholders": {
+        const rendering = await client.itemByPath(op.targetPath);
+        if (!rendering) {
+          if (mode === "check") {
+            record(op.id, "update", "would link placeholder settings after rendering creation");
             break;
           }
-          const { value } = field;
-          const merged = listMerge(value, renderingId);
-          if (merged !== null) {
-            await client.updateItem(found.itemId, [{ name: op.allowedControls.field, value: merged }]);
-            record(op.id, "updated", "rendering appended to Allowed Controls");
-          } else {
-            record(op.id, "no-op", "rendering already allowed");
-          }
-        } else {
-          record(op.id, "no-op", "placeholder settings ensured");
+          throw new ExecutorError("conflict", `Rendering not found at ${op.targetPath}.`, "Ensure the rendering operation completed before linking its placeholders.");
         }
+        const field = await client.fieldValue(op.targetPath, op.field);
+        if (!field.exists) {
+          followUps.push(`${op.targetPath}: ${op.field} is not exposed by the item template — left untouched.`);
+          record(op.id, "conflict", `${op.field} field unavailable`);
+          break;
+        }
+        let mergedValue = field.value;
+        let changed = false;
+        let unresolved = false;
+        for (const reference of op.append || []) {
+          const placeholderId = substitute(reference, bindings);
+          if (isUnresolvedPlaceholder(placeholderId)) {
+            unresolved = true;
+            continue;
+          }
+          const merged = listMerge(mergedValue, placeholderId);
+          if (merged !== null) {
+            mergedValue = merged;
+            changed = true;
+          }
+        }
+        if (unresolved && mode === "push") {
+          throw new ExecutorError("conflict", `Could not resolve a placeholder settings item for ${op.targetPath}.`, "Ensure every emitted placeholder was created earlier in the plan.");
+        }
+        if (mode === "push" && changed) await client.updateItem(rendering.itemId, [{ name: op.field, value: mergedValue }]);
+        if (changed || unresolved) record(op.id, mode === "push" ? "updated" : "update", op.field);
+        else record(op.id, "no-op", "placeholder settings already linked");
         break;
       }
 
