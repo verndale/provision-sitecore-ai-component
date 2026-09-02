@@ -25,6 +25,7 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
+- 2026-09-01 — [Clone-equivalent SXA component provisioning](journal/2026-09-01-clone-equivalent-sxa-provisioning.md) — one reviewed manifest now models folder/parameters Standard Values, reusable setup branches, and explicit existing-site registration with mutation-free collision preflight.
 - 2026-08-31 — [Live SitecoreAI authoring check compatibility](journal/2026-08-31-live-authoring-check-compatibility.md) — the first real development check aligned item/template queries, inherited rendering-field verification, and the Required-rule path with the current schema.
 - 2026-08-31 — [Windows skill installs use native directory junctions](journal/2026-08-31-windows-skill-junctions.md) — setup now creates testable live links on Windows instead of copy-like Git Bash directories while preserving collision safety.
 - 2026-08-31 — [Blank credential values fall through to the machine default](journal/2026-08-31-blank-credential-fallback.md) — empty project placeholders no longer mask non-empty process or per-machine SitecoreAI credentials.

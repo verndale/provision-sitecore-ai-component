@@ -18,13 +18,23 @@
     "templateSectionTemplate": "/sitecore/templates/System/Templates/Template section",
     "templateFieldTemplate": "/sitecore/templates/System/Templates/Template field",
     "requiredFieldRule": "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
-    "placeholderSettingsTemplate": "/sitecore/templates/System/Layout/Placeholder"
+    "placeholderSettingsTemplate": "/sitecore/templates/System/Layout/Placeholder",
+    "branchTemplate": "/sitecore/templates/System/Branches/Branch",
+    "folderTemplate": "/sitecore/templates/Common/Folder",
+    "availableRenderingsTemplate": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+    "headlessVariantsTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+    "variantDefinitionTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+    "siteSetupAddItemTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+    "scaffoldDataLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Data",
+    "scaffoldAvailableRenderingsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Available Renderings",
+    "scaffoldHeadlessVariantsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Headless Variants"
   },
   "graphql": {
-    "ITEM_BY_PATH": "query GetItem($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path } }",
-    "TEMPLATE_BY_PATH": "query GetTemplate($templateId: ID!) { itemTemplate(where: { database: \"master\", templateId: $templateId }) { itemId: templateId name ownFields { nodes { name type } } allFields: fields { nodes { name type } } } }",
-    "FIELD_VALUE": "query GetFieldValue($path: String!, $field: String!) { item(where: { database: \"master\", path: $path }) { itemId field(name: $field) { value } } }",
+    "ITEM_BY_PATH": "query GetItem($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path template { templateId name fullName } } }",
+    "TEMPLATE_BY_PATH": "query GetTemplate($templateId: ID!) { itemTemplate(where: { database: \"master\", templateId: $templateId }) { itemId: templateId name icon baseTemplates(first: 100, directOnly: true) { nodes { templateId name fullName } } standardValuesItem(language: \"en\") { itemId path } ownFields(first: 500) { nodes { name type } } allFields: fields(first: 500) { nodes { name type } } } }",
+    "FIELD_VALUE": "query GetFieldValue($path: String!, $field: String!) { item(where: { database: \"master\", path: $path }) { itemId field(name: $field) { name value } } }",
     "CREATE_ITEM_TEMPLATE": "mutation CreateTemplate($input: CreateItemTemplateInput!) { createItemTemplate(input: $input) { itemTemplate { templateId name } } }",
+    "UPDATE_ITEM_TEMPLATE": "mutation UpdateTemplate($input: UpdateItemTemplateInput!) { updateItemTemplate(input: $input) { itemTemplate { templateId name } } }",
     "CREATE_ITEM": "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
     "UPDATE_ITEM": "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }"
   },
@@ -34,11 +44,125 @@
       "kind": "resolveSystemItems",
       "query": "ITEM_BY_PATH",
       "resolves": {
-        "__TEMPLATE_SECTION_TEMPLATE_ID__": "/sitecore/templates/System/Templates/Template section",
-        "__TEMPLATE_FIELD_TEMPLATE_ID__": "/sitecore/templates/System/Templates/Template field",
         "__REQUIRED_RULE_ID__": "/sitecore/system/Settings/Validation Rules/Field Rules/Required"
       },
-      "note": "Well-known system items resolved by path; the executor binds each placeholder to the resolved itemId. The Required rule is only fetched when some field is required."
+      "note": "Well-known system items are resolved by path before any mutation. The Required rule is fetched only when a field is required."
+    },
+    {
+      "id": "preflight-dependencies",
+      "kind": "preflightDependencies",
+      "resolves": {
+        "__TEMPLATE_0_PARENT_ID__": "/sitecore/templates/Project/CN/Pages",
+        "__RENDERING_ROOT_ID__": "/sitecore/layout/Renderings/Project/CN"
+      },
+      "templateResolves": {},
+      "templateChecks": [
+        {
+          "path": "/sitecore/templates/System/Templates/Template section",
+          "into": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/System/Templates/Template field",
+          "into": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "fields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "into": "__JSON_RENDERING_TEMPLATE_ID__",
+          "fields": [
+            "componentName"
+          ]
+        }
+      ],
+      "templateTargets": [
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page",
+          "mustExist": true
+        }
+      ],
+      "itemChecks": [
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template section",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personName",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personJobTitle",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/profileImage",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/roleStartDate",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/biographyText",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead",
+          "createIfMissing": true,
+          "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "requiredFields": [
+            "componentName"
+          ]
+        }
+      ],
+      "note": "Every external dependency and discoverable template/rendering/SXA collision is checked before the first mutation."
     },
     {
       "id": "ensure-template-0",
@@ -52,8 +176,16 @@
           "path": "/sitecore/templates/Project/CN/Pages/People Detail Page"
         }
       },
+      "desired": {
+        "baseTemplates": [],
+        "standardValues": false,
+        "icon": null
+      },
       "whenAbsent": {
         "error": "Template marked existing was not found at /sitecore/templates/Project/CN/Pages/People Detail Page. Fix the manifest (existing/parent root) or create the template first."
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
       },
       "resolves": {
         "__TEMPLATE_0_ID__": "itemId"
@@ -153,7 +285,7 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
@@ -185,7 +317,7 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
@@ -217,7 +349,7 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
@@ -274,30 +406,14 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
       "id": "ensure-rendering",
       "kind": "ensureRendering",
       "targetPath": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead",
-      "preflight": {
-        "query": "ITEM_BY_PATH",
-        "variables": {
-          "path": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead"
-        }
-      },
-      "resolveTemplate": {
-        "query": "TEMPLATE_BY_PATH",
-        "path": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
-        "into": "__JSON_RENDERING_TEMPLATE_ID__",
-        "verifyFields": [
-          "componentName",
-          "Datasource Template",
-          "Datasource Location"
-        ],
-        "note": "Introspection preflight: the Json Rendering template is resolved by path and its field surface verified before any mutation; a mismatch aborts with remediation instead of guessing."
-      },
+      "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
@@ -307,11 +423,6 @@
             "parent": "__RENDERING_ROOT_ID__",
             "language": "en"
           }
-        },
-        "resolveParent": {
-          "query": "ITEM_BY_PATH",
-          "path": "/sitecore/layout/Renderings/Project/CN",
-          "into": "__RENDERING_ROOT_ID__"
         }
       },
       "resolves": {
@@ -321,6 +432,7 @@
     {
       "id": "set-rendering-bindings",
       "kind": "setRenderingBindings",
+      "targetPath": "/sitecore/layout/Renderings/Project/CN/People Detail Masthead",
       "always": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -336,11 +448,11 @@
           }
         }
       },
-      "note": "Idempotent set — bindings are written on every push."
+      "note": "Idempotent set of the reviewed rendering contract."
     }
   ],
   "manualFollowUps": [
-    "Register the rendering in the site's Available Renderings / Pages toolbox (not automated in v1).",
-    "Create and assign a rendering parameters template if this component needs one (not automated in v1)."
+    "Register the rendering in each existing site's Available Renderings / Pages toolbox (no sxa.sites target was reviewed).",
+    "Create and assign a rendering parameters template if this component needs one (rendering.parametersTemplate is omitted)."
   ]
 }

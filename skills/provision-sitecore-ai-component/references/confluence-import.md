@@ -21,7 +21,7 @@ Specs carry the field inventory in one of two shapes (both occur in real CN spec
 
 **Shape B — a "Template Fields" section with one table per template** (e.g. Related Content Card: the `Related Content Card` datasource template plus a shared `_RelatedContentPageData` page-base template). Each table becomes its own `templates[]` entry — datasource templates as `role: "datasource"`, shared page-data bases as `role: "base"`. An "Item" table nearby names the rendering, its datasource pattern, and the parent component — use it for `rendering` and for insert-option/placeholder decisions.
 
-Ignore "Content Structure" sections (content-tree diagrams) — they describe authored content, not provisioning input. "Recommended Characters" columns are authoring guidance, not CMS configuration — do not map them.
+Do not translate "Content Structure" tree nodes into fields. Use them as evidence for datasource folders, child templates, recursive insert options, and SXA site structure; exact template paths, roots, categories, icons, bases, and permissions still require review. "Recommended Characters" columns are authoring guidance, not CMS configuration — do not map them.
 
 ## Extraction rules
 
@@ -36,7 +36,23 @@ Ignore "Content Structure" sections (content-tree diagrams) — they describe au
 
 - Concrete `source` strings for any restricted list/tree/link field.
 - The field-naming convention for `name` (camelCase vs PascalCase) when the project has no established one.
-- `datasourceLocation` when it differs from the config default (e.g. child-item card patterns).
+- `datasourceLocation` when it differs from the config default, except the normative clone-equivalent SXA query defined below.
 - Which picker (Droptree vs Droplink; Multilist vs Treelist) when the spec names only "reference".
 - Insert options implied by parent/child authoring patterns ("one child item per card") — they belong to the parent component's template and may be out of this manifest's scope.
 - Placeholder settings: whether this component is added to a placeholder (and which key) or is fixed in a page layout.
+
+## SXA topology review
+
+When the developer asks for clone-equivalent SXA setup, the field table still owns only the content fields. Draft these deterministic names from the reviewed rendering name:
+
+- content template and rendering: `<Rendering>`;
+- folder: `<Rendering> Folder`;
+- rendering parameters: `<Rendering> Parameters`;
+- folder `insertOptions`: the content template plus the folder itself;
+- datasource location:
+
+```text
+./Data|query:$site/*[@@name='Data']/*[@@templatename='<Rendering> Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='<Rendering> Folder']
+```
+
+Surface the remaining topology as explicit review questions before writing `sxa`: base-template paths and icons; branch and setup roots; module and optional data-action names; every existing `siteRoot`; the Available Renderings category; and whether missing Data folders, variants, or categories may be created. Never infer all sites from the live tenant or reuse an unreviewed built-in category.

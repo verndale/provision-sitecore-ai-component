@@ -17,11 +17,14 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 - The shared PreToolUse policy is platform-adapted: Claude Code can ask on push, while Codex denies the command until `--yes` records the skill gate; Codex hooks use canonical `Bash`/`apply_patch` payloads and require exact-hash trust after updates ([scripts/hooks/pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)).
 - Required fields attach the standard Required rule (resolved by path) to the Validate Button and Workflow bars; list fields (`__Masters`, Allowed Controls, validation bars) merge append-only with brace/case-insensitive de-duplication.
 - Live-compatible preflight resolves items by path, loads templates by ID, uses own fields for template reconciliation and inherited fields for Json Rendering verification, and treats an absent template as a create decision instead of a GraphQL failure.
+- Clone-equivalent SXA topology is explicit rather than inferred: content/folder/parameters templates and Standard Values, complete rendering bindings, optional reusable future-site branches/setup actions, and only the existing sites listed in `sxa.sites` ([manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)).
+- The consolidated preflight validates actual template dependencies and every discoverable manifest-template, rendering, or SXA item collision before the first mutation; existing list values and unrelated rendering properties are preserved add-only.
 - The emitted pair (`Component.types.ts` + `Component.tsx`) matches the eng team's handoff contract and the ai-orchestration sitecore-ai adapter's boundary rules; page-driven components (no datasource) emit a typed contract with a marked TODO for the page-item access ([src/emit-tsx.cjs](../../src/emit-tsx.cjs)).
 - Golden fixtures pin plans and TSX byte-for-byte, modeled on the CN Related Content Card (datasource, two templates, restricted Droptree) and People Detail Masthead (existing page template, rendering without datasource) specs.
 
 ## Decisions
 
+- 2026-09-01 — Modeled clone-equivalent SXA topology in the reviewed manifest instead of discovering the live tree, keeping offline plans deterministic and separating future-site scaffolding from explicit existing-site backfill ([journal](../journal/2026-09-01-clone-equivalent-sxa-provisioning.md)).
 - 2026-08-31 — Aligned read-only preflight with the live SitecoreAI schema after the first development-environment check: item paths resolve template IDs, inherited rendering fields are verified, and the Required rule uses its actual system path ([journal](../journal/2026-08-31-live-authoring-check-compatibility.md)).
 - 2026-08-31 — Replaced Git Bash `ln -s` with a Node-managed Windows junction / Unix symlink because copy-like Windows results became stale and broke idempotent setup; existing ordinary directories remain an explicit migration instead of being deleted automatically ([journal](../journal/2026-08-31-windows-skill-junctions.md)).
 - 2026-08-31 — Credential precedence now selects the first non-empty value rather than the first declared key, preserving explicit project overrides while allowing blank template placeholders to fall through to the machine bootstrap ([journal](../journal/2026-08-31-blank-credential-fallback.md)).
@@ -46,6 +49,5 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Open threads
 
-- Live `check` is validated against the Training App Router development environment; `push` and the mutation input variants remain unverified until an explicitly approved provisioning run.
-- Available Renderings registration and rendering-parameters templates remain manual follow-ups (candidate v2 scope).
+- Live `check` and the Training App Router SXA topology are validated against the development environment; the new template-metadata and SXA mutation paths remain unverified until an explicitly approved provisioning run.
 - Content SDK 2 reference-field types (Droptree/Multilist) are conservatively `unknown` pending SDK-surface verification.
