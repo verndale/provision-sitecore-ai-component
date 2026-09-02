@@ -21,7 +21,7 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
 - [provision-sitecore-ai-component — operator docs](../../skills/provision-sitecore-ai-component/README.md) → [provision-sitecore-ai-component](../../README.md)
 - [Wiki Mechanics](../../wiki/MECHANICS.md) → [build-graph.cjs](../../scripts/graph/build-graph.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)
-- [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [Component manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md)
+- [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [Component manifest contract](../../skills/provision-sitecore-ai-component/references/manifest-contract.md) (×2)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [build-plan.cjs](../../src/build-plan.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [cli.cjs](../../src/cli.cjs)
 - [SitecoreAI component provisioning — Design History](../../wiki/topics/sitecore-provisioning.md) → [emit-tsx.cjs](../../src/emit-tsx.cjs)

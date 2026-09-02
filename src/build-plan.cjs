@@ -3,19 +3,9 @@
 /**
  * Mutation-plan builder. Pure — no I/O, no network.
  *
- * buildMutationPlan(manifest, resolved, manifestBasename) → plan object
- * serializePlan(plan) → byte-deterministic JSON string (2-space indent, trailing
- * newline, fixed construction order, no timestamps)
- *
- * The plan is the human-reviewable artifact: it embeds the GraphQL documents verbatim
- * (plan.graphql) and per-op variables. `__NAME__` placeholders are bound by the
- * executor from preflight results — the plan itself never contains hardcoded GUIDs;
- * every well-known Sitecore item is resolved by path at run time.
- *
- * Op order is fixed: templates → template fields → field configuration → standard
- * values/insert options → rendering → rendering bindings → placeholder settings.
- * Reconcile semantics are add-only: the executor never deletes, renames, or retypes;
- * anything it declines to touch is reported in manualFollowUps.
+ * The reviewed manifest remains the single source of truth. SXA structural templates,
+ * rendering bindings, optional reusable site scaffolding, and concrete site instances
+ * are all represented in the deterministic plan. The executor reconciles add-only.
  */
 
 const { joinItemPath, isPlainObject } = require("./util.cjs");
@@ -27,6 +17,15 @@ const SYSTEM_PATHS = {
   templateFieldTemplate: "/sitecore/templates/System/Templates/Template field",
   requiredFieldRule: "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
   placeholderSettingsTemplate: "/sitecore/templates/System/Layout/Placeholder",
+  branchTemplate: "/sitecore/templates/System/Branches/Branch",
+  folderTemplate: "/sitecore/templates/Common/Folder",
+  availableRenderingsTemplate: "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+  headlessVariantsTemplate: "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+  variantDefinitionTemplate: "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+  siteSetupAddItemTemplate: "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+  scaffoldDataLocation: "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Data",
+  scaffoldAvailableRenderingsLocation: "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Available Renderings",
+  scaffoldHeadlessVariantsLocation: "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Headless Variants",
 };
 
 /** Template-field item fields that carry required-field validation (add-only merge). */
@@ -34,13 +33,15 @@ const VALIDATION_BAR_FIELDS = ["Validate Button", "Workflow"];
 
 const GRAPHQL = {
   ITEM_BY_PATH:
-    'query GetItem($path: String!) { item(where: { database: "master", path: $path }) { itemId name path } }',
+    'query GetItem($path: String!) { item(where: { database: "master", path: $path }) { itemId name path template { templateId name fullName } } }',
   TEMPLATE_BY_PATH:
-    'query GetTemplate($templateId: ID!) { itemTemplate(where: { database: "master", templateId: $templateId }) { itemId: templateId name ownFields { nodes { name type } } allFields: fields { nodes { name type } } } }',
+    'query GetTemplate($templateId: ID!) { itemTemplate(where: { database: "master", templateId: $templateId }) { itemId: templateId name icon baseTemplates(first: 100, directOnly: true) { nodes { templateId name fullName } } standardValuesItem(language: "en") { itemId path } ownFields(first: 500) { nodes { name type } } allFields: fields(first: 500) { nodes { name type } } } }',
   FIELD_VALUE:
-    'query GetFieldValue($path: String!, $field: String!) { item(where: { database: "master", path: $path }) { itemId field(name: $field) { value } } }',
+    'query GetFieldValue($path: String!, $field: String!) { item(where: { database: "master", path: $path }) { itemId field(name: $field) { name value } } }',
   CREATE_ITEM_TEMPLATE:
     "mutation CreateTemplate($input: CreateItemTemplateInput!) { createItemTemplate(input: $input) { itemTemplate { templateId name } } }",
+  UPDATE_ITEM_TEMPLATE:
+    "mutation UpdateTemplate($input: UpdateItemTemplateInput!) { updateItemTemplate(input: $input) { itemTemplate { templateId name } } }",
   CREATE_ITEM:
     "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
   UPDATE_ITEM:
@@ -48,9 +49,7 @@ const GRAPHQL = {
 };
 
 function templateParentPath(template, resolved) {
-  if (typeof template.parentPath === "string" && template.parentPath.startsWith("/sitecore/")) {
-    return template.parentPath;
-  }
+  if (typeof template.parentPath === "string" && template.parentPath.startsWith("/sitecore/")) return template.parentPath;
   return resolved.templateRoots[template.role];
 }
 
@@ -58,55 +57,230 @@ function templatePath(template, resolved) {
   return joinItemPath(templateParentPath(template, resolved), template.name);
 }
 
-function datasourceTemplatePath(manifest, resolved) {
-  const rendering = manifest.rendering;
-  if (!isPlainObject(rendering) || rendering.datasourceTemplate === undefined) return null;
-  const ref = rendering.datasourceTemplate;
-  if (ref.startsWith("/sitecore/")) return ref;
-  const target = manifest.templates.find((t) => t.name === ref);
+function templateSections(template) {
+  return Array.isArray(template.sections) ? template.sections : [];
+}
+
+function templateReferencePath(reference, manifest, resolved) {
+  if (typeof reference !== "string") return null;
+  if (reference.startsWith("/sitecore/")) return reference;
+  const target = manifest.templates.find((template) => template.name === reference);
   return target ? templatePath(target, resolved) : null;
 }
 
+function templateReferencePlaceholder(reference, manifest) {
+  if (typeof reference !== "string" || reference.startsWith("/sitecore/")) return null;
+  const index = manifest.templates.findIndex((template) => template.name === reference);
+  return index >= 0 ? `__TEMPLATE_${index}_ID__` : null;
+}
+
+function datasourceTemplatePath(manifest, resolved) {
+  const rendering = manifest.rendering;
+  if (!isPlainObject(rendering) || rendering.datasourceTemplate === undefined) return null;
+  return templateReferencePath(rendering.datasourceTemplate, manifest, resolved);
+}
+
 function insertOptionPath(option, manifest, resolved) {
-  if (option.startsWith("/sitecore/")) return option;
-  const target = manifest.templates.find((t) => t.name === option);
-  return target ? templatePath(target, resolved) : option;
+  return templateReferencePath(option, manifest, resolved) || option;
 }
 
 /** Flatten a template's sections into [{ section, field }] pairs in manifest order. */
 function flattenFields(template) {
   const out = [];
-  for (const section of template.sections) {
-    for (const field of section.fields) {
-      out.push({ section: section.name, field });
-    }
+  for (const section of templateSections(template)) {
+    for (const field of section.fields) out.push({ section: section.name, field });
   }
   return out;
 }
 
+function itemField(name, value) {
+  return { name, value };
+}
+
 function buildMutationPlan(manifest, resolved, manifestBasename) {
   const ops = [];
-  const manualFollowUps = [
-    "Register the rendering in the site's Available Renderings / Pages toolbox (not automated in v1).",
-    "Create and assign a rendering parameters template if this component needs one (not automated in v1).",
-  ];
+  const rendering = isPlainObject(manifest.rendering) ? manifest.rendering : null;
+  const sxa = isPlainObject(manifest.sxa) ? manifest.sxa : null;
+  const sxaSites = sxa && Array.isArray(sxa.sites) ? sxa.sites : [];
+  const manualFollowUps = [];
+
+  if (rendering && sxaSites.length === 0) {
+    manualFollowUps.push("Register the rendering in each existing site's Available Renderings / Pages toolbox (no sxa.sites target was reviewed).");
+  }
+  if (rendering && !rendering.parametersTemplate) {
+    manualFollowUps.push("Create and assign a rendering parameters template if this component needs one (rendering.parametersTemplate is omitted).");
+  }
+
+  const renderingPath = rendering ? joinItemPath(resolved.renderingRoot, rendering.name) : null;
+  const datasourcePath = rendering ? datasourceTemplatePath(manifest, resolved) : null;
+  const renderingBindingFields = rendering ? [itemField("componentName", rendering.componentName || manifest.component)] : [];
+  if (rendering && datasourcePath) renderingBindingFields.push(itemField("Datasource Template", datasourcePath));
+  if (rendering && (rendering.datasourceLocation || (datasourcePath && resolved.datasourceLocation))) {
+    renderingBindingFields.push(itemField("Datasource Location", rendering.datasourceLocation || resolved.datasourceLocation));
+  }
+  if (rendering && rendering.parametersTemplate) {
+    const parametersId = templateReferencePlaceholder(rendering.parametersTemplate, manifest) || "__PARAMETERS_TEMPLATE_ID__";
+    renderingBindingFields.push(itemField("Parameters Template", parametersId));
+  }
+  if (rendering && typeof rendering.openPropertiesAfterAdd === "boolean") {
+    renderingBindingFields.push(itemField("Open Properties after Add", rendering.openPropertiesAfterAdd ? "1" : "0"));
+  }
+  if (rendering && typeof rendering.enableDatasourceQuery === "boolean") {
+    renderingBindingFields.push(itemField("Enable Datasource Query", rendering.enableDatasourceQuery ? "1" : "0"));
+  }
+  if (rendering && rendering.icon) renderingBindingFields.push(itemField("__Icon", rendering.icon));
+
+  const systemResolves = {
+    __REQUIRED_RULE_ID__: SYSTEM_PATHS.requiredFieldRule,
+  };
+  if (sxa && isPlainObject(sxa.siteScaffolding)) {
+    Object.assign(systemResolves, {
+      __SXA_SCAFFOLD_DATA_LOCATION_ID__: SYSTEM_PATHS.scaffoldDataLocation,
+      __SXA_SCAFFOLD_AVAILABLE_RENDERINGS_LOCATION_ID__: SYSTEM_PATHS.scaffoldAvailableRenderingsLocation,
+      __SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__: SYSTEM_PATHS.scaffoldHeadlessVariantsLocation,
+    });
+  }
 
   ops.push({
     id: "resolve-system-items",
     kind: "resolveSystemItems",
     query: "ITEM_BY_PATH",
-    resolves: {
-      __TEMPLATE_SECTION_TEMPLATE_ID__: SYSTEM_PATHS.templateSectionTemplate,
-      __TEMPLATE_FIELD_TEMPLATE_ID__: SYSTEM_PATHS.templateFieldTemplate,
-      __REQUIRED_RULE_ID__: SYSTEM_PATHS.requiredFieldRule,
-    },
-    note: "Well-known system items resolved by path; the executor binds each placeholder to the resolved itemId. The Required rule is only fetched when some field is required.",
+    resolves: systemResolves,
+    note: "Well-known system items are resolved by path before any mutation. The Required rule is fetched only when a field is required.",
   });
+
+  const dependencyResolves = {};
+  const templateResolves = {};
+  manifest.templates.forEach((template, index) => {
+    dependencyResolves[`__TEMPLATE_${index}_PARENT_ID__`] = templateParentPath(template, resolved);
+    (template.baseTemplates || []).forEach((path, baseIndex) => {
+      templateResolves[`__TEMPLATE_${index}_BASE_${baseIndex}_ID__`] = path;
+    });
+  });
+  if (rendering) dependencyResolves.__RENDERING_ROOT_ID__ = resolved.renderingRoot;
+  if (rendering && rendering.parametersTemplate && rendering.parametersTemplate.startsWith("/sitecore/")) {
+    templateResolves.__PARAMETERS_TEMPLATE_ID__ = rendering.parametersTemplate;
+  }
+  if (rendering && rendering.datasourceTemplate && rendering.datasourceTemplate.startsWith("/sitecore/")) {
+    templateResolves.__DATASOURCE_TEMPLATE_CHECK_ID__ = rendering.datasourceTemplate;
+  }
+  if (Array.isArray(manifest.placeholders) && manifest.placeholders.length > 0) {
+    dependencyResolves.__PLACEHOLDER_ROOT_ID__ = resolved.placeholderSettingsRoot;
+  }
+
+  const itemChecks = [];
+  const templateTargets = manifest.templates.map((template) => ({
+    targetPath: templatePath(template, resolved),
+    mustExist: template.existing === true,
+  }));
+  manifest.templates.forEach((template) => {
+    const targetTemplatePath = templatePath(template, resolved);
+    for (const section of templateSections(template)) {
+      const sectionPath = joinItemPath(targetTemplatePath, section.name);
+      itemChecks.push({
+        targetPath: sectionPath,
+        createIfMissing: true,
+        expectedTemplateId: "__TEMPLATE_SECTION_TEMPLATE_ID__",
+        expectedTemplatePath: SYSTEM_PATHS.templateSectionTemplate,
+        requiredFields: [],
+      });
+      for (const field of section.fields) {
+        const requiredFields = ["Type", "Title"];
+        if (field.source) requiredFields.push("Source");
+        if (field.helpText) requiredFields.push("__Short description");
+        if (field.required === true) requiredFields.push(...VALIDATION_BAR_FIELDS);
+        itemChecks.push({
+          targetPath: joinItemPath(sectionPath, field.name),
+          createIfMissing: true,
+          expectedTemplateId: "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          expectedTemplatePath: SYSTEM_PATHS.templateFieldTemplate,
+          requiredFields,
+        });
+      }
+    }
+  });
+  if (sxa && isPlainObject(sxa.siteScaffolding)) {
+    dependencyResolves.__SXA_BRANCH_ROOT_ID__ = sxa.siteScaffolding.branchRoot;
+    dependencyResolves.__SXA_SETUP_ROOT_ID__ = sxa.siteScaffolding.setupRoot;
+  }
+  sxaSites.forEach((site, index) => {
+    const siteRoot = site.siteRoot;
+    if (site.createDataFolder !== false) {
+      dependencyResolves[`__SXA_SITE_${index}_DATA_ROOT_ID__`] = joinItemPath(siteRoot, "Data");
+    }
+    dependencyResolves[`__SXA_SITE_${index}_AVAILABLE_ROOT_ID__`] = joinItemPath(siteRoot, "Presentation/Available Renderings");
+    if (site.createHeadlessVariant !== false) {
+      dependencyResolves[`__SXA_SITE_${index}_VARIANTS_ROOT_ID__`] = joinItemPath(siteRoot, "Presentation/Headless Variants");
+    }
+  });
+
+  const templateFieldSurface = new Set(["Type", "Title"]);
+  manifest.templates.forEach((template) => {
+    flattenFields(template).forEach(({ field }) => {
+      if (field.source) templateFieldSurface.add("Source");
+      if (field.helpText) templateFieldSurface.add("__Short description");
+      if (field.required === true) VALIDATION_BAR_FIELDS.forEach((name) => templateFieldSurface.add(name));
+    });
+  });
+  const templateChecks = [
+    { path: SYSTEM_PATHS.templateSectionTemplate, into: "__TEMPLATE_SECTION_TEMPLATE_ID__", fields: [] },
+    { path: SYSTEM_PATHS.templateFieldTemplate, into: "__TEMPLATE_FIELD_TEMPLATE_ID__", fields: [...templateFieldSurface] },
+  ];
+  if (Array.isArray(manifest.placeholders) && manifest.placeholders.length > 0) {
+    templateChecks.push({ path: SYSTEM_PATHS.placeholderSettingsTemplate, into: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__", fields: ["Placeholder Key", "Allowed Controls"] });
+  }
+  if (rendering) {
+    const jsonFields = renderingBindingFields.map((field) => field.name);
+    if (typeof rendering.dynamicPlaceholders === "boolean") jsonFields.push("OtherProperties");
+    templateChecks.push({ path: SYSTEM_PATHS.jsonRenderingTemplate, into: "__JSON_RENDERING_TEMPLATE_ID__", fields: jsonFields });
+  }
+  if (sxa && (isPlainObject(sxa.siteScaffolding) || sxaSites.length > 0)) {
+    templateChecks.push({ path: SYSTEM_PATHS.availableRenderingsTemplate, into: "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__", fields: ["Renderings"] });
+  }
+  const variantsPlanned = sxa && (isPlainObject(sxa.siteScaffolding) || sxaSites.some((site) => site.createHeadlessVariant !== false));
+  if (variantsPlanned) {
+    templateChecks.push({ path: SYSTEM_PATHS.headlessVariantsTemplate, into: "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__", fields: ["__Icon"] });
+    templateChecks.push({ path: SYSTEM_PATHS.variantDefinitionTemplate, into: "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__", fields: [] });
+  }
+  if (sxa && isPlainObject(sxa.siteScaffolding)) {
+    templateChecks.push(
+      { path: SYSTEM_PATHS.branchTemplate, into: "__SXA_BRANCH_TEMPLATE_ID__", fields: [] },
+      { path: SYSTEM_PATHS.folderTemplate, into: "__SXA_FOLDER_ITEM_TEMPLATE_ID__", fields: [] },
+      { path: SYSTEM_PATHS.siteSetupAddItemTemplate, into: "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__", fields: ["Location", "Template", "Name", "Fields"] }
+    );
+  }
+  if (Object.keys(dependencyResolves).length > 0 || Object.keys(templateResolves).length > 0 || templateChecks.length > 0 || templateTargets.length > 0) {
+    ops.push({
+      id: "preflight-dependencies",
+      kind: "preflightDependencies",
+      resolves: dependencyResolves,
+      templateResolves,
+      templateChecks,
+      templateTargets,
+      itemChecks,
+      note: "Every external dependency and discoverable template/rendering/SXA collision is checked before the first mutation.",
+    });
+  }
 
   manifest.templates.forEach((template, index) => {
     const path = templatePath(template, resolved);
     const idPlaceholder = `__TEMPLATE_${index}_ID__`;
     const existing = template.existing === true;
+    const sections = templateSections(template);
+    const insertOptions = Array.isArray(template.insertOptions) ? template.insertOptions : [];
+    const createStandardValues = template.standardValues === true || insertOptions.length > 0;
+    const input = { name: template.name, parent: `__TEMPLATE_${index}_PARENT_ID__` };
+    if (sections.length > 0) {
+      input.sections = sections.map((section) => ({
+        name: section.name,
+        fields: section.fields.map((field) => ({ name: field.name, type: field.sitecoreType })),
+      }));
+    }
+    if (Array.isArray(template.baseTemplates) && template.baseTemplates.length > 0) {
+      input.baseTemplates = template.baseTemplates.map((_, baseIndex) => `__TEMPLATE_${index}_BASE_${baseIndex}_ID__`);
+    }
+    if (createStandardValues) input.createStandardValuesItem = true;
+    if (template.icon) input.icon = template.icon;
 
     ops.push({
       id: `ensure-template-${index}`,
@@ -115,22 +289,18 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       targetPath: path,
       existing,
       preflight: { query: "TEMPLATE_BY_PATH", variables: { path } },
+      desired: {
+        baseTemplates: (template.baseTemplates || []).map((pathValue, baseIndex) => ({
+          path: pathValue,
+          id: `__TEMPLATE_${index}_BASE_${baseIndex}_ID__`,
+        })),
+        standardValues: createStandardValues,
+        icon: template.icon || null,
+      },
       whenAbsent: existing
         ? { error: `Template marked existing was not found at ${path}. Fix the manifest (existing/parent root) or create the template first.` }
-        : {
-            mutation: "CREATE_ITEM_TEMPLATE",
-            variables: {
-              input: {
-                name: template.name,
-                parent: `__TEMPLATE_${index}_PARENT_ID__`,
-                sections: template.sections.map((s) => ({
-                  name: s.name,
-                  fields: s.fields.map((f) => ({ name: f.name, type: f.sitecoreType })),
-                })),
-              },
-            },
-            resolveParent: { query: "ITEM_BY_PATH", path: templateParentPath(template, resolved), into: `__TEMPLATE_${index}_PARENT_ID__` },
-          },
+        : { mutation: "CREATE_ITEM_TEMPLATE", variables: { input } },
+      whenPresent: { mutation: "UPDATE_ITEM_TEMPLATE" },
       resolves: { [idPlaceholder]: "itemId" },
     });
 
@@ -138,10 +308,10 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       id: `ensure-template-fields-${index}`,
       kind: "ensureTemplateFields",
       templatePath: path,
-      sections: template.sections.map((s) => ({
-        name: s.name,
-        path: joinItemPath(path, s.name),
-        fields: s.fields.map((f) => ({ name: f.name, type: f.sitecoreType })),
+      sections: sections.map((section) => ({
+        name: section.name,
+        path: joinItemPath(path, section.name),
+        fields: section.fields.map((field) => ({ name: field.name, type: field.sitecoreType })),
       })),
       reconcile: {
         addMissingSection: {
@@ -158,7 +328,7 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
               templateId: "__TEMPLATE_FIELD_TEMPLATE_ID__",
               parent: "__SECTION_ID__",
               language: "en",
-              fields: [{ name: "Type", value: "__FIELD_TYPE__" }],
+              fields: [itemField("Type", "__FIELD_TYPE__")],
             },
           },
         },
@@ -169,9 +339,9 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
 
     flattenFields(template).forEach(({ section, field }) => {
       const fieldPath = joinItemPath(joinItemPath(path, section), field.name);
-      const values = [{ name: "Type", value: field.sitecoreType }, { name: "Title", value: field.title }];
-      if (field.source) values.push({ name: "Source", value: field.source });
-      if (field.helpText) values.push({ name: "__Short description", value: field.helpText });
+      const values = [itemField("Type", field.sitecoreType), itemField("Title", field.title)];
+      if (field.source) values.push(itemField("Source", field.source));
+      if (field.helpText) values.push(itemField("__Short description", field.helpText));
       ops.push({
         id: `configure-field-${index}-${section}-${field.name}`,
         kind: "configureField",
@@ -181,77 +351,252 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
           ? {
               appendRuleTo: VALIDATION_BAR_FIELDS,
               ruleIdPlaceholder: "__REQUIRED_RULE_ID__",
-              note: "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved).",
+              note: "Read-modify-write: Required is appended to each validation bar only when missing.",
             }
           : null,
       });
     });
-
   });
 
-  // Standard values run as a second pass, after every template op: insert options may
-  // reference templates declared later in the manifest, which must exist before the
-  // executor resolves them by path.
+  // Standard Values reconcile only after every template exists, because insert options
+  // may name later templates in the same manifest.
   manifest.templates.forEach((template, index) => {
-    if (!Array.isArray(template.insertOptions) || template.insertOptions.length === 0) return;
+    const insertOptions = Array.isArray(template.insertOptions) ? template.insertOptions : [];
+    if (template.standardValues !== true && insertOptions.length === 0) return;
     const path = templatePath(template, resolved);
     ops.push({
       id: `ensure-standard-values-${index}`,
       kind: "ensureStandardValues",
       templatePath: path,
       standardValuesPath: joinItemPath(path, "__Standard Values"),
-      whenAbsent: {
-        mutation: "CREATE_ITEM",
-        variables: { input: { name: "__Standard Values", templateId: `__TEMPLATE_${index}_ID__`, parent: `__TEMPLATE_${index}_ID__`, language: "en" } },
-      },
       insertOptions: {
         field: "__Masters",
-        paths: template.insertOptions.map((o) => insertOptionPath(o, manifest, resolved)),
-        note: "Read-modify-write: each insert-option template id is appended to __Masters only when missing (add-only).",
+        paths: insertOptions.map((option) => insertOptionPath(option, manifest, resolved)),
+        note: "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved.",
       },
     });
   });
 
-  if (isPlainObject(manifest.rendering)) {
-    const rendering = manifest.rendering;
-    const renderingPath = joinItemPath(resolved.renderingRoot, rendering.name);
-    const componentName = rendering.componentName || manifest.component;
-    const dsTemplatePath = datasourceTemplatePath(manifest, resolved);
-    const dsLocation = rendering.datasourceLocation || (dsTemplatePath ? resolved.datasourceLocation : null);
-
+  if (rendering) {
     ops.push({
       id: "ensure-rendering",
       kind: "ensureRendering",
       targetPath: renderingPath,
-      preflight: { query: "ITEM_BY_PATH", variables: { path: renderingPath } },
-      resolveTemplate: {
-        query: "TEMPLATE_BY_PATH",
-        path: SYSTEM_PATHS.jsonRenderingTemplate,
-        into: "__JSON_RENDERING_TEMPLATE_ID__",
-        verifyFields: ["componentName", "Datasource Template", "Datasource Location"],
-        note: "Introspection preflight: the Json Rendering template is resolved by path and its field surface verified before any mutation; a mismatch aborts with remediation instead of guessing.",
-      },
+      expectedTemplateId: "__JSON_RENDERING_TEMPLATE_ID__",
       whenAbsent: {
         mutation: "CREATE_ITEM",
         variables: {
           input: { name: rendering.name, templateId: "__JSON_RENDERING_TEMPLATE_ID__", parent: "__RENDERING_ROOT_ID__", language: "en" },
         },
-        resolveParent: { query: "ITEM_BY_PATH", path: resolved.renderingRoot, into: "__RENDERING_ROOT_ID__" },
       },
       resolves: { __RENDERING_ID__: "itemId" },
     });
-
-    const bindingFields = [{ name: "componentName", value: componentName }];
-    if (dsTemplatePath) bindingFields.push({ name: "Datasource Template", value: dsTemplatePath });
-    if (dsLocation) bindingFields.push({ name: "Datasource Location", value: dsLocation });
+    itemChecks.push({
+      targetPath: renderingPath,
+      createIfMissing: true,
+      expectedTemplateId: "__JSON_RENDERING_TEMPLATE_ID__",
+      expectedTemplatePath: SYSTEM_PATHS.jsonRenderingTemplate,
+      requiredFields: [...renderingBindingFields.map((field) => field.name), ...(typeof rendering.dynamicPlaceholders === "boolean" ? ["OtherProperties"] : [])],
+    });
     ops.push({
       id: "set-rendering-bindings",
       kind: "setRenderingBindings",
+      targetPath: renderingPath,
       always: {
         mutation: "UPDATE_ITEM",
-        variables: { input: { itemId: "__RENDERING_ID__", language: "en", fields: bindingFields } },
+        variables: { input: { itemId: "__RENDERING_ID__", language: "en", fields: renderingBindingFields } },
       },
-      note: "Idempotent set — bindings are written on every push.",
+      ...(typeof rendering.dynamicPlaceholders === "boolean" ? { dynamicPlaceholders: rendering.dynamicPlaceholders } : {}),
+      note: "Idempotent set of the reviewed rendering contract.",
+    });
+  }
+
+  const systemTemplatePathByPlaceholder = {
+    __SXA_BRANCH_TEMPLATE_ID__: SYSTEM_PATHS.branchTemplate,
+    __SXA_FOLDER_ITEM_TEMPLATE_ID__: SYSTEM_PATHS.folderTemplate,
+    __SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__: SYSTEM_PATHS.availableRenderingsTemplate,
+    __SXA_HEADLESS_VARIANTS_TEMPLATE_ID__: SYSTEM_PATHS.headlessVariantsTemplate,
+    __SXA_VARIANT_DEFINITION_TEMPLATE_ID__: SYSTEM_PATHS.variantDefinitionTemplate,
+    __SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__: SYSTEM_PATHS.siteSetupAddItemTemplate,
+  };
+
+  function addEnsureItem({ id, targetPath, name, templateId, expectedTemplatePath = null, parentId, createIfMissing = true, fields = [], listFields = [], resolves = null }) {
+    const createFields = [...fields, ...listFields.map((entry) => itemField(entry.name, entry.append))];
+    itemChecks.push({
+      targetPath,
+      createIfMissing,
+      expectedTemplateId: templateId,
+      expectedTemplatePath: expectedTemplatePath || systemTemplatePathByPlaceholder[templateId] || null,
+      requiredFields: [...new Set(createFields.map((field) => field.name))],
+    });
+    ops.push({
+      id,
+      kind: "ensureItem",
+      targetPath,
+      expectedTemplateId: templateId,
+      createIfMissing,
+      whenAbsent: {
+        mutation: "CREATE_ITEM",
+        variables: {
+          input: {
+            name,
+            templateId,
+            parent: parentId,
+            language: "en",
+            ...(createFields.length > 0 ? { fields: createFields } : {}),
+          },
+        },
+      },
+      fields,
+      listFields,
+      ...(resolves ? { resolves } : {}),
+      reconcile: "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only.",
+    });
+  }
+
+  if (sxa && rendering) {
+    const folderTemplateIndex = manifest.templates.findIndex((template) => template.name === sxa.folderTemplate);
+    const folderTemplateId = `__TEMPLATE_${folderTemplateIndex}_ID__`;
+    const folderTemplatePath = templatePath(manifest.templates[folderTemplateIndex], resolved);
+    const datasourceTemplate = manifest.templates.find((template) => template.name === rendering.datasourceTemplate);
+    const componentIcon = (datasourceTemplate && datasourceTemplate.icon) || rendering.icon || "Office/32x32/window_dialog.png";
+
+    if (isPlainObject(sxa.siteScaffolding)) {
+      const scaffold = sxa.siteScaffolding;
+      const defaultBranchName = `Default ${rendering.name} Variant`;
+      const defaultBranchPath = joinItemPath(scaffold.branchRoot, defaultBranchName);
+      addEnsureItem({
+        id: "ensure-sxa-default-variant-branch",
+        targetPath: defaultBranchPath,
+        name: defaultBranchName,
+        templateId: "__SXA_BRANCH_TEMPLATE_ID__",
+        parentId: "__SXA_BRANCH_ROOT_ID__",
+        resolves: { __SXA_DEFAULT_VARIANT_BRANCH_ID__: "itemId" },
+      });
+      const variantBranchRootPath = joinItemPath(defaultBranchPath, "$name");
+      addEnsureItem({
+        id: "ensure-sxa-default-variant-branch-root",
+        targetPath: variantBranchRootPath,
+        name: "$name",
+        templateId: "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+        parentId: "__SXA_DEFAULT_VARIANT_BRANCH_ID__",
+        resolves: { __SXA_DEFAULT_VARIANT_BRANCH_ROOT_ID__: "itemId" },
+      });
+      addEnsureItem({
+        id: "ensure-sxa-default-variant-branch-default",
+        targetPath: joinItemPath(variantBranchRootPath, "Default"),
+        name: "Default",
+        templateId: "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+        parentId: "__SXA_DEFAULT_VARIANT_BRANCH_ROOT_ID__",
+      });
+
+      const availableBranchName = `Available Headless ${scaffold.moduleName} Renderings`;
+      const availableBranchPath = joinItemPath(scaffold.branchRoot, availableBranchName);
+      addEnsureItem({
+        id: "ensure-sxa-available-renderings-branch",
+        targetPath: availableBranchPath,
+        name: availableBranchName,
+        templateId: "__SXA_BRANCH_TEMPLATE_ID__",
+        parentId: "__SXA_BRANCH_ROOT_ID__",
+        resolves: { __SXA_AVAILABLE_RENDERINGS_BRANCH_ID__: "itemId" },
+      });
+      addEnsureItem({
+        id: "ensure-sxa-available-renderings-branch-category",
+        targetPath: joinItemPath(availableBranchPath, "$name"),
+        name: "$name",
+        templateId: "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+        parentId: "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__",
+        listFields: [{ name: "Renderings", append: "__RENDERING_ID__" }],
+      });
+
+      addEnsureItem({
+        id: "ensure-sxa-setup-add-data",
+        targetPath: joinItemPath(scaffold.setupRoot, scaffold.dataActionName || `Add ${rendering.name} Data Item`),
+        name: scaffold.dataActionName || `Add ${rendering.name} Data Item`,
+        templateId: "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+        parentId: "__SXA_SETUP_ROOT_ID__",
+        fields: [
+          itemField("Location", "__SXA_SCAFFOLD_DATA_LOCATION_ID__"),
+          itemField("Template", folderTemplateId),
+          itemField("Name", rendering.name),
+        ],
+      });
+      addEnsureItem({
+        id: "ensure-sxa-setup-add-available-renderings",
+        targetPath: joinItemPath(scaffold.setupRoot, "Add Available Renderings"),
+        name: "Add Available Renderings",
+        templateId: "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+        parentId: "__SXA_SETUP_ROOT_ID__",
+        fields: [
+          itemField("Location", "__SXA_SCAFFOLD_AVAILABLE_RENDERINGS_LOCATION_ID__"),
+          itemField("Template", "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__"),
+          itemField("Name", scaffold.moduleName),
+        ],
+      });
+      const variantsFolderPath = joinItemPath(scaffold.setupRoot, "Rendering Variants");
+      addEnsureItem({
+        id: "ensure-sxa-setup-rendering-variants-folder",
+        targetPath: variantsFolderPath,
+        name: "Rendering Variants",
+        templateId: "__SXA_FOLDER_ITEM_TEMPLATE_ID__",
+        parentId: "__SXA_SETUP_ROOT_ID__",
+        resolves: { __SXA_SETUP_RENDERING_VARIANTS_FOLDER_ID__: "itemId" },
+      });
+      addEnsureItem({
+        id: "ensure-sxa-setup-rendering-variant",
+        targetPath: joinItemPath(variantsFolderPath, rendering.name),
+        name: rendering.name,
+        templateId: "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+        parentId: "__SXA_SETUP_RENDERING_VARIANTS_FOLDER_ID__",
+        fields: [
+          itemField("Location", "__SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__"),
+          itemField("Template", "__SXA_DEFAULT_VARIANT_BRANCH_ID__"),
+          itemField("Name", rendering.name),
+          itemField("Fields", `__Icon=${encodeURIComponent(componentIcon)}`),
+        ],
+      });
+    }
+
+    sxaSites.forEach((site, index) => {
+      const siteRoot = site.siteRoot;
+      if (site.createDataFolder !== false) {
+        addEnsureItem({
+          id: `ensure-sxa-site-${index}-data-folder`,
+          targetPath: joinItemPath(joinItemPath(siteRoot, "Data"), rendering.name),
+          name: rendering.name,
+          templateId: folderTemplateId,
+          expectedTemplatePath: folderTemplatePath,
+          parentId: `__SXA_SITE_${index}_DATA_ROOT_ID__`,
+        });
+      }
+      addEnsureItem({
+        id: `ensure-sxa-site-${index}-available-renderings`,
+        targetPath: joinItemPath(joinItemPath(siteRoot, "Presentation/Available Renderings"), site.availableRenderingsCategory),
+        name: site.availableRenderingsCategory,
+        templateId: "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+        parentId: `__SXA_SITE_${index}_AVAILABLE_ROOT_ID__`,
+        createIfMissing: site.createAvailableRenderingsCategory === true,
+        listFields: [{ name: "Renderings", append: "__RENDERING_ID__" }],
+      });
+      if (site.createHeadlessVariant !== false) {
+        const variantPath = joinItemPath(joinItemPath(siteRoot, "Presentation/Headless Variants"), rendering.name);
+        addEnsureItem({
+          id: `ensure-sxa-site-${index}-variant`,
+          targetPath: variantPath,
+          name: rendering.name,
+          templateId: "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+          parentId: `__SXA_SITE_${index}_VARIANTS_ROOT_ID__`,
+          fields: [itemField("__Icon", componentIcon)],
+          resolves: { [`__SXA_SITE_${index}_VARIANT_ID__`]: "itemId" },
+        });
+        addEnsureItem({
+          id: `ensure-sxa-site-${index}-variant-default`,
+          targetPath: joinItemPath(variantPath, "Default"),
+          name: "Default",
+          templateId: "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+          parentId: `__SXA_SITE_${index}_VARIANT_ID__`,
+        });
+      }
     });
   }
 
@@ -263,7 +608,7 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
         kind: "ensurePlaceholderSettings",
         targetPath: placeholderPath,
         preflight: { query: "ITEM_BY_PATH", variables: { path: placeholderPath } },
-        resolveTemplate: { query: "ITEM_BY_PATH", path: SYSTEM_PATHS.placeholderSettingsTemplate, into: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__" },
+        resolveTemplate: { into: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__" },
         whenAbsent: {
           mutation: "CREATE_ITEM",
           variables: {
@@ -272,17 +617,16 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
               templateId: "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
               parent: "__PLACEHOLDER_ROOT_ID__",
               language: "en",
-              fields: [{ name: "Placeholder Key", value: placeholder.name }],
+              fields: [itemField("Placeholder Key", placeholder.name)],
             },
           },
-          resolveParent: { query: "ITEM_BY_PATH", path: resolved.placeholderSettingsRoot, into: "__PLACEHOLDER_ROOT_ID__" },
         },
-        allowedControls: placeholder.allowedControlsAdd === false || !isPlainObject(manifest.rendering)
+        allowedControls: placeholder.allowedControlsAdd === false || !rendering
           ? null
           : {
               field: "Allowed Controls",
               append: "__RENDERING_ID__",
-              note: "Read-modify-write: the rendering id is appended to Allowed Controls only when missing (add-only; existing controls are preserved).",
+              note: "The rendering id is appended to Allowed Controls only when missing.",
             },
       });
     });
@@ -310,4 +654,12 @@ function serializePlan(plan) {
   return `${JSON.stringify(plan, null, 2)}\n`;
 }
 
-module.exports = { buildMutationPlan, serializePlan, SYSTEM_PATHS, GRAPHQL, VALIDATION_BAR_FIELDS, templatePath, flattenFields };
+module.exports = {
+  buildMutationPlan,
+  serializePlan,
+  SYSTEM_PATHS,
+  GRAPHQL,
+  VALIDATION_BAR_FIELDS,
+  templatePath,
+  flattenFields,
+};

@@ -6,8 +6,8 @@ Part of the [wiring map](../connections.md), generated from the knowledge graph 
 
 - [build-plan.cjs](../../src/build-plan.cjs) ← [executor.test.cjs](../../test/executor.test.cjs), [plan-emit.test.cjs](../../test/plan-emit.test.cjs)
 - [cli.cjs](../../src/cli.cjs) ← [plan-emit.test.cjs](../../test/plan-emit.test.cjs)
-- [emit-tsx.cjs](../../src/emit-tsx.cjs) ← [plan-emit.test.cjs](../../test/plan-emit.test.cjs)
+- [emit-tsx.cjs](../../src/emit-tsx.cjs) ← [plan-emit.test.cjs](../../test/plan-emit.test.cjs), [sxa-manifest-validation.test.cjs](../../test/sxa-manifest-validation.test.cjs)
 - [executor.cjs](../../src/executor.cjs) ← [executor.test.cjs](../../test/executor.test.cjs)
 - [type-map.cjs](../../src/type-map.cjs) ← [validate.test.cjs](../../test/validate.test.cjs)
 - [util.cjs](../../src/util.cjs) ← [validate.test.cjs](../../test/validate.test.cjs)
-- [validate-manifest.cjs](../../src/validate-manifest.cjs) ← [executor.test.cjs](../../test/executor.test.cjs), [plan-emit.test.cjs](../../test/plan-emit.test.cjs)
+- [validate-manifest.cjs](../../src/validate-manifest.cjs) ← [executor.test.cjs](../../test/executor.test.cjs), [plan-emit.test.cjs](../../test/plan-emit.test.cjs), [sxa-manifest-validation.test.cjs](../../test/sxa-manifest-validation.test.cjs)

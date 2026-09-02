@@ -45,7 +45,7 @@ function readFixtureFile(fixtureName, relative) {
  */
 function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures = null } = {}) {
   const state = {
-    items: items.map((i) => ({ ...i })),
+    items: items.map((i) => ({ ...i, fieldNames: [...(i.fieldNames || [])] })),
     fieldValues: { ...fieldValues },
     nextId: 1,
   };
@@ -77,10 +77,13 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
 
     if (query.includes("GetTemplate")) {
       const item = byId(variables.templateId);
-      if (!item) return json(200, { data: { itemTemplate: null } });
+      if (!item || item.isTemplate === false) return json(200, { data: { itemTemplate: null } });
       const payload = {
         itemId: item.itemId,
         name: item.name,
+        icon: item.icon || "",
+        baseTemplates: { nodes: (item.baseTemplates || []).map((templateId) => ({ templateId })) },
+        standardValuesItem: item.standardValuesItem || null,
         ownFields: { nodes: item.ownFields || [] },
         allFields: { nodes: item.allFields || item.ownFields || [] },
       };
@@ -89,14 +92,20 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
     if (query.includes("GetItem")) {
       const item = byPath(variables.path);
       if (!item) return json(200, { data: { item: null } });
-      const payload = { itemId: item.itemId, name: item.name, path: item.path };
+      const template = item.templateId
+        ? { templateId: item.templateId, name: item.templateName || "Template", fullName: item.templateFullName || item.templateName || "Template" }
+        : null;
+      const payload = { itemId: item.itemId, name: item.name, path: item.path, template };
       return json(200, { data: { item: payload } });
     }
     if (query.includes("GetFieldValue")) {
       const item = byPath(variables.path);
       if (!item) return json(200, { data: { item: null } });
-      const value = state.fieldValues[`${variables.path}::${variables.field}`] ?? null;
-      return json(200, { data: { item: { itemId: item.itemId, field: value === null ? null : { value } } } });
+      const key = `${variables.path}::${variables.field}`;
+      const hasValue = Object.prototype.hasOwnProperty.call(state.fieldValues, key);
+      const exists = hasValue || (item.fieldNames || []).includes(variables.field);
+      const value = hasValue ? state.fieldValues[key] : "";
+      return json(200, { data: { item: { itemId: item.itemId, field: exists ? { name: variables.field, value } : null } } });
     }
     if (query.includes("CreateTemplate")) {
       const input = variables.input;
@@ -106,25 +115,75 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
         itemId: newId(),
         name: input.name,
         path: itemPath,
-        ownFields: input.sections.flatMap((s) => s.fields.map((f) => ({ name: f.name, type: f.type }))),
+        icon: input.icon || "",
+        baseTemplates: [...(input.baseTemplates || [])],
+        ownFields: (input.sections || []).flatMap((s) => s.fields.map((f) => ({ name: f.name, type: f.type }))),
+        fieldNames: [],
       };
       state.items.push(created);
+      if (input.createStandardValuesItem) {
+        const standardValues = {
+          itemId: newId(),
+          name: "__Standard Values",
+          path: `${itemPath}/__Standard Values`,
+          templateId: created.itemId,
+          fieldNames: ["__Masters"],
+        };
+        state.items.push(standardValues);
+        created.standardValuesItem = { itemId: standardValues.itemId, path: standardValues.path };
+      }
       // The real API creates the section/field item tree with the template; mirror that.
-      for (const section of input.sections) {
+      const sectionTemplate = byPath("/sitecore/templates/System/Templates/Template section");
+      const fieldTemplate = byPath("/sitecore/templates/System/Templates/Template field");
+      for (const section of input.sections || []) {
         const sectionPath = `${itemPath}/${section.name}`;
-        state.items.push({ itemId: newId(), name: section.name, path: sectionPath });
+        state.items.push({ itemId: newId(), name: section.name, path: sectionPath, templateId: sectionTemplate ? sectionTemplate.itemId : null });
         for (const field of section.fields) {
-          state.items.push({ itemId: newId(), name: field.name, path: `${sectionPath}/${field.name}` });
+          state.items.push({
+            itemId: newId(),
+            name: field.name,
+            path: `${sectionPath}/${field.name}`,
+            templateId: fieldTemplate ? fieldTemplate.itemId : null,
+            fieldNames: ["Type", "Title", "Source", "__Short description", "Validate Button", "Workflow"],
+          });
           state.fieldValues[`${sectionPath}/${field.name}::Type`] = field.type;
         }
       }
       return json(200, { data: { createItemTemplate: { itemTemplate: { templateId: created.itemId, name: created.name } } } });
     }
+    if (query.includes("UpdateTemplate")) {
+      const input = variables.input;
+      const item = byId(input.templateId);
+      if (item) {
+        if (input.baseTemplates) item.baseTemplates = [...input.baseTemplates];
+        if (input.icon !== undefined) item.icon = input.icon;
+        if (input.createStandardValuesItem && !item.standardValuesItem) {
+          const standardValues = {
+            itemId: newId(),
+            name: "__Standard Values",
+            path: `${item.path}/__Standard Values`,
+            templateId: item.itemId,
+            fieldNames: ["__Masters"],
+          };
+          state.items.push(standardValues);
+          item.standardValuesItem = { itemId: standardValues.itemId, path: standardValues.path };
+        }
+      }
+      return json(200, { data: { updateItemTemplate: { itemTemplate: { templateId: input.templateId, name: item ? item.name : null } } } });
+    }
     if (query.includes("CreateItem")) {
       const input = variables.input;
       const parent = byId(input.parent);
       const itemPath = parent ? `${parent.path}/${input.name}` : `/created/${input.name}`;
-      const created = { itemId: newId(), name: input.name, path: itemPath, templateId: input.templateId };
+      const template = byId(input.templateId);
+      const templateFields = template ? (template.allFields || template.ownFields || []).map((field) => field.name) : [];
+      const created = {
+        itemId: newId(),
+        name: input.name,
+        path: itemPath,
+        templateId: input.templateId,
+        fieldNames: [...new Set([...templateFields, ...(input.fields || []).map((field) => field.name)])],
+      };
       state.items.push(created);
       for (const f of input.fields || []) {
         state.fieldValues[`${itemPath}::${f.name}`] = f.value;

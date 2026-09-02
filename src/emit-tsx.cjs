@@ -34,7 +34,7 @@ const RENDERERS = { text: "Text", richtext: "RichText", image: "NextImage", link
  * a rendering with a datasource is declared; otherwise page mode on the first template.
  */
 function resolveContract(manifest) {
-  const templates = manifest.templates;
+  const templates = manifest.templates.filter((template) => template.kind === undefined || template.kind === "content");
   const rendering = isPlainObject(manifest.rendering) ? manifest.rendering : null;
   if (rendering && rendering.datasourceTemplate !== undefined) {
     const named = templates.find((t) => t.name === rendering.datasourceTemplate);
@@ -48,7 +48,7 @@ function resolveContract(manifest) {
 /** Flatten the contract template's fields in manifest order, with resolved type rows. */
 function contractFields(template) {
   const out = [];
-  for (const section of template.sections) {
+  for (const section of template?.sections || []) {
     for (const field of section.fields) {
       out.push({ ...field, row: resolveType(field.sitecoreType) });
     }
@@ -70,7 +70,7 @@ function emitTypes(manifest, resolved) {
   lines.push(`import type { ComponentProps } from '${resolved.componentPropsImport}';`);
   lines.push("");
   if (mode === "page") {
-    lines.push(`// Page-driven contract: these fields live on the page item (template "${template.name}"), not a component datasource.`);
+    lines.push(`// Page-driven contract: these fields live on the page item (template "${template?.name || manifest.component}"), not a component datasource.`);
   }
   lines.push(`export type ${component}Fields = {`);
   for (const f of fields) {

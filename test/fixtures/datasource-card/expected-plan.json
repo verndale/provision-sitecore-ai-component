@@ -18,13 +18,23 @@
     "templateSectionTemplate": "/sitecore/templates/System/Templates/Template section",
     "templateFieldTemplate": "/sitecore/templates/System/Templates/Template field",
     "requiredFieldRule": "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
-    "placeholderSettingsTemplate": "/sitecore/templates/System/Layout/Placeholder"
+    "placeholderSettingsTemplate": "/sitecore/templates/System/Layout/Placeholder",
+    "branchTemplate": "/sitecore/templates/System/Branches/Branch",
+    "folderTemplate": "/sitecore/templates/Common/Folder",
+    "availableRenderingsTemplate": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+    "headlessVariantsTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+    "variantDefinitionTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+    "siteSetupAddItemTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+    "scaffoldDataLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Data",
+    "scaffoldAvailableRenderingsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Available Renderings",
+    "scaffoldHeadlessVariantsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Headless Variants"
   },
   "graphql": {
-    "ITEM_BY_PATH": "query GetItem($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path } }",
-    "TEMPLATE_BY_PATH": "query GetTemplate($templateId: ID!) { itemTemplate(where: { database: \"master\", templateId: $templateId }) { itemId: templateId name ownFields { nodes { name type } } allFields: fields { nodes { name type } } } }",
-    "FIELD_VALUE": "query GetFieldValue($path: String!, $field: String!) { item(where: { database: \"master\", path: $path }) { itemId field(name: $field) { value } } }",
+    "ITEM_BY_PATH": "query GetItem($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path template { templateId name fullName } } }",
+    "TEMPLATE_BY_PATH": "query GetTemplate($templateId: ID!) { itemTemplate(where: { database: \"master\", templateId: $templateId }) { itemId: templateId name icon baseTemplates(first: 100, directOnly: true) { nodes { templateId name fullName } } standardValuesItem(language: \"en\") { itemId path } ownFields(first: 500) { nodes { name type } } allFields: fields(first: 500) { nodes { name type } } } }",
+    "FIELD_VALUE": "query GetFieldValue($path: String!, $field: String!) { item(where: { database: \"master\", path: $path }) { itemId field(name: $field) { name value } } }",
     "CREATE_ITEM_TEMPLATE": "mutation CreateTemplate($input: CreateItemTemplateInput!) { createItemTemplate(input: $input) { itemTemplate { templateId name } } }",
+    "UPDATE_ITEM_TEMPLATE": "mutation UpdateTemplate($input: UpdateItemTemplateInput!) { updateItemTemplate(input: $input) { itemTemplate { templateId name } } }",
     "CREATE_ITEM": "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
     "UPDATE_ITEM": "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }"
   },
@@ -34,11 +44,191 @@
       "kind": "resolveSystemItems",
       "query": "ITEM_BY_PATH",
       "resolves": {
-        "__TEMPLATE_SECTION_TEMPLATE_ID__": "/sitecore/templates/System/Templates/Template section",
-        "__TEMPLATE_FIELD_TEMPLATE_ID__": "/sitecore/templates/System/Templates/Template field",
         "__REQUIRED_RULE_ID__": "/sitecore/system/Settings/Validation Rules/Field Rules/Required"
       },
-      "note": "Well-known system items resolved by path; the executor binds each placeholder to the resolved itemId. The Required rule is only fetched when some field is required."
+      "note": "Well-known system items are resolved by path before any mutation. The Required rule is fetched only when a field is required."
+    },
+    {
+      "id": "preflight-dependencies",
+      "kind": "preflightDependencies",
+      "resolves": {
+        "__TEMPLATE_0_PARENT_ID__": "/sitecore/templates/Project/CN/Components",
+        "__TEMPLATE_1_PARENT_ID__": "/sitecore/templates/Project/CN/Pages/Base",
+        "__RENDERING_ROOT_ID__": "/sitecore/layout/Renderings/Project/CN",
+        "__PLACEHOLDER_ROOT_ID__": "/sitecore/layout/Placeholder Settings/Project/CN"
+      },
+      "templateResolves": {},
+      "templateChecks": [
+        {
+          "path": "/sitecore/templates/System/Templates/Template section",
+          "into": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/System/Templates/Template field",
+          "into": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "fields": [
+            "Type",
+            "Title",
+            "Source",
+            "__Short description",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/System/Layout/Placeholder",
+          "into": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+          "fields": [
+            "Placeholder Key",
+            "Allowed Controls"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "into": "__JSON_RENDERING_TEMPLATE_ID__",
+          "fields": [
+            "componentName",
+            "Datasource Template",
+            "Datasource Location"
+          ]
+        }
+      ],
+      "templateTargets": [
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card",
+          "mustExist": false
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData",
+          "mustExist": false
+        }
+      ],
+      "itemChecks": [
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template section",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/pageReference",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Source",
+            "__Short description",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/cardTitleOverride",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "__Short description"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/ctaLink",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/featured",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/displayOrder",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Components/Related Content Card/Content/customBadge",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData/Related Content",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template section",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData/Related Content/PageTitle",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData/Related Content/PageSummary",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData/Related Content/ThumbnailImage",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/layout/Renderings/Project/CN/Related Content Card",
+          "createIfMissing": true,
+          "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "requiredFields": [
+            "componentName",
+            "Datasource Template",
+            "Datasource Location"
+          ]
+        }
+      ],
+      "note": "Every external dependency and discoverable template/rendering/SXA collision is checked before the first mutation."
     },
     {
       "id": "ensure-template-0",
@@ -51,6 +241,11 @@
         "variables": {
           "path": "/sitecore/templates/Project/CN/Components/Related Content Card"
         }
+      },
+      "desired": {
+        "baseTemplates": [],
+        "standardValues": true,
+        "icon": null
       },
       "whenAbsent": {
         "mutation": "CREATE_ITEM_TEMPLATE",
@@ -88,14 +283,13 @@
                   }
                 ]
               }
-            ]
+            ],
+            "createStandardValuesItem": true
           }
-        },
-        "resolveParent": {
-          "query": "ITEM_BY_PATH",
-          "path": "/sitecore/templates/Project/CN/Components",
-          "into": "__TEMPLATE_0_PARENT_ID__"
         }
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
       },
       "resolves": {
         "__TEMPLATE_0_ID__": "itemId"
@@ -207,7 +401,7 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
@@ -351,6 +545,11 @@
           "path": "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData"
         }
       },
+      "desired": {
+        "baseTemplates": [],
+        "standardValues": false,
+        "icon": null
+      },
       "whenAbsent": {
         "mutation": "CREATE_ITEM_TEMPLATE",
         "variables": {
@@ -377,12 +576,10 @@
               }
             ]
           }
-        },
-        "resolveParent": {
-          "query": "ITEM_BY_PATH",
-          "path": "/sitecore/templates/Project/CN/Pages/Base",
-          "into": "__TEMPLATE_1_PARENT_ID__"
         }
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
       },
       "resolves": {
         "__TEMPLATE_1_ID__": "itemId"
@@ -474,7 +671,7 @@
           "Workflow"
         ],
         "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
-        "note": "Read-modify-write: the Required rule id is appended to each validation-bar field only when missing (add-only; existing rules are preserved)."
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
       }
     },
     {
@@ -532,47 +729,20 @@
       "kind": "ensureStandardValues",
       "templatePath": "/sitecore/templates/Project/CN/Components/Related Content Card",
       "standardValuesPath": "/sitecore/templates/Project/CN/Components/Related Content Card/__Standard Values",
-      "whenAbsent": {
-        "mutation": "CREATE_ITEM",
-        "variables": {
-          "input": {
-            "name": "__Standard Values",
-            "templateId": "__TEMPLATE_0_ID__",
-            "parent": "__TEMPLATE_0_ID__",
-            "language": "en"
-          }
-        }
-      },
       "insertOptions": {
         "field": "__Masters",
         "paths": [
           "/sitecore/templates/Project/CN/Pages/Base/_RelatedContentPageData",
           "/sitecore/templates/Project/CN/Components/Related Content Row"
         ],
-        "note": "Read-modify-write: each insert-option template id is appended to __Masters only when missing (add-only)."
+        "note": "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved."
       }
     },
     {
       "id": "ensure-rendering",
       "kind": "ensureRendering",
       "targetPath": "/sitecore/layout/Renderings/Project/CN/Related Content Card",
-      "preflight": {
-        "query": "ITEM_BY_PATH",
-        "variables": {
-          "path": "/sitecore/layout/Renderings/Project/CN/Related Content Card"
-        }
-      },
-      "resolveTemplate": {
-        "query": "TEMPLATE_BY_PATH",
-        "path": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
-        "into": "__JSON_RENDERING_TEMPLATE_ID__",
-        "verifyFields": [
-          "componentName",
-          "Datasource Template",
-          "Datasource Location"
-        ],
-        "note": "Introspection preflight: the Json Rendering template is resolved by path and its field surface verified before any mutation; a mismatch aborts with remediation instead of guessing."
-      },
+      "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
       "whenAbsent": {
         "mutation": "CREATE_ITEM",
         "variables": {
@@ -582,11 +752,6 @@
             "parent": "__RENDERING_ROOT_ID__",
             "language": "en"
           }
-        },
-        "resolveParent": {
-          "query": "ITEM_BY_PATH",
-          "path": "/sitecore/layout/Renderings/Project/CN",
-          "into": "__RENDERING_ROOT_ID__"
         }
       },
       "resolves": {
@@ -596,6 +761,7 @@
     {
       "id": "set-rendering-bindings",
       "kind": "setRenderingBindings",
+      "targetPath": "/sitecore/layout/Renderings/Project/CN/Related Content Card",
       "always": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -619,7 +785,7 @@
           }
         }
       },
-      "note": "Idempotent set — bindings are written on every push."
+      "note": "Idempotent set of the reviewed rendering contract."
     },
     {
       "id": "ensure-placeholder-settings-0",
@@ -632,8 +798,6 @@
         }
       },
       "resolveTemplate": {
-        "query": "ITEM_BY_PATH",
-        "path": "/sitecore/templates/System/Layout/Placeholder",
         "into": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__"
       },
       "whenAbsent": {
@@ -651,22 +815,17 @@
               }
             ]
           }
-        },
-        "resolveParent": {
-          "query": "ITEM_BY_PATH",
-          "path": "/sitecore/layout/Placeholder Settings/Project/CN",
-          "into": "__PLACEHOLDER_ROOT_ID__"
         }
       },
       "allowedControls": {
         "field": "Allowed Controls",
         "append": "__RENDERING_ID__",
-        "note": "Read-modify-write: the rendering id is appended to Allowed Controls only when missing (add-only; existing controls are preserved)."
+        "note": "The rendering id is appended to Allowed Controls only when missing."
       }
     }
   ],
   "manualFollowUps": [
-    "Register the rendering in the site's Available Renderings / Pages toolbox (not automated in v1).",
-    "Create and assign a rendering parameters template if this component needs one (not automated in v1)."
+    "Register the rendering in each existing site's Available Renderings / Pages toolbox (no sxa.sites target was reviewed).",
+    "Create and assign a rendering parameters template if this component needs one (rendering.parametersTemplate is omitted)."
   ]
 }

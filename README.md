@@ -1,6 +1,6 @@
 # provision-sitecore-ai-component
 
-Provision SitecoreAI components from one reviewed manifest. The manifest — drafted from the BA functional spec in Confluence — drives both sides of component setup: the CMS items (templates, fields with required validation and Source restrictions, the JSON rendering with datasource bindings, insert options, placeholder settings) via the Authoring GraphQL API, and the front-end TSX handoff scaffold (`Component.tsx` + `Component.types.ts`) the [ai-orchestration](https://github.com/verndale/ai-orchestration) pipeline consumes. Because one manifest creates the CMS template *and* the TypeScript boundary contract, the two can't drift.
+Provision SitecoreAI components from one reviewed manifest. The manifest — drafted from the BA functional spec in Confluence — drives both sides of component setup: CMS fields and templates, the JSON rendering and bindings, and, when `sxa` is reviewed, the clone-equivalent folder, rendering-parameters, Standard Values, branches, site setup actions, Available Renderings, and Headless Variants family. It also emits the front-end TSX handoff scaffold (`Component.tsx` + `Component.types.ts`) the [ai-orchestration](https://github.com/verndale/ai-orchestration) pipeline consumes. Because one manifest creates the CMS contract and the TypeScript boundary, the two cannot drift.
 
 ## Contents
 
@@ -11,10 +11,11 @@ Provision SitecoreAI components from one reviewed manifest. The manifest — dra
 - [Subcommands and exit codes](#subcommands-and-exit-codes)
 - [Configuration](#configuration)
 - [The manifest](#the-manifest)
+- [Clone-equivalent SXA provisioning](#clone-equivalent-sxa-provisioning)
 - [Authentication (check/push)](#authentication-checkpush)
 - [Safety model](#safety-model)
 - [The skill](#the-skill)
-- [Manual follow-ups (v1 scope)](#manual-follow-ups-v1-scope)
+- [Conditional follow-ups](#conditional-follow-ups)
 - [Context wiki](#context-wiki)
 - [Development](#development)
 
@@ -66,7 +67,7 @@ node src/cli.cjs check <manifest.json>
 node src/cli.cjs push <manifest.json> --yes
 ```
 
-Two complete manifests modeled on real CN specs live in the golden fixtures and double as reference examples: [test/fixtures/datasource-card/manifest.json](test/fixtures/datasource-card/manifest.json) (datasource component: two templates, a restricted Droptree, insert options, a placeholder) and [test/fixtures/page-fields/manifest.json](test/fixtures/page-fields/manifest.json) (page-driven component: fields added to an existing page template, rendering without a datasource) — with the exact plan and TSX output each produces frozen next to them under `expected*`.
+Three complete manifests live in the golden fixtures and double as reference examples: [test/fixtures/datasource-card/manifest.json](test/fixtures/datasource-card/manifest.json) (datasource component), [test/fixtures/page-fields/manifest.json](test/fixtures/page-fields/manifest.json) (page-driven component), and [test/fixtures/sxa-component/manifest.json](test/fixtures/sxa-component/manifest.json) (synthetic field contract plus the live-verified Training App Router SXA topology). The exact plan and TSX output each produces are frozen under `expected*`. The SXA fixture is a runtime test, not a reviewed manifest for pushing over the live Codex Component.
 
 ## Subcommands and exit codes
 
@@ -89,7 +90,8 @@ Resolution order: `--config <path>` → `./provision.config.json` → `./build.c
   "templateRoots": {
     "datasource": "/sitecore/templates/Project/<tenant>/<site>/Components",
     "base": "/sitecore/templates/Project/<tenant>/<site>/Pages/Base",
-    "page": "/sitecore/templates/Project/<tenant>/<site>/Pages"
+    "page": "/sitecore/templates/Project/<tenant>/<site>/Pages",
+    "renderingParameters": "/sitecore/templates/Project/<tenant>/<site>/Rendering Parameters"
   },
   "renderingRoot": "/sitecore/layout/Renderings/Project/<tenant>/<site>",
   "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/<tenant>/<site>",
@@ -100,9 +102,41 @@ Resolution order: `--config <path>` → `./provision.config.json` → `./build.c
 
 ## The manifest
 
-The reviewed contract for one component: which templates (new datasource/base templates, or a field section added to an `existing` page template), each field's `name` / `title` / `sitecoreType` / `required` / `source` / `helpText`, the rendering and its bindings, insert options, and placeholder settings. Full schema with semantics: [skills/provision-sitecore-ai-component/references/manifest-contract.md](skills/provision-sitecore-ai-component/references/manifest-contract.md). The Sitecore-type → TypeScript → renderer table: [references/type-mapping.md](skills/provision-sitecore-ai-component/references/type-mapping.md).
+The reviewed contract for one component: content and structural templates, each field's authoring contract, the rendering and its bindings, insert options, placeholder settings, and optional explicit SXA scaffolding/site targets. Full schema with semantics: [skills/provision-sitecore-ai-component/references/manifest-contract.md](skills/provision-sitecore-ai-component/references/manifest-contract.md). The Sitecore-type → TypeScript → renderer table: [references/type-mapping.md](skills/provision-sitecore-ai-component/references/type-mapping.md).
 
 The generated `<slug>.plan.json` is the human-reviewable push artifact: it embeds every GraphQL document verbatim, the resolved paths, and `__PLACEHOLDER__` ids that the executor binds from preflight results at run time — no hardcoded GUIDs anywhere.
+
+## Clone-equivalent SXA provisioning
+
+An explicit `sxa` block provisions the item family that the Training App Router `Codex Component` clone established. Names and the datasource query are validated as one convention: rendering and content template `<Component>`, folder `<Component> Folder`, parameters `<Component> Parameters`, and:
+
+```text
+./Data|query:$site/*[@@name='Data']/*[@@templatename='<Component> Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='<Component> Folder']
+```
+
+The resulting topology is:
+
+```text
+Templates/
+  <Component> + __Standard Values
+  <Component> Folder + __Standard Values (__Masters allows component + folder)
+  Rendering Parameters/<Component> Parameters + __Standard Values
+Renderings/
+  <Component> (datasource, parameters, query, authoring options)
+Branches/
+  Default <Component> Variant/$name/Default
+  Available Headless <Module> Renderings/$name
+Settings/
+  Add <Component> Data Item
+  Add Available Renderings
+  Rendering Variants/<Component>
+Each reviewed existing site/
+  Data/<Component>
+  Presentation/Available Renderings/<Category>
+  Presentation/Headless Variants/<Component>/Default
+```
+
+`sxa.siteScaffolding` defines reusable branch/setup items for future sites. `sxa.sites` backfills only the explicitly listed existing sites; the CLI never discovers and fans out across a tenant. Missing Available Renderings categories are created only when `createAvailableRenderingsCategory: true` was reviewed. Direct existing-site projection creates the functional items but does not claim branch `BranchID`/`__Originator` history.
 
 ## Authentication (check/push)
 
@@ -122,7 +156,7 @@ Resolution order for non-empty values: exported env vars → a repo-root `.env` 
 
 - **Offline by default** — `plan` touches nothing but local files; `check` is read-only.
 - **Add-only reconcile** — the tool creates and updates; it never deletes, renames, retypes, or removes list entries (Allowed Controls, `__Masters`, validation bars). Extra CMS fields and type mismatches are reported as follow-ups, never "fixed".
-- **Resolve by path, verify by introspection** — well-known items (the Json Rendering template, the Required field rule, section/field templates) are resolved by path at run time, and the Json Rendering template's field surface is introspected before any rendering mutation; a mismatch aborts with remediation instead of guessing.
+- **Resolve by path, verify by introspection** — every external template/root and every discoverable template, rendering, or SXA target collision is checked before the first mutation. Wrong templates and missing required fields abort with remediation instead of allowing a partial provision.
 - **Create-only scaffold** — an existing TSX pair is never overwritten without `--force-tsx`.
 - **Bounded retries** — at most 3 transport attempts, only on network errors/429/5xx; auth and schema errors never retry.
 
@@ -134,12 +168,12 @@ Install it globally with `setup.sh` ([Install the skill globally](#install-the-s
 
 `skills/_meta/` and the skill's `references/retry-contract.md` are vendored copies of the ai-orchestration authoring specs so skill edits here follow the same standard; re-sync them from the source repo when it changes.
 
-## Manual follow-ups (v1 scope)
+## Conditional follow-ups
 
-Every plan and push report lists what the tool deliberately does not automate:
+Every plan and push report lists what was omitted or declined:
 
-- Registering the rendering in the site's **Available Renderings** / Pages toolbox.
-- Creating/assigning a **rendering parameters** template.
+- No `sxa.sites` targets → registering the rendering in existing sites remains manual.
+- No `rendering.parametersTemplate` → creating/assigning one remains manual.
 - Anything the add-only reconcile declined (extra fields, type conflicts) — reported verbatim for a human decision.
 
 ## Context wiki

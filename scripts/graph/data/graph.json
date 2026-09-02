@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 90,
-    "edges": 187,
+    "nodes": 92,
+    "edges": 192,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -10,20 +10,20 @@
       "reference": 6,
       "skill": 1,
       "source": 7,
-      "test": 13,
+      "test": 14,
       "wiki-index": 3,
-      "wiki-journal": 14,
+      "wiki-journal": 15,
       "wiki-plan": 9,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 8,
       "invokes": 7,
-      "links-to": 82,
+      "links-to": 84,
       "plan": 9,
       "references": 6,
-      "requires": 56,
-      "topic": 19
+      "requires": 58,
+      "topic": 20
     }
   },
   "nodes": [
@@ -167,7 +167,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14158,
+      "bytes": 15928,
       "degree": 8
     },
     {
@@ -479,7 +479,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 2464,
+      "bytes": 2683,
       "degree": 4
     },
     {
@@ -492,7 +492,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6630,
+      "bytes": 7846,
       "degree": 5
     },
     {
@@ -505,7 +505,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3884,
+      "bytes": 5047,
       "degree": 2
     },
     {
@@ -518,7 +518,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6983,
+      "bytes": 11247,
       "degree": 5
     },
     {
@@ -570,7 +570,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7882,
+      "bytes": 8472,
       "degree": 13
     },
     {
@@ -583,7 +583,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 13602,
+      "bytes": 31139,
       "degree": 6
     },
     {
@@ -609,8 +609,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6653,
-      "degree": 6
+      "bytes": 6764,
+      "degree": 7
     },
     {
       "id": "src/executor.cjs",
@@ -622,7 +622,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 23288,
+      "bytes": 37230,
       "degree": 4
     },
     {
@@ -661,8 +661,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14291,
-      "degree": 4
+      "bytes": 33041,
+      "degree": 5
     },
     {
       "id": "test/executor.test.cjs",
@@ -674,7 +674,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 15304,
+      "bytes": 36072,
       "degree": 4
     },
     {
@@ -713,7 +713,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6560,
+      "bytes": 9495,
       "degree": 4
     },
     {
@@ -752,7 +752,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5235,
+      "bytes": 5444,
       "degree": 5
     },
     {
@@ -793,6 +793,19 @@
       "githubRefs": [],
       "bytes": 4932,
       "degree": 0
+    },
+    {
+      "id": "test/sxa-manifest-validation.test.cjs",
+      "label": "sxa-manifest-validation.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 13810,
+      "degree": 2
     },
     {
       "id": "test/validate.test.cjs",
@@ -843,8 +856,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6322,
-      "degree": 21
+      "bytes": 6619,
+      "degree": 22
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1194,6 +1207,21 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 1475,
+      "degree": 3
+    },
+    {
+      "id": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
+      "label": "Clone-equivalent SXA component provisioning",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 2235,
       "degree": 3
     },
     {
@@ -1695,8 +1723,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 9944,
-      "degree": 39
+      "bytes": 10768,
+      "degree": 41
     }
   ],
   "edges": [
@@ -2064,6 +2092,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2227,7 +2262,7 @@
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "skills/provision-sitecore-ai-component/references/manifest-contract.md",
       "type": "links-to",
-      "count": 1,
+      "count": 2,
       "anchors": []
     },
     {
@@ -2317,6 +2352,13 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2645,6 +2687,16 @@
       "type": "requires"
     },
     {
+      "source": "test/sxa-manifest-validation.test.cjs",
+      "target": "src/emit-tsx.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/sxa-manifest-validation.test.cjs",
+      "target": "src/validate-manifest.cjs",
+      "type": "requires"
+    },
+    {
       "source": "test/validate.test.cjs",
       "target": "src/type-map.cjs",
       "type": "requires"
@@ -2766,6 +2818,11 @@
     },
     {
       "source": "wiki/journal/2026-08-31-windows-skill-junctions.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-01-clone-equivalent-sxa-provisioning.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     },

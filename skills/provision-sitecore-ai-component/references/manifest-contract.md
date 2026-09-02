@@ -10,6 +10,7 @@ Schema and semantics for the component manifest — the single reviewed artifact
 - templates[]
 - Fields
 - rendering
+- sxa
 - placeholders[]
 - sitecorePaths
 - Validation failures
@@ -30,7 +31,8 @@ Config shape (all keys optional at the file level; completeness is checked again
   "templateRoots": {
     "datasource": "/sitecore/templates/Project/<tenant>/<site>/Components",
     "base": "/sitecore/templates/Project/<tenant>/<site>/Pages/Base",
-    "page": "/sitecore/templates/Project/<tenant>/<site>/Pages"
+    "page": "/sitecore/templates/Project/<tenant>/<site>/Pages",
+    "renderingParameters": "/sitecore/templates/Project/<tenant>/<site>/Rendering Parameters"
   },
   "renderingRoot": "/sitecore/layout/Renderings/Project/<tenant>/<site>",
   "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/<tenant>/<site>",
@@ -105,13 +107,17 @@ Config shape (all keys optional at the file level; completeness is checked again
 
 ## templates[]
 
-At least one entry. Each entry:
+At least one `kind: "content"` entry is required because the TSX contract is derived only from content-template fields. Structural templates do not leak into the frontend contract. Each entry:
 
-- `role` — `datasource` | `base` | `page`; picks the parent from the config `templateRoots`. `parentPath` (absolute `/sitecore/` path) overrides the role root when a template lives elsewhere.
+- `role` — `datasource` | `base` | `page` | `renderingParameters`; picks the parent from the config `templateRoots`. `parentPath` (absolute `/sitecore/` path) overrides the role root when a template lives elsewhere.
+- `kind` — `content` (default), `folder`, or `renderingParameters`. Content templates require non-empty `sections`; structural templates may omit `sections` or use an empty array.
 - `name` — the Sitecore template item name. Unique within the manifest.
 - `existing` — `true` when the template already exists (the Masthead case: adding a field section to a page template). The push preflight must find it or the run aborts; sections/fields are then reconciled add-only.
-- `sections[]` — `{ name, fields[] }`, at least one section, each with at least one field.
-- `insertOptions` — optional list of manifest template names or absolute template paths; appended (add-only) to the template's standard-values `__Masters`.
+- `sections[]` — `{ name, fields[] }`; every declared section has at least one field.
+- `standardValues` — optional boolean. `true` creates/links the template Standard Values item. `insertOptions` also implies Standard Values even when this key is omitted.
+- `baseTemplates` — optional array of absolute template paths. Existing direct bases are preserved and missing requested bases are appended.
+- `icon` — optional Sitecore icon value. An empty existing icon may be filled; a different non-empty icon is reported and preserved.
+- `insertOptions` — optional list of manifest template names or absolute template paths; appended (add-only) to the linked Standard Values `__Masters`.
 
 ## Fields
 
@@ -130,6 +136,60 @@ At least one entry. Each entry:
 - `componentName` — optional; defaults to `component`. Must match the React component the app's component map registers.
 - `datasourceTemplate` — optional; a manifest template name or absolute template path. Omit for renderings that read the page item instead of a datasource.
 - `datasourceLocation` — optional; falls back to the config `datasourceLocation` when a datasource template is set. Opaque authored string (path or `query:…`).
+- `parametersTemplate` — optional manifest `kind: "renderingParameters"` template name or absolute template path; written to `Parameters Template`.
+- `openPropertiesAfterAdd` — optional boolean; written as `1`/`0` to the rendering field of the same meaning.
+- `enableDatasourceQuery` — optional boolean; written as `1`/`0`.
+- `dynamicPlaceholders` — optional boolean. `true` additively adds `IsRenderingsWithDynamicPlaceholders=true` to `OtherProperties`; unrelated properties are preserved. `false` never removes an existing true value and reports that add-only conflict.
+- `icon` — optional rendering icon value.
+
+## sxa
+
+Optional clone-equivalent SXA topology. When present, it requires a datasource-backed rendering plus three manifest templates whose names follow one convention:
+
+- content template and rendering: `<Component>`;
+- folder template: `<Component> Folder` (`sxa.folderTemplate`);
+- rendering-parameters template: `<Component> Parameters`.
+
+The content and rendering-parameters templates require `standardValues: true`. The folder's `insertOptions` must contain both the content template and the folder itself, creating the recursive `__Masters` contract. Clone-equivalent bases are also required:
+
+- content: Standard template and `_PerSiteStandardValues`;
+- folder: Standard template;
+- parameters: `BaseRenderingParameters`, `IDynamicPlaceholder`, `_PerSiteStandardValues`, and `IRenderingId` at the absolute Foundation paths shown in the SXA golden fixture.
+
+`rendering.datasourceLocation` is mandatory and must equal:
+
+```text
+./Data|query:$site/*[@@name='Data']/*[@@templatename='<Component> Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='<Component> Folder']
+```
+
+The CLI validates this exact value and requires `rendering.enableDatasourceQuery: true` instead of silently falling back to the generic config query.
+
+`sxa.siteScaffolding` is optional and creates reusable definitions used when future sites enable the module:
+
+```json
+{
+  "branchRoot": "/sitecore/templates/Branches/Project/<module>",
+  "setupRoot": "/sitecore/system/Settings/Project/<module>/<setup module>",
+  "moduleName": "<module>",
+  "dataActionName": "Add <Component> Data Item"
+}
+```
+
+Paths are exact reviewed values and are never trimmed (a live root may intentionally contain trailing whitespace). `dataActionName` is optional; the default is `Add <Rendering name> Data Item`. This block creates the Default Variant branch, Available Headless Renderings branch, and the three setup actions for Data, Available Renderings, and Rendering Variants.
+
+`sxa.sites` is an optional non-empty array of explicitly reviewed existing sites:
+
+```json
+{
+  "siteRoot": "/sitecore/content/<collection>/<site>",
+  "availableRenderingsCategory": "<module or category>",
+  "createDataFolder": true,
+  "createHeadlessVariant": true,
+  "createAvailableRenderingsCategory": false
+}
+```
+
+The first two creation flags default to `true`. Category creation defaults to `false`; a missing category is a preflight conflict unless explicit creation was reviewed. The rendering is appended to the category's `Renderings` field without removing existing entries. Direct existing-site projection creates the functional Data/category/variant items, not branch provenance metadata such as `BranchID`/`__Originator`. The tool never discovers other tenant sites.
 
 ## placeholders[]
 
