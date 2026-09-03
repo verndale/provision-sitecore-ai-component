@@ -21,6 +21,7 @@
  * `fetchImpl` is injectable for tests; defaults to global fetch.
  */
 
+const { sitecoreQuerySource, folderMatchesOptions, parentItemPath, SEARCH_PAGE_SIZE } = require("./option-source.cjs");
 const DEFAULT_TOKEN_URL = "https://auth.sitecorecloud.io/oauth/token";
 const DEFAULT_AUDIENCE = "https://api.sitecorecloud.io";
 const MAX_ATTEMPTS = 3;
@@ -225,6 +226,16 @@ function createClient(plan, options) {
         value: data.item.field ? data.item.field.value : null,
       };
     },
+    async itemChildren(path) {
+      const data = await graphql("ITEM_CHILDREN", { path });
+      if (!data.item) return { item: null, children: [] };
+      const nodes = data.item.children && Array.isArray(data.item.children.nodes) ? data.item.children.nodes : [];
+      return { item: data.item, children: nodes };
+    },
+    async searchItems(queryInput) {
+      const data = await graphql("SEARCH_ITEMS", { query: queryInput });
+      return data.search || { totalCount: 0, results: [] };
+    },
     async updateItem(itemId, fields) {
       const data = await graphql("UPDATE_ITEM", { input: { itemId, language: "en", fields } }, { mutation: true });
       return data.updateItem.item;
@@ -248,6 +259,10 @@ function planRequiresRule(plan) {
   return plan.ops.some((op) => op.kind === "configureField" && op.required);
 }
 
+function planRequiresFolderTemplate(plan) {
+  return plan.ops.some((op) => op.kind === "resolveOptionSource");
+}
+
 async function resolveBinding(client, bindings, path, placeholder, { optional = false, remediation } = {}) {
   const item = await client.itemByPath(path);
   if (!item) {
@@ -256,6 +271,114 @@ async function resolveBinding(client, bindings, path, placeholder, { optional = 
   }
   bindings[placeholder] = item.itemId;
   return item;
+}
+
+function searchQueryInput(searchRoot, itemTemplateId, pageIndex) {
+  return {
+    searchStatement: {
+      criteria: [
+        { field: "_path", operator: "MUST", criteriaType: "CONTAINS", value: searchRoot },
+        { field: "_template", operator: "MUST", criteriaType: "EXACT", value: itemTemplateId },
+      ],
+    },
+    paging: { pageSize: SEARCH_PAGE_SIZE, pageIndex },
+  };
+}
+
+async function paginateSearch(client, searchRoot, itemTemplateId) {
+  const results = [];
+  for (let pageIndex = 0; pageIndex < 1000; pageIndex += 1) {
+    const page = await client.searchItems(searchQueryInput(searchRoot, itemTemplateId, pageIndex));
+    const batch = Array.isArray(page.results) ? page.results : [];
+    results.push(...batch);
+    const total = typeof page.totalCount === "number" ? page.totalCount : results.length;
+    if (batch.length === 0 || batch.length < SEARCH_PAGE_SIZE || results.length >= total) break;
+  }
+  return results;
+}
+
+function resultPath(result) {
+  if (result && result.innerItem && typeof result.innerItem.path === "string") return result.innerItem.path;
+  return result && typeof result.path === "string" ? result.path : "";
+}
+
+function resultName(result) {
+  if (result && result.innerItem && typeof result.innerItem.name === "string") return result.innerItem.name;
+  return result && typeof result.name === "string" ? result.name : "";
+}
+
+function isUnderRoot(itemPath, searchRoot) {
+  const root = String(searchRoot || "").replace(/\/+$/, "");
+  const path = String(itemPath || "").replace(/\/+$/, "");
+  return path === root || path.startsWith(`${root}/`);
+}
+
+async function optionItemMatches(client, child, option, itemTemplateId, valueField) {
+  const childTemplateId = child.template && child.template.templateId;
+  if (normalizeId(childTemplateId) !== normalizeId(itemTemplateId)) return false;
+  const display = child.displayName && String(child.displayName).trim() ? child.displayName : child.name;
+  if (child.name !== option.name || display !== option.displayName) return false;
+  const { value } = await client.fieldValue(child.path, valueField);
+  return String(value ?? "") === option.value;
+}
+
+async function findExactOptionFolders(client, searchRoot, options, itemTemplateId, valueField) {
+  const hits = await paginateSearch(client, searchRoot, itemTemplateId);
+  const wanted = new Set(options.map((option) => option.name));
+  const candidateParents = new Set();
+  for (const hit of hits) {
+    const itemPath = resultPath(hit);
+    if (!isUnderRoot(itemPath, searchRoot)) continue;
+    if (!wanted.has(resultName(hit))) continue;
+    const parent = parentItemPath(itemPath);
+    if (parent) candidateParents.add(parent);
+  }
+  const matches = [];
+  for (const folderPath of [...candidateParents].sort()) {
+    const { children } = await client.itemChildren(folderPath);
+    if (!folderMatchesOptions(children, options)) continue;
+    let exact = true;
+    for (const option of options) {
+      const child = children.find((candidate) => candidate.name === option.name);
+      if (!child || !(await optionItemMatches(client, child, option, itemTemplateId, valueField))) {
+        exact = false;
+        break;
+      }
+    }
+    if (exact) matches.push(folderPath);
+  }
+  return matches;
+}
+
+async function ensureAncestorFolders(client, bindings, mode, ancestors, folderTemplatePlaceholder) {
+  const missing = [];
+  for (const path of ancestors) {
+    const found = await client.itemByPath(path);
+    if (found) continue;
+    missing.push(path);
+    if (mode === "check") continue;
+    const parentPath = parentItemPath(path);
+    const parent = await client.itemByPath(parentPath);
+    if (!parent) {
+      throw new ExecutorError(
+        "conflict",
+        `Cannot create option-source folder ${path} because parent ${parentPath} was not found.`,
+        "Create the missing ancestor in the CMS (or correct fallback.path) and re-run."
+      );
+    }
+    const name = path.slice(parentPath.length + 1);
+    await client.createItem({
+      name,
+      templateId: bindings[folderTemplatePlaceholder],
+      parent: parent.itemId,
+      language: "en",
+    });
+  }
+  return missing;
+}
+
+function optionItemByName(children, name) {
+  return children.find((child) => child.name === name) || null;
 }
 
 async function runPlan(plan, options) {
@@ -275,6 +398,7 @@ async function runPlan(plan, options) {
         let resolvedCount = 0;
         for (const [placeholder, path] of Object.entries(op.resolves)) {
           if (placeholder === "__REQUIRED_RULE_ID__" && !planRequiresRule(plan)) continue;
+          if (placeholder === "__FOLDER_TEMPLATE_ID__" && !planRequiresFolderTemplate(plan)) continue;
           await resolveBinding(client, bindings, path, placeholder, {
             remediation: `The well-known system item ${path} was not found; this environment differs from the assumed SitecoreAI layout. Adjust the plan/manifest paths.`,
           });
@@ -461,6 +585,114 @@ async function runPlan(plan, options) {
         break;
       }
 
+      case "resolveOptionSource": {
+        let itemTemplateId = bindings[op.itemTemplate.placeholder];
+        if (!itemTemplateId) {
+          const itemTemplate = await client.itemByPath(op.itemTemplate.path);
+          if (itemTemplate) {
+            itemTemplateId = itemTemplate.itemId;
+            bindings[op.itemTemplate.placeholder] = itemTemplateId;
+          }
+        }
+        if (!itemTemplateId && mode === "push") {
+          throw new ExecutorError(
+            "conflict",
+            `Option item template was not found at ${op.itemTemplate.path}.`,
+            "Declare it in the manifest or correct optionSource.itemTemplate, then re-run."
+          );
+        }
+        const matches = itemTemplateId
+          ? await findExactOptionFolders(client, op.searchRoot, op.options, itemTemplateId, op.valueField)
+          : [];
+        if (matches.length > 1) {
+          throw new ExecutorError(
+            "conflict",
+            `Multiple folders under ${op.searchRoot} match the ${op.fieldName} options exactly: ${matches.join(", ")}.`,
+            "Pick one folder (or change option names) and set a verbatim source, or remove the extra match; the tool will not choose."
+          );
+        }
+        if (matches.length === 1) {
+          bindings[op.sourcePlaceholder] = sitecoreQuerySource(matches[0]);
+          record(op.id, "no-op", `reused option folder ${matches[0]}`);
+          break;
+        }
+
+        const missingAncestors = await ensureAncestorFolders(client, bindings, mode, op.fallbackAncestors, op.folderTemplatePlaceholder);
+        let folderLookup = await client.itemChildren(op.fallbackPath);
+        const existingChildren = folderLookup.item ? folderLookup.children : [];
+        const extraChildren = existingChildren.filter((child) => !op.options.some((option) => option.name === child.name));
+        for (const extra of extraChildren) {
+          followUps.push(
+            `Option folder ${op.fallbackPath} has extra item "${extra.name}" not in the manifest — left untouched (never deleted).`
+          );
+        }
+        const missingOptions = [];
+        const incompatibleOptions = [];
+        for (const option of op.options) {
+          const existing = optionItemByName(existingChildren, option.name);
+          if (!existing) {
+            missingOptions.push(option);
+            continue;
+          }
+          if (!itemTemplateId || !(await optionItemMatches(client, existing, option, itemTemplateId, op.valueField))) {
+            incompatibleOptions.push(option);
+            followUps.push(
+              `Option item ${op.fallbackPath}/${option.name} does not match template ${op.itemTemplate.path}, display name "${option.displayName}", and ${op.valueField}="${option.value}" — left untouched; reconcile manually.`
+            );
+          }
+        }
+
+        if (incompatibleOptions.length > 0) {
+          bindings[`${op.sourcePlaceholder}:conflict`] = true;
+          record(op.id, "conflict", `incompatible option item(s): ${incompatibleOptions.map((option) => option.name).join(", ")}`);
+          break;
+        }
+
+        if (mode === "push" && missingOptions.length > 0) {
+          const folderItem = folderLookup.item || (await client.itemByPath(op.fallbackPath));
+          if (!folderItem) {
+            throw new ExecutorError(
+              "conflict",
+              `Option folder ${op.fallbackPath} was not found; cannot create option items.`,
+              "Create the fallback folder (or correct fallback.path) and re-run."
+            );
+          }
+          for (const option of missingOptions) {
+            await client.createItem({
+              name: option.name,
+              templateId: itemTemplateId,
+              parent: folderItem.itemId,
+              language: "en",
+              fields: [
+                { name: "__Display name", value: option.displayName },
+                { name: op.valueField, value: option.value },
+              ],
+            });
+          }
+        }
+
+        bindings[op.sourcePlaceholder] = sitecoreQuerySource(op.fallbackPath);
+        const wouldCreate = missingAncestors.length + missingOptions.length;
+        if (mode === "check") {
+          record(
+            op.id,
+            wouldCreate > 0 ? "create" : extraChildren.length > 0 ? "update" : "no-op",
+            wouldCreate > 0
+              ? `option folder ${op.fallbackPath} (${missingOptions.map((o) => o.name).join(", ") || "folders"})`
+              : `option folder ${op.fallbackPath}`
+          );
+        } else {
+          record(
+            op.id,
+            wouldCreate > 0 ? "created" : "no-op",
+            wouldCreate > 0
+              ? `option folder ${op.fallbackPath} with ${missingOptions.map((o) => o.name).join(", ") || "folders"}`
+              : `option folder ${op.fallbackPath}`
+          );
+        }
+        break;
+      }
+
       case "configureField": {
         const found = await client.itemByPath(op.fieldPath);
         if (!found) {
@@ -475,13 +707,16 @@ async function runPlan(plan, options) {
           break;
         }
         if (mode === "check") {
-          record(op.id, "update", `would set ${op.set.variables.input.fields.map((f) => f.name).join(", ")}${op.required ? " + Required rule" : ""}`);
+          const sourceConflicted = op.optionSourcePlaceholder && bindings[`${op.optionSourcePlaceholder}:conflict`] === true;
+          const names = op.set.variables.input.fields.filter((field) => !(sourceConflicted && field.name === "Source")).map((field) => field.name);
+          record(op.id, sourceConflicted ? "conflict" : "update", `would set ${names.join(", ")}${sourceConflicted ? " (Source skipped — option conflict)" : ""}${op.required ? " + Required rule" : ""}`);
           break;
         }
         const typeConflicted = bindings[`typeConflict:${op.fieldPath}`] === true;
-        const setFields = typeConflicted
-          ? op.set.variables.input.fields.filter((f) => f.name !== "Type")
-          : op.set.variables.input.fields;
+        const sourceConflicted = op.optionSourcePlaceholder && bindings[`${op.optionSourcePlaceholder}:conflict`] === true;
+        const setFields = op.set.variables.input.fields.filter(
+          (field) => !(typeConflicted && field.name === "Type") && !(sourceConflicted && field.name === "Source")
+        );
         await client.updateItem(found.itemId, substitute(setFields, bindings));
         if (op.required) {
           for (const barField of op.required.appendRuleTo) {
@@ -492,7 +727,7 @@ async function runPlan(plan, options) {
             }
           }
         }
-        record(op.id, "updated", `configured${typeConflicted ? " (Type left untouched — CMS type differs)" : ""}${op.required ? " (+Required rule)" : ""}`);
+        record(op.id, sourceConflicted ? "conflict" : "updated", `configured${typeConflicted ? " (Type left untouched — CMS type differs)" : ""}${sourceConflicted ? " (Source left untouched — option conflict)" : ""}${op.required ? " (+Required rule)" : ""}`);
         break;
       }
 
@@ -548,6 +783,28 @@ async function runPlan(plan, options) {
           await client.updateItem(sv.itemId, [{ name: op.insertOptions.field, value }]);
         }
         record(op.id, appended > 0 ? "updated" : "no-op", `insert options appended: ${appended}`);
+        break;
+      }
+
+      case "ensureFieldDefaults": {
+        const template = await client.itemByPath(op.templatePath);
+        if (!template) {
+          record(op.id, mode === "check" ? "create" : "conflict", "template not present yet; field defaults follow its creation");
+          if (mode === "push") {
+            followUps.push(`Field defaults for ${op.templatePath} could not be written because the template was missing at this point in the run.`);
+          }
+          break;
+        }
+        let sv = await client.itemByPath(op.standardValuesPath);
+        if (mode === "check") {
+          record(op.id, sv ? "update" : "create", `defaults: ${op.fields.map((f) => f.name).join(", ")}`);
+          break;
+        }
+        if (!sv) {
+          sv = await client.createItem(substitute(op.whenAbsent.variables.input, bindings));
+        }
+        await client.updateItem(sv.itemId, op.fields.map((field) => ({ name: field.name, value: field.value })));
+        record(op.id, "updated", `standard values defaults: ${op.fields.map((f) => f.name).join(", ")}`);
         break;
       }
 

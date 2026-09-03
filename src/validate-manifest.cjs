@@ -14,6 +14,7 @@
 
 const { pascalToKebab, isPlainObject } = require("./util.cjs");
 const { DEFAULT_FIELD_SOURCES } = require("./field-source.cjs");
+const { validateOptionSource, collectOptionSourceFields } = require("./option-source.cjs");
 
 const ROLES = ["datasource", "base", "page", "renderingParameters"];
 const TEMPLATE_KINDS = ["content", "folder", "renderingParameters"];
@@ -134,7 +135,7 @@ function validateTemplate(t, index, errors) {
       return;
     }
     if (!Array.isArray(s.fields) || s.fields.length === 0) {
-      errors.push(err(`${sLabel}.fields is missing or empty.`, "Every section must declare at least one field.", "Add field objects: { name, title, sitecoreType, required?, source?, helpText? }."));
+      errors.push(err(`${sLabel}.fields is missing or empty.`, "Every section must declare at least one field.", "Add field objects: { name, title, sitecoreType, required?, source?, optionSource?, defaultValue?, helpText? }."));
       return;
     }
     s.fields.forEach((f, fi) => {
@@ -161,8 +162,27 @@ function validateTemplate(t, index, errors) {
       if (f.required !== undefined && typeof f.required !== "boolean") {
         errors.push(err(`${fLabel}.required must be a boolean.`, "required controls the standard Required field rule in the CMS.", "Set required to true or false, or omit it."));
       }
+      if (f.source !== undefined && f.optionSource !== undefined) {
+        errors.push(err(`${fLabel} has both source and optionSource.`, "source is a verbatim CMS Source string; optionSource discovers or creates option items and writes a Sitecore query.", "Keep only source, or only optionSource."));
+      }
       if (f.source !== undefined && !isNonEmptyString(f.source)) {
         errors.push(err(`${fLabel}.source must be a non-empty string when present.`, "source is the field's Source (selection restriction), written verbatim.", "Set the concrete Source string, or omit it."));
+      }
+      if (f.optionSource !== undefined) {
+        if (String(f.sitecoreType || "").trim().toLowerCase() !== "droplist") {
+          errors.push(err(`${fLabel}.optionSource is only valid on Droplist fields.`, "optionSource discovers or creates named option items and writes a Sitecore query Source.", "Use optionSource only when sitecoreType is Droplist, or set a verbatim source instead."));
+        }
+        validateOptionSource(f.optionSource, fLabel, errors, err);
+      }
+      if (f.defaultValue !== undefined) {
+        if (!isNonEmptyString(f.defaultValue)) {
+          errors.push(err(`${fLabel}.defaultValue must be a non-empty string when present.`, "defaultValue is written to the template's __Standard Values for this field.", "Set defaultValue to an option name, or omit it."));
+        } else if (isPlainObject(f.optionSource) && Array.isArray(f.optionSource.options)) {
+          const names = f.optionSource.options.filter((o) => isPlainObject(o) && isNonEmptyString(o.name)).map((o) => o.name.toLowerCase());
+          if (names.length > 0 && !names.includes(f.defaultValue.toLowerCase())) {
+            errors.push(err(`${fLabel}.defaultValue ("${f.defaultValue}") is not an option name.`, "defaultValue must match one of optionSource.options[].name (the stored Droplist value).", "Set defaultValue to one of the declared option names (e.g. \"light\")."));
+          }
+        }
       }
       if (f.helpText !== undefined && !isNonEmptyString(f.helpText)) {
         errors.push(err(`${fLabel}.helpText must be a non-empty string when present.`, "helpText is written to the field item's short help description.", "Set the help text, or omit it."));
@@ -226,6 +246,26 @@ function validateManifest(manifest, config) {
     });
     if (!manifest.templates.some((template) => isPlainObject(template) && templateKind(template) === "content")) {
       errors.push(err("templates has no content template.", "The TSX contract must be derived from at least one content template; structural templates alone are not a component field contract.", "Add a kind: content template with at least one section and field."));
+    }
+    for (const { templateIndex, section, field } of collectOptionSourceFields(manifest)) {
+      const label = `templates[${templateIndex}].sections[${manifest.templates[templateIndex].sections.findIndex((s) => s.name === section)}].fields[${manifest.templates[templateIndex].sections.find((s) => s.name === section).fields.indexOf(field)}].optionSource`;
+      const itemTemplate = field.optionSource.itemTemplate;
+      if (!isNonEmptyString(itemTemplate)) continue;
+      if (itemTemplate.startsWith("/sitecore/")) {
+        if (!itemTemplate.startsWith("/sitecore/templates/")) {
+          errors.push(err(`${label}.itemTemplate must be under /sitecore/templates/.`, "Option items must be based on a Sitecore template.", "Set itemTemplate to an absolute /sitecore/templates/… path."));
+        }
+        continue;
+      }
+      const declared = manifest.templates.find((candidate) => candidate.name === itemTemplate);
+      if (!declared) {
+        errors.push(err(`${label}.itemTemplate ("${itemTemplate}") is unknown.`, "A named option item template must be declared in this manifest.", "Declare that template in templates[], or use its absolute /sitecore/templates/… path."));
+        continue;
+      }
+      const fields = (declared.sections || []).flatMap((declaredSection) => declaredSection.fields || []);
+      if (!fields.some((candidate) => candidate.name === field.optionSource.valueField)) {
+        errors.push(err(`${label}.valueField ("${field.optionSource.valueField}") is not on template "${itemTemplate}".`, "Each option value must be written to a field owned by the declared option item template.", "Add that field to the template declaration or correct valueField."));
+      }
     }
   }
 

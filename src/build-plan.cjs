@@ -6,10 +6,15 @@
  * The reviewed manifest remains the single source of truth. SXA structural templates,
  * rendering bindings, optional reusable site scaffolding, and concrete site instances
  * are all represented in the deterministic plan. The executor reconciles add-only.
+ *
+ * Op order is fixed: templates → template fields → option datasources → field
+ * configuration → standard values/insert options/field defaults → rendering →
+ * rendering bindings → placeholder settings.
  */
 
 const { joinItemPath, isPlainObject } = require("./util.cjs");
 const { effectiveFieldSource } = require("./field-source.cjs");
+const { collectDefaultValueFields, collectOptionSourceFields, ancestorPaths } = require("./option-source.cjs");
 
 /** Well-known system items, always resolved by path at run time (never by GUID). */
 const SYSTEM_PATHS = {
@@ -47,6 +52,10 @@ const GRAPHQL = {
     "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
   UPDATE_ITEM:
     "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }",
+  SEARCH_ITEMS:
+    'query SearchItems($query: SearchQueryInput!) { search(query: $query) { totalCount results { itemId name path templateId templateName parentId innerItem { itemId name displayName path } } } }',
+  ITEM_CHILDREN:
+    'query GetItemChildren($path: String!) { item(where: { database: "master", path: $path }) { itemId name path children(first: 200, includeHiddenItems: true) { nodes { itemId name displayName path template { templateId name } } } } }',
 };
 
 function templateParentPath(template, resolved) {
@@ -83,6 +92,18 @@ function datasourceTemplatePath(manifest, resolved) {
 
 function insertOptionPath(option, manifest, resolved) {
   return templateReferencePath(option, manifest, resolved) || option;
+}
+
+function optionItemTemplate(field, manifest, resolved, fieldKey) {
+  const ref = field.optionSource.itemTemplate;
+  if (ref.startsWith("/sitecore/")) {
+    return { path: ref, placeholder: `__OPTION_ITEM_TEMPLATE_${fieldKey}_ID__` };
+  }
+  const index = manifest.templates.findIndex((template) => template.name === ref);
+  return {
+    path: templatePath(manifest.templates[index], resolved),
+    placeholder: `__TEMPLATE_${index}_ID__`,
+  };
 }
 
 /** Flatten a template's sections into [{ section, field }] pairs in manifest order. */
@@ -152,6 +173,9 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       __SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__: SYSTEM_PATHS.scaffoldHeadlessVariantsLocation,
     });
   }
+  if (collectOptionSourceFields(manifest).length > 0) {
+    systemResolves.__FOLDER_TEMPLATE_ID__ = SYSTEM_PATHS.folderTemplate;
+  }
 
   ops.push({
     id: "resolve-system-items",
@@ -202,7 +226,7 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
         requiredFields: [],
       });
       for (const field of section.fields) {
-        const source = effectiveFieldSource(field);
+        const source = isPlainObject(field.optionSource) || effectiveFieldSource(field);
         const requiredFields = ["Type", "Title"];
         if (source) requiredFields.push("Source");
         if (field.helpText) requiredFields.push("__Short description");
@@ -253,7 +277,7 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
   const templateFieldSurface = new Set(["Type", "Title"]);
   manifest.templates.forEach((template) => {
     flattenFields(template).forEach(({ field }) => {
-      if (effectiveFieldSource(field)) templateFieldSurface.add("Source");
+      if (isPlainObject(field.optionSource) || effectiveFieldSource(field)) templateFieldSurface.add("Source");
       if (field.helpText) templateFieldSurface.add("__Short description");
       if (field.required === true) VALIDATION_BAR_FIELDS.forEach((name) => templateFieldSurface.add(name));
     });
@@ -375,16 +399,45 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       },
     });
 
+  });
+
+  // Field configuration runs after every template op because an optionSource may
+  // reference an option item template declared later in the manifest.
+  manifest.templates.forEach((template, index) => {
+    const path = templatePath(template, resolved);
     flattenFields(template).forEach(({ section, field }) => {
       const fieldPath = joinItemPath(joinItemPath(path, section), field.name);
+      const sourcePlaceholder = `__OPTION_SOURCE_QUERY_${index}_${field.name}__`;
+      if (isPlainObject(field.optionSource)) {
+        const itemTemplate = optionItemTemplate(field, manifest, resolved, `${index}_${field.name}`);
+        ops.push({
+          id: `resolve-option-source-${index}-${section}-${field.name}`,
+          kind: "resolveOptionSource",
+          fieldName: field.name,
+          searchRoot: field.optionSource.searchRoot,
+          options: field.optionSource.options,
+          valueField: field.optionSource.valueField,
+          itemTemplate,
+          fallbackPath: field.optionSource.fallback.path,
+          folderTemplatePath: SYSTEM_PATHS.folderTemplate,
+          folderTemplatePlaceholder: "__FOLDER_TEMPLATE_ID__",
+          sourcePlaceholder,
+          fallbackAncestors: ancestorPaths(field.optionSource.fallback.path),
+          note: "Search the tenant for a folder whose direct children exactly match the declared name, displayName, item template, and value. Reuse one exact match; multiple matches conflict; otherwise create the fallback folder and typed option items (add-only). Binds Source to query:<folder>/*.",
+        });
+      }
       const values = [itemField("Type", field.sitecoreType), itemField("Title", field.title)];
-      const source = effectiveFieldSource(field);
-      if (source) values.push(itemField("Source", source));
+      if (isPlainObject(field.optionSource)) values.push(itemField("Source", sourcePlaceholder));
+      else {
+        const source = effectiveFieldSource(field);
+        if (source) values.push(itemField("Source", source));
+      }
       if (field.helpText) values.push(itemField("__Short description", field.helpText));
       ops.push({
         id: `configure-field-${index}-${section}-${field.name}`,
         kind: "configureField",
         fieldPath,
+        optionSourcePlaceholder: isPlainObject(field.optionSource) ? sourcePlaceholder : null,
         set: { mutation: "UPDATE_ITEM", variables: { input: { itemId: "__FIELD_ITEM_ID__", language: "en", fields: values } } },
         required: field.required === true
           ? {
@@ -415,6 +468,30 @@ function buildMutationPlan(manifest, resolved, manifestBasename) {
       },
     });
   });
+
+  const defaultsByTemplate = new Map();
+  for (const entry of collectDefaultValueFields(manifest)) {
+    const list = defaultsByTemplate.get(entry.templateIndex) || [];
+    list.push(entry);
+    defaultsByTemplate.set(entry.templateIndex, list);
+  }
+  for (const [index, entries] of defaultsByTemplate) {
+    const template = manifest.templates[index];
+    const path = templatePath(template, resolved);
+    ops.push({
+      id: `ensure-field-defaults-${index}`,
+      kind: "ensureFieldDefaults",
+      templatePath: path,
+      standardValuesPath: joinItemPath(path, "__Standard Values"),
+      templateIdPlaceholder: `__TEMPLATE_${index}_ID__`,
+      whenAbsent: {
+        mutation: "CREATE_ITEM",
+        variables: { input: { name: "__Standard Values", templateId: `__TEMPLATE_${index}_ID__`, parent: `__TEMPLATE_${index}_ID__`, language: "en" } },
+      },
+      fields: entries.map((entry) => ({ name: entry.field.name, value: entry.field.defaultValue })),
+      note: "Writes defaultValue onto __Standard Values (item name for Droplist). Creates standard values when missing.",
+    });
+  }
 
   if (rendering) {
     ops.push({

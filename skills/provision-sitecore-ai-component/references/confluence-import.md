@@ -29,13 +29,14 @@ Do not translate "Content Structure" tree nodes into fields. Use them as evidenc
 - `Required` column `Yes` → `required: true`; `No` or blank → omit.
 - Field types map per `type-mapping.md`; unmappable rows become review questions.
 - Write the house Source into every reviewed `Rich Text` (`query:$xaRichTextProfile`), `Image` (`query:$siteMedia`), and `General Link` (`query:$linkableHomes`) field. The planner supplies these same deterministic values when an older v1 manifest omits them, but a newly drafted manifest keeps them explicit so reviewers can see the authoring contract. Use another exact value only when the spec or project review explicitly chooses it; that non-blank override is preserved verbatim.
-- Notes columns often carry help text (→ `helpText`) and restriction intent (→ a `source` review question when it is not already covered by a house Source).
+- Notes columns often carry help text (→ `helpText`) and restriction intent (→ a `source` review question when it is not already covered by a house Source, or `optionSource` when the spec lists Droplist values). Copy Droplist names, labels, and values from that row; do not assume `light`/`dark` or any other component's set.
 - Prose stating "mandatory on every instance", "cannot publish without it" → confirms `required: true`.
 - The spec's component name in PascalCase becomes `component`; the rendering name usually matches the spec title.
 
 ## Always review questions, never guesses
 
 - Concrete `source` strings for restricted list/tree/reference fields not covered by the three house Sources above, and any proposed exception to a house Source.
+- For Droplist named values: the exact `options[]` from this spec (names change per component), the project folder under which an option item template may be created (or the path of an existing one), its exact value-field name, `searchRoot` (tenant content root), and `fallback.path` (explicit site Data folder). Draft `optionSource`; never put `name=Label` in Source and never create option entries with the Common Folder template.
 - The field-naming convention for `name` (camelCase vs PascalCase) when the project has no established one.
 - `datasourceLocation` when it differs from the config default, except the normative clone-equivalent SXA query defined below.
 - Which picker (Droptree vs Droplink; Multilist vs Treelist) when the spec names only "reference".
