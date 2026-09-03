@@ -20,6 +20,7 @@ How Sitecore field types map to TypeScript types and SDK renderers, and how BA-s
 | Date / Datetime | `Field<string>` | TODO comment (render/format is design-driven) |
 | Checkbox | `Field<boolean>` | TODO comment (markup is design-driven) |
 | Number / Integer | `Field<number>` | TODO comment (markup is design-driven) |
+| Droplist | `Field<string>` | TODO comment (stored value is the selected item name; markup is design-driven) |
 | Droptree / Droplink | `unknown` | TODO comment (verify the SDK's referenced-item type against the app's package surface) |
 | Multilist / Treelist | `unknown[]` | TODO comment (same verification, array shape) |
 | anything else | `Field<unknown>` | TODO comment naming the unmapped type |
@@ -39,15 +40,18 @@ Specs vary in vocabulary. Map common phrasings; anything not clearly one of thes
 | Link, CTA, Button (with URL) | General Link |
 | Date, Start Date, Publish Date | Date |
 | Toggle, Flag, Boolean, Yes/No | Checkbox |
+| Theme, Variant, or any named choice list | Droplist — draft `optionSource` from **this spec's** item names, display names, and values; ask for the project option item template/value field, `searchRoot`, and an explicit Data-folder `fallback.path`; never write `name=Label` into Source |
 | Page Reference, Content Reference (single) | Droptree or Droplink — ask which picker the authors expect |
 | Related Items, Tags, Categories (multiple) | Multilist or Treelist — ask which picker the authors expect |
 
 ## Source restrictions
 
-Specs state selection restrictions as intent — "Restrict to eligible page templates inheriting the shared base template". The manifest `source` value must be the concrete Sitecore Source string (a path, a `query:…`, or parameterized syntax with template filters). Translating intent → string is a review decision:
+Specs state selection restrictions as intent — "Restrict to eligible page templates inheriting the shared base template". For Droptree/Droplink/Multilist/Treelist/Image, the manifest `source` value must be the concrete Sitecore Source string (a path, a `query:…`, or parameterized syntax with template filters). Translating intent → string is a review decision:
 
 Three house field types have deterministic planner defaults for v1 compatibility: `Rich Text` → `query:$xaRichTextProfile`, `Image` → `query:$siteMedia`, and `General Link` → `query:$linkableHomes`. Newly drafted manifests still write those values explicitly for review. An explicit non-blank override is preserved verbatim and must be backed by the spec or project review; no default applies to other list/tree/reference types.
 
 ✅ Surface the spec's restriction sentence as a review question and record the developer's exact answer in `source`.
 
 ❌ Invent a plausible `query:`/`Datasource=` string from the intent sentence and push it.
+
+For a Droplist, copy the spec's option names, author-facing labels, and values into `optionSource.options` instead of a Source string. Those names are per-component (Image CTA Row's `light`/`dark` is an example, not a default). Ask which project item template backs options (or under which project template folder to create it), the exact value-field name, the tenant `searchRoot`, and an explicit `fallback.path` under the site Data folder. The executor writes `query:<folder>/*` after reuse-or-create; only the collection folder uses Common Folder, while each option is an item based on the declared project template. Do not switch the field to Enum or Droplink unless the spec says so.

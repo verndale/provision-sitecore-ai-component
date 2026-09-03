@@ -663,3 +663,290 @@ test("listMerge appends only when missing, normalizing braces and case", () => {
   assert.equal(listMerge("|{4E01C8EC-6EFD-4EFF-895B-BF0F0E5416F2}", "4e01c8ec6efd4eff895bbf0f0e5416f2"), null, "Sitecore's hyphenated field value matches an API compact id");
   assert.equal(normalizeId("{ABC-Def}"), "abcdef");
 });
+
+const THEME_FALLBACK = "/sitecore/content/T/Basic Site/Data/Theme";
+const THEME_QUERY = "query:/sitecore/content/T/#Basic Site#/Data/Theme/*";
+const OPTION_TEMPLATE_PATH = `${CONFIG.templateRoots.datasource}/Option`;
+
+function themeField(overrides = {}) {
+  return {
+    name: "theme",
+    title: "Theme",
+    sitecoreType: "Droplist",
+    required: true,
+    defaultValue: "light",
+    optionSource: {
+      searchRoot: "/sitecore/content/T",
+      itemTemplate: "Option",
+      valueField: "value",
+      options: [
+        { name: "light", displayName: "Light", value: "light" },
+        { name: "dark", displayName: "Dark", value: "dark" },
+      ],
+      fallback: { path: THEME_FALLBACK },
+    },
+    ...overrides,
+  };
+}
+
+function droplistManifest() {
+  return {
+    ...MANIFEST,
+    rendering: null,
+    placeholders: [],
+    templates: [
+      {
+        role: "datasource",
+        name: "Award Card",
+        sections: [{ name: "Content", fields: [themeField()] }],
+      },
+      {
+        parentPath: CONFIG.templateRoots.datasource,
+        name: "Option",
+        sections: [{ name: "Data", fields: [{ name: "value", title: "Value", sitecoreType: "Single-Line Text" }] }],
+      },
+    ],
+  };
+}
+
+function contentTree() {
+  return [
+    { itemId: "sys-folder", name: "Folder", path: SYSTEM_PATHS.folderTemplate },
+    { itemId: "sitecore", name: "sitecore", path: "/sitecore" },
+    { itemId: "content", name: "content", path: "/sitecore/content" },
+    { itemId: "tenant", name: "T", path: "/sitecore/content/T" },
+    { itemId: "site", name: "Basic Site", path: "/sitecore/content/T/Basic Site" },
+    { itemId: "data", name: "Data", path: "/sitecore/content/T/Basic Site/Data" },
+    {
+      itemId: "option-template",
+      name: "Option",
+      path: OPTION_TEMPLATE_PATH,
+      ownFields: [{ name: "value", type: "Single-Line Text" }],
+    },
+  ];
+}
+
+function optionChildren(folderPath, entries) {
+  return entries.map((entry, i) => ({
+    itemId: `opt-${entry.name}-${i}`,
+    name: entry.name,
+    displayName: entry.displayName,
+    path: `${folderPath}/${entry.name}`,
+    templateId: entry.templateId || "option-template",
+    fields: { value: entry.value || entry.name },
+  }));
+}
+
+test("plan resolves typed option items after all template ensure ops and before field config", () => {
+  const plan = buildPlan(droplistManifest());
+  assert.match(plan.graphql.SEARCH_ITEMS, /search\(query: \$query\)/);
+  assert.match(plan.graphql.ITEM_CHILDREN, /GetItemChildren/);
+  assert.equal(plan.systemPaths.folderTemplate, "/sitecore/templates/Common/Folder");
+  const resolve = plan.ops.find((op) => op.kind === "resolveOptionSource");
+  assert.ok(resolve);
+  assert.equal(resolve.fallbackPath, THEME_FALLBACK);
+  assert.equal(resolve.itemTemplate.path, OPTION_TEMPLATE_PATH);
+  assert.equal(resolve.itemTemplate.placeholder, "__TEMPLATE_1_ID__");
+  assert.equal(resolve.valueField, "value");
+  const configure = plan.ops.find((op) => op.id.includes("configure-field-0-Content-theme"));
+  assert.ok(configure.set.variables.input.fields.some((f) => f.name === "Source" && f.value === resolve.sourcePlaceholder));
+  assert.ok(plan.ops.findIndex((op) => op.id === "ensure-template-1") < plan.ops.indexOf(resolve));
+  assert.ok(plan.ops.indexOf(resolve) < plan.ops.indexOf(configure));
+  assert.ok(plan.ops.some((op) => op.kind === "ensureFieldDefaults"));
+});
+
+test("executor reuses a tenant folder whose children match name and displayName exactly", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+    {
+      itemId: "tmpl-award",
+      name: "Award Card",
+      path: TEMPLATE_PATH,
+      ownFields: [{ name: "theme", type: "Droplist" }],
+    },
+    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content`, templateId: "sys-section" },
+    { itemId: "fld-theme", name: "theme", path: `${TEMPLATE_PATH}/Content/theme`, templateId: "sys-field", fieldNames: ["Type", "Title", "Source", "Validate Button", "Workflow"] },
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(outcome.ok, true);
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "no-op"));
+  assert.equal(cms.mutations.filter((m) => m.query.includes("CreateItem") && m.variables.input.name === "Theme").length, 0);
+  const sourceWrite = cms.mutations.find(
+    (m) => m.query.includes("UpdateItem") && m.variables.input.itemId === "fld-theme" && (m.variables.input.fields || []).some((f) => f.name === "Source")
+  );
+  assert.ok(sourceWrite);
+  assert.equal(sourceWrite.variables.input.fields.find((f) => f.name === "Source").value, `query:${folder}/*`);
+});
+
+test("executor does not reuse a folder outside searchRoot even when names look similar", async () => {
+  const facebook = "/sitecore/system/Settings/Feature/Experience Accelerator/Engagement/Enums/Facebook comments";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "fb", name: "Facebook comments", path: facebook },
+    ...optionChildren(facebook, [
+      { name: "Light", displayName: "Light" },
+      { name: "Dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/light`));
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/dark`));
+  const createdOptions = cms.mutations.filter(
+    (mutation) => mutation.query.includes("CreateItem") && ["light", "dark"].includes(mutation.variables.input.name)
+  );
+  assert.equal(createdOptions.length, 2);
+  assert.ok(createdOptions.every((mutation) => mutation.variables.input.templateId === "option-template"));
+  assert.deepEqual(
+    createdOptions.map((mutation) => mutation.variables.input.fields.find((field) => field.name === "value").value).sort(),
+    ["dark", "light"]
+  );
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "created"));
+});
+
+test("executor treats a name/displayName mismatch as not reusable and falls back", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "Light", displayName: "Light" },
+      { name: "Dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/light` && i.displayName === "Light"));
+});
+
+test("executor rejects matching names on the wrong item template and creates typed fallback items", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "light", displayName: "Light", templateId: "sys-folder" },
+      { name: "dark", displayName: "Dark", templateId: "sys-folder" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((item) => item.path === `${THEME_FALLBACK}/light` && item.templateId === "option-template"));
+  assert.ok(cms.state.items.some((item) => item.path === `${THEME_FALLBACK}/dark` && item.templateId === "option-template"));
+});
+
+test("multiple exact matches abort as a conflict and do not pick a folder", async () => {
+  const a = "/sitecore/content/T/A/Theme";
+  const b = "/sitecore/content/T/B/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "fa", name: "Theme", path: a },
+    { itemId: "fb", name: "Theme", path: b },
+    ...optionChildren(a, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+    ...optionChildren(b, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await assert.rejects(
+    runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+    (error) => error instanceof ExecutorError && error.kind === "conflict" && /Multiple folders/.test(error.message) && error.message.includes(a) && error.message.includes(b)
+  );
+  assert.equal(cms.mutations.length, 0);
+});
+
+test("fallback extras are reported and never deleted; Source still points at the folder", async () => {
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "enum", name: "Enumerations", path: "/sitecore/content/T/Basic Site/Data/Enumerations" },
+    { itemId: "row", name: "Image CTA Row", path: "/sitecore/content/T/Basic Site/Data/Enumerations/Image CTA Row" },
+    { itemId: "theme", name: "Theme", path: THEME_FALLBACK, templateId: "sys-folder" },
+    ...optionChildren(THEME_FALLBACK, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+      { name: "contrast", displayName: "Contrast" },
+    ]),
+    {
+      itemId: "tmpl-award",
+      name: "Award Card",
+      path: TEMPLATE_PATH,
+      ownFields: [{ name: "theme", type: "Droplist" }],
+    },
+    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content`, templateId: "sys-section" },
+    { itemId: "fld-theme", name: "theme", path: `${TEMPLATE_PATH}/Content/theme`, templateId: "sys-field", fieldNames: ["Type", "Title", "Source", "Validate Button", "Workflow"] },
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(outcome.followUps.some((f) => f.includes("contrast") && f.includes("never deleted")));
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/contrast`));
+  const sourceWrite = cms.mutations.find(
+    (m) => m.query.includes("UpdateItem") && (m.variables.input.fields || []).some((f) => f.name === "Source" && f.value === THEME_QUERY)
+  );
+  assert.ok(sourceWrite);
+});
+
+test("check mode with optionSource issues zero mutations and still predicts fallback creates", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(cms.mutations.length, 0);
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "create"));
+  assert.ok(outcome.results.some((r) => r.kind === undefined && r.id.startsWith("ensure-field-defaults") && r.action === "create"));
+});
+
+test("push writes defaultValue onto __Standard Values as the option item name", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(cms.state.fieldValues[`${TEMPLATE_PATH}/__Standard Values::theme`], "light");
+});
+
+test("optionSource search paginates under the tenant root", async () => {
+  const extras = [];
+  for (let i = 0; i < 101; i += 1) {
+    extras.push({
+      itemId: `pad-${i}`,
+      name: `pad-${i}`,
+      path: `/sitecore/content/T/pad-${i}`,
+      templateId: "option-template",
+      fields: { value: `pad-${i}` },
+    });
+  }
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree(), ...extras] });
+  await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  const searches = cms.calls.filter((c) => !String(c.url).includes("/oauth/token") && JSON.parse(c.init.body).query.includes("SearchItems"));
+  assert.ok(searches.length >= 2, "tenant search must page past the first 100 hits");
+  const firstQuery = JSON.parse(searches[0].init.body).variables.query;
+  assert.equal(firstQuery.searchStatement.criteria[0].operator, "MUST");
+  assert.equal(firstQuery.searchStatement.criteria[0].criteriaType, "CONTAINS");
+  assert.deepEqual(firstQuery.searchStatement.criteria[1], {
+    field: "_template",
+    operator: "MUST",
+    criteriaType: "EXACT",
+    value: "option-template",
+  });
+});
+
+test("optionSource logs never include authoring secrets", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  const logLines = [];
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0, log: (l) => logLines.push(l) });
+  const blob = logLines.join("\n") + JSON.stringify(outcome.results);
+  assert.ok(!blob.includes(FAKE_ENV.SITECORE_AUTHORING_CLIENT_SECRET));
+  assert.ok(!blob.includes(FAKE_ENV.SITECORE_AUTHORING_CLIENT_ID));
+});

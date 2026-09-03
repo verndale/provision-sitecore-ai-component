@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 95,
-    "edges": 206,
+    "nodes": 100,
+    "edges": 227,
     "byType": {
       "hook": 7,
       "root-doc": 4,
@@ -9,21 +9,21 @@
       "skill-readme": 1,
       "reference": 6,
       "skill": 1,
-      "source": 8,
+      "source": 9,
       "test": 15,
       "wiki-index": 3,
-      "wiki-journal": 16,
-      "wiki-plan": 9,
+      "wiki-journal": 18,
+      "wiki-plan": 11,
       "wiki-topic": 2
     },
     "byEdgeType": {
-      "covers": 10,
+      "covers": 11,
       "invokes": 7,
-      "links-to": 87,
-      "plan": 9,
+      "links-to": 96,
+      "plan": 11,
       "references": 6,
-      "requires": 66,
-      "topic": 21
+      "requires": 71,
+      "topic": 25
     }
   },
   "nodes": [
@@ -492,7 +492,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 9873,
+      "bytes": 11254,
       "degree": 5
     },
     {
@@ -505,7 +505,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7198,
+      "bytes": 7800,
       "degree": 2
     },
     {
@@ -518,7 +518,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 14992,
+      "bytes": 16099,
       "degree": 5
     },
     {
@@ -557,7 +557,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3730,
+      "bytes": 4871,
       "degree": 3
     },
     {
@@ -570,7 +570,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10627,
+      "bytes": 11592,
       "degree": 13
     },
     {
@@ -583,8 +583,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 34013,
-      "degree": 9
+      "bytes": 38227,
+      "degree": 10
     },
     {
       "id": "src/cli.cjs",
@@ -622,8 +622,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 40346,
-      "degree": 5
+      "bytes": 51952,
+      "degree": 6
     },
     {
       "id": "src/field-source.cjs",
@@ -639,6 +639,19 @@
       "degree": 4
     },
     {
+      "id": "src/option-source.cjs",
+      "label": "option-source.cjs",
+      "type": "source",
+      "dir": "src",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 7997,
+      "degree": 7
+    },
+    {
       "id": "src/type-map.cjs",
       "label": "type-map.cjs",
       "type": "source",
@@ -648,7 +661,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 4248,
+      "bytes": 4447,
       "degree": 2
     },
     {
@@ -662,7 +675,7 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 790,
-      "degree": 4
+      "degree": 5
     },
     {
       "id": "src/validate-manifest.cjs",
@@ -674,8 +687,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 38121,
-      "degree": 8
+      "bytes": 41671,
+      "degree": 9
     },
     {
       "id": "test/executor.test.cjs",
@@ -687,7 +700,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 36284,
+      "bytes": 49718,
       "degree": 4
     },
     {
@@ -726,7 +739,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 9495,
+      "bytes": 12442,
       "degree": 5
     },
     {
@@ -843,8 +856,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 3531,
-      "degree": 3
+      "bytes": 5946,
+      "degree": 4
     },
     {
       "id": "test/wiki-actions.test.cjs",
@@ -882,8 +895,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 6905,
-      "degree": 23
+      "bytes": 7397,
+      "degree": 25
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1251,6 +1264,36 @@
       "degree": 3
     },
     {
+      "id": "wiki/journal/2026-09-01-droplist-query-sources.md",
+      "label": "Droplist sources via Sitecore query",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1943,
+      "degree": 4
+    },
+    {
+      "id": "wiki/journal/2026-09-01-option-template-dropdown-items.md",
+      "label": "Droplist options use project item templates",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 1944,
+      "degree": 4
+    },
+    {
       "id": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "label": "Placeholder component families",
       "type": "wiki-journal",
@@ -1517,6 +1560,36 @@
       "degree": 4
     },
     {
+      "id": "wiki/plans/2026-09-01-droplist-items-based-on-option-template.md",
+      "label": "Droplist items based on Option template",
+      "type": "wiki-plan",
+      "dir": "wiki/plans",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 3582,
+      "degree": 4
+    },
+    {
+      "id": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
+      "label": "Droplist sources via Sitecore query",
+      "type": "wiki-plan",
+      "dir": "wiki/plans",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 6966,
+      "degree": 4
+    },
+    {
       "id": "wiki/plans/INDEX.md",
       "label": "Plan Audit",
       "type": "wiki-index",
@@ -1599,8 +1672,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/24"
         }
       ],
-      "bytes": 3338,
-      "degree": 11
+      "bytes": 3648,
+      "degree": 13
     },
     {
       "id": "wiki/topics/knowledge-graph.md",
@@ -1764,8 +1837,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 12188,
-      "degree": 46
+      "bytes": 13461,
+      "degree": 56
     }
   ],
   "edges": [
@@ -1812,6 +1885,11 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/field-source.cjs",
+      "type": "covers"
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/option-source.cjs",
       "type": "covers"
     },
     {
@@ -2152,6 +2230,20 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-01-droplist-query-sources.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-01-option-template-dropdown-items.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "type": "links-to",
       "count": 1,
@@ -2270,6 +2362,20 @@
       "anchors": []
     },
     {
+      "source": "wiki/plans/INDEX.md",
+      "target": "wiki/plans/2026-09-01-droplist-items-based-on-option-template.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/plans/INDEX.md",
+      "target": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
       "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/journal/2026-07-21-agents-and-claude-md.md",
       "type": "links-to",
@@ -2350,12 +2456,19 @@
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/executor.cjs",
       "type": "links-to",
-      "count": 1,
+      "count": 2,
       "anchors": []
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/field-source.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/option-source.cjs",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2432,6 +2545,20 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-09-01-droplist-query-sources.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-09-01-option-template-dropdown-items.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "type": "links-to",
       "count": 1,
@@ -2461,6 +2588,20 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/plans/2026-07-22-deny-hand-edits-to-generated-slug-plan-json-plan-artifacts.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/plans/2026-09-01-droplist-items-based-on-option-template.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2508,6 +2649,16 @@
     {
       "source": "wiki/journal/2026-08-23-wiki-actions-routing-standard.md",
       "target": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
+      "type": "plan"
+    },
+    {
+      "source": "wiki/journal/2026-09-01-droplist-query-sources.md",
+      "target": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
+      "type": "plan"
+    },
+    {
+      "source": "wiki/journal/2026-09-01-option-template-dropdown-items.md",
+      "target": "wiki/plans/2026-09-01-droplist-items-based-on-option-template.md",
       "type": "plan"
     },
     {
@@ -2637,6 +2788,11 @@
     },
     {
       "source": "src/build-plan.cjs",
+      "target": "src/option-source.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/build-plan.cjs",
       "target": "src/util.cjs",
       "type": "requires"
     },
@@ -2671,8 +2827,23 @@
       "type": "requires"
     },
     {
+      "source": "src/executor.cjs",
+      "target": "src/option-source.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/option-source.cjs",
+      "target": "src/util.cjs",
+      "type": "requires"
+    },
+    {
       "source": "src/validate-manifest.cjs",
       "target": "src/field-source.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/validate-manifest.cjs",
+      "target": "src/option-source.cjs",
       "type": "requires"
     },
     {
@@ -2812,6 +2983,11 @@
     },
     {
       "source": "test/validate.test.cjs",
+      "target": "src/option-source.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/validate.test.cjs",
       "target": "src/type-map.cjs",
       "type": "requires"
     },
@@ -2941,6 +3117,16 @@
       "type": "topic"
     },
     {
+      "source": "wiki/journal/2026-09-01-droplist-query-sources.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-01-option-template-dropdown-items.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
       "source": "wiki/journal/2026-09-02-placeholder-component-families.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
@@ -2973,6 +3159,16 @@
     {
       "source": "wiki/plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md",
       "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/plans/2026-09-01-droplist-items-based-on-option-template.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     }
   ]

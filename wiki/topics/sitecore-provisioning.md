@@ -1,6 +1,6 @@
 ---
 aliases: [SitecoreAI component provisioning, component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation]
-covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs, src/field-source.cjs, src/validate-manifest.cjs]
+covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs, src/field-source.cjs, src/option-source.cjs, src/validate-manifest.cjs]
 ---
 # SitecoreAI component provisioning — Design History
 
@@ -22,11 +22,14 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 - The consolidated preflight validates actual template dependencies and every discoverable manifest-template, rendering, or SXA item collision before the first mutation; existing list values and unrelated rendering properties are preserved add-only.
 - Parent/child families keep one reviewed manifest per component and use a staged child-first workflow: provision the child rendering, then preflight and provision the parent whose placeholder names that rendering in `allowedControls`. Reconcile appends child IDs to `Allowed Controls` and appends the placeholder-settings ID to the parent's raw JSON Rendering `Placeholders` field without removing live entries.
 - The emitted pair (`Component.types.ts` + `Component.tsx`) matches the eng team's handoff contract and the ai-orchestration sitecore-ai adapter's boundary rules; placeholder owners emit Content SDK `AppPlaceholder` slots, while page-driven components (no datasource) emit a typed contract with a marked TODO for the page-item access ([src/emit-tsx.cjs](../../src/emit-tsx.cjs)).
+- A Droplist field may declare `optionSource` instead of a raw `source` string: option names are whatever that spec lists (not a fixed light/dark Theme set); reuse matches item name, display name, project item template, and value field, while fallback creates only the collection as Common Folder and its children as typed option items before writing `query:<folder>/*` ([src/option-source.cjs](../../src/option-source.cjs), [src/executor.cjs](../../src/executor.cjs)).
 - Golden fixtures pin plans and TSX byte-for-byte, modeled on the CN Related Content Card (datasource, two templates, restricted Droptree) and People Detail Masthead (existing page template, rendering without datasource) specs.
 
 ## Decisions
 
 - 2026-09-02 — Kept one component per manifest and made family order explicit because child rendering existence is a real parent preflight dependency; CN Labeled Content Section is the canonical slot model, while contradictory General Image Card Row materials remain a review question rather than an inferred convention ([journal](../journal/2026-09-02-placeholder-component-families.md)).
+- 2026-09-01 — Droplist choices use an explicit per-project item template and value field; Common Folder is limited to the collection path, and the skill asks where the project template lives because that convention is not globally fixed ([plan](../plans/2026-09-01-droplist-items-based-on-option-template.md), [journal](../journal/2026-09-01-option-template-dropdown-items.md)).
+- 2026-09-01 — Droplist named values stay Droplist (not Enum/Droplink) and get Source from a Sitecore item query after tenant reuse-or-create; `name=Value` Source strings and SXA Enum templates were ruled out because they are invalid or the wrong authoring contract ([plan](../plans/2026-09-01-droplist-sources-via-sitecore-query.md), [journal](../journal/2026-09-01-droplist-query-sources.md)).
 - 2026-09-01 — Modeled clone-equivalent SXA topology in the reviewed manifest instead of discovering the live tree, keeping offline plans deterministic and separating future-site scaffolding from explicit existing-site backfill ([journal](../journal/2026-09-01-clone-equivalent-sxa-provisioning.md)).
 - 2026-08-31 — Aligned read-only preflight with the live SitecoreAI schema after the first development-environment check: item paths resolve template IDs, inherited rendering fields are verified, and the Required rule uses its actual system path ([journal](../journal/2026-08-31-live-authoring-check-compatibility.md)).
 - 2026-08-31 — Replaced Git Bash `ln -s` with a Node-managed Windows junction / Unix symlink because copy-like Windows results became stale and broke idempotent setup; existing ordinary directories remain an explicit migration instead of being deleted automatically ([journal](../journal/2026-08-31-windows-skill-junctions.md)).

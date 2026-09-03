@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "component": "ImageCtaRow",
+  "slug": "image-cta-row",
+  "output": "artifacts/image-cta-row",
+  "confluence": {
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6727237711",
+    "pageId": "6727237711"
+  },
+  "templates": [
+    {
+      "role": "datasource",
+      "parentPath": "/sitecore/templates/Project/Training App Router/Hackathon",
+      "name": "Image CTA Row",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "imageCtaRowHeading",
+              "title": "Image CTA Row Heading",
+              "sitecoreType": "Single-Line Text",
+              "required": true,
+              "helpText": "Required. Component must not render if empty."
+            },
+            {
+              "name": "imageCtaRowBodyText",
+              "title": "Image CTA Row Body Text",
+              "sitecoreType": "Multi-Line Text",
+              "helpText": "Optional supporting copy. Omit when empty."
+            },
+            {
+              "name": "primaryLink",
+              "title": "Primary Link",
+              "sitecoreType": "General Link",
+              "required": true,
+              "helpText": "Required. Provides both CTA destination and visible button label."
+            },
+            {
+              "name": "openInModal",
+              "title": "Open In Modal",
+              "sitecoreType": "Checkbox",
+              "helpText": "Default unchecked. Controls CTA behavior only."
+            },
+            {
+              "name": "imageCtaRowImage",
+              "title": "Image CTA Row Image",
+              "sitecoreType": "Image",
+              "required": true,
+              "helpText": "Required. Same asset used across breakpoints. Alt text must be authored on the selected image."
+            },
+            {
+              "name": "theme",
+              "title": "Theme",
+              "sitecoreType": "Droplist",
+              "required": true,
+              "defaultValue": "light",
+              "optionSource": {
+                "searchRoot": "/sitecore/content/Training App Router",
+                "itemTemplate": "Option",
+                "valueField": "value",
+                "options": [
+                  { "name": "light", "displayName": "Light", "value": "light" },
+                  { "name": "dark", "displayName": "Dark", "value": "dark" }
+                ],
+                "fallback": {
+                  "path": "/sitecore/content/Training App Router/Basic Site/Data/Theme"
+                }
+              },
+              "helpText": "Default light. Values should be light=Light and dark=Dark."
+            },
+            {
+              "name": "fullBleedIllustration",
+              "title": "Full-bleed Illustration",
+              "sitecoreType": "Checkbox",
+              "helpText": "Default unchecked. Desktop-only presentation flag."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "parentPath": "/sitecore/templates/Project/Training App Router/Hackathon",
+      "name": "Option",
+      "sections": [
+        {
+          "name": "Data",
+          "fields": [
+            {
+              "name": "value",
+              "title": "Value",
+              "sitecoreType": "Single-Line Text"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "rendering": {
+    "name": "Image CTA Row",
+    "componentName": "ImageCtaRow",
+    "datasourceTemplate": "Image CTA Row"
+  },
+  "sitecorePaths": {
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router"
+  }
+}

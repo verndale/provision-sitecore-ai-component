@@ -26,6 +26,8 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
 
 - 2026-09-02 — [Placeholder component families](journal/2026-09-02-placeholder-component-families.md) — parent slots now emit through the Content SDK and reconcile child restrictions, rendering links, field Sources, and per-site Data folders through staged one-component manifests.
+- 2026-09-01 — [Droplist options use project item templates](journal/2026-09-01-option-template-dropdown-items.md) — collection folders stay simple under Data while each choice uses the project's explicit option template and value field.
+- 2026-09-01 — [Droplist sources via Sitecore query](journal/2026-09-01-droplist-query-sources.md) — Droplist option lists become `query:<folder>/*` after tenant reuse or an explicit Data-folder fallback; `name=Value` Source strings are invalid.
 - 2026-09-01 — [Clone-equivalent SXA component provisioning](journal/2026-09-01-clone-equivalent-sxa-provisioning.md) — one reviewed manifest now models folder/parameters Standard Values, reusable setup branches, and explicit existing-site registration with mutation-free collision preflight.
 - 2026-08-31 — [Live SitecoreAI authoring check compatibility](journal/2026-08-31-live-authoring-check-compatibility.md) — the first real development check aligned item/template queries, inherited rendering-field verification, and the Required-rule path with the current schema.
 - 2026-08-31 — [Windows skill installs use native directory junctions](journal/2026-08-31-windows-skill-junctions.md) — setup now creates testable live links on Windows instead of copy-like Git Bash directories while preserving collision safety.

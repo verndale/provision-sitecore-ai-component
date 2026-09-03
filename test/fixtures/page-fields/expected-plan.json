@@ -36,7 +36,9 @@
     "CREATE_ITEM_TEMPLATE": "mutation CreateTemplate($input: CreateItemTemplateInput!) { createItemTemplate(input: $input) { itemTemplate { templateId name } } }",
     "UPDATE_ITEM_TEMPLATE": "mutation UpdateTemplate($input: UpdateItemTemplateInput!) { updateItemTemplate(input: $input) { itemTemplate { templateId name } } }",
     "CREATE_ITEM": "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
-    "UPDATE_ITEM": "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }"
+    "UPDATE_ITEM": "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }",
+    "SEARCH_ITEMS": "query SearchItems($query: SearchQueryInput!) { search(query: $query) { totalCount results { itemId name path templateId templateName parentId innerItem { itemId name displayName path } } } }",
+    "ITEM_CHILDREN": "query GetItemChildren($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path children(first: 200, includeHiddenItems: true) { nodes { itemId name displayName path template { templateId name } } } } }"
   },
   "ops": [
     {
@@ -263,6 +265,7 @@
       "id": "configure-field-0-Masthead-personName",
       "kind": "configureField",
       "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personName",
+      "optionSourcePlaceholder": null,
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -295,6 +298,7 @@
       "id": "configure-field-0-Masthead-personJobTitle",
       "kind": "configureField",
       "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/personJobTitle",
+      "optionSourcePlaceholder": null,
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -327,6 +331,7 @@
       "id": "configure-field-0-Masthead-profileImage",
       "kind": "configureField",
       "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/profileImage",
+      "optionSourcePlaceholder": null,
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -363,6 +368,7 @@
       "id": "configure-field-0-Masthead-roleStartDate",
       "kind": "configureField",
       "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/roleStartDate",
+      "optionSourcePlaceholder": null,
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {
@@ -388,6 +394,7 @@
       "id": "configure-field-0-Masthead-biographyText",
       "kind": "configureField",
       "fieldPath": "/sitecore/templates/Project/CN/Pages/People Detail Page/Masthead/biographyText",
+      "optionSourcePlaceholder": null,
       "set": {
         "mutation": "UPDATE_ITEM",
         "variables": {

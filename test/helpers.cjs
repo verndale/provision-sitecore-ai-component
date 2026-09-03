@@ -49,12 +49,18 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
     fieldValues: { ...fieldValues },
     nextId: 1,
   };
+  for (const item of state.items) {
+    for (const [field, value] of Object.entries(item.fields || {})) {
+      state.fieldValues[`${item.path}::${field}`] = value;
+    }
+  }
   const calls = [];
   const mutations = [];
 
   const json = (status, body) => ({ ok: status < 400, status, json: async () => body });
   const byPath = (p) => state.items.find((i) => i.path === p) || null;
   const byId = (id) => state.items.find((i) => i.itemId === id) || null;
+  const normalizeFakeId = (id) => String(id || "").toLowerCase().replace(/[{}]/g, "");
   const newId = () => `id-${state.nextId++}`;
 
   async function fetchImpl(url, init) {
@@ -88,6 +94,64 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
         allFields: { nodes: item.allFields || item.ownFields || [] },
       };
       return json(200, { data: { itemTemplate: payload } });
+    }
+    if (query.includes("GetItemChildren")) {
+      const item = byPath(variables.path);
+      if (!item) return json(200, { data: { item: null } });
+      const children = state.items
+        .filter((child) => {
+          const parent = child.path.slice(0, child.path.lastIndexOf("/"));
+          return parent === variables.path;
+        })
+        .map((child) => ({
+          itemId: child.itemId,
+          name: child.name,
+          displayName: child.displayName || state.fieldValues[`${child.path}::__Display name`] || child.name,
+          path: child.path,
+          template: child.templateId
+            ? { templateId: child.templateId, name: (byId(child.templateId) || {}).name || null }
+            : null,
+        }));
+      return json(200, {
+        data: { item: { itemId: item.itemId, name: item.name, path: item.path, children: { nodes: children } } },
+      });
+    }
+    if (query.includes("SearchItems") || query.includes("search(")) {
+      const criteria = (((variables.query || {}).searchStatement || {}).criteria || []);
+      const pathCriterion = criteria.find((c) => c && c.field === "_path");
+      const templateCriterion = criteria.find((c) => c && c.field === "_template");
+      const root = pathCriterion && pathCriterion.value ? String(pathCriterion.value).replace(/\/+$/, "") : "";
+      const templateId = templateCriterion && templateCriterion.value ? String(templateCriterion.value) : "";
+      const paging = (variables.query || {}).paging || {};
+      const pageSize = typeof paging.pageSize === "number" ? paging.pageSize : 100;
+      const pageIndex = typeof paging.pageIndex === "number" ? paging.pageIndex : 0;
+      const all = state.items.filter(
+        (item) =>
+          (item.path === root || item.path.startsWith(`${root}/`)) &&
+          (!templateId || normalizeFakeId(item.templateId) === normalizeFakeId(templateId))
+      );
+      const start = pageIndex * pageSize;
+      const slice = all.slice(start, start + pageSize);
+      return json(200, {
+        data: {
+          search: {
+            totalCount: all.length,
+            results: slice.map((item) => ({
+              itemId: item.itemId,
+              name: item.name,
+              path: item.path,
+              templateId: item.templateId,
+              parentId: null,
+              innerItem: {
+                itemId: item.itemId,
+                name: item.name,
+                displayName: item.displayName || state.fieldValues[`${item.path}::__Display name`] || item.name,
+                path: item.path,
+              },
+            })),
+          },
+        },
+      });
     }
     if (query.includes("GetItem")) {
       const item = byPath(variables.path);
@@ -187,6 +251,7 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
       state.items.push(created);
       for (const f of input.fields || []) {
         state.fieldValues[`${itemPath}::${f.name}`] = f.value;
+        if (f.name === "__Display name") created.displayName = f.value;
       }
       return json(200, { data: { createItem: { item: { itemId: created.itemId, name: created.name, path: created.path } } } });
     }

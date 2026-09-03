@@ -11,6 +11,7 @@ How `check` and `push` talk to the SitecoreAI Authoring and Management GraphQL A
 - Placeholder ownership and family order
 - Reconcile semantics (add-only)
 - Required-field validation
+- Droplist option sources
 - System items resolved by path
 - Verify-against-docs procedure
 - Failure classes and exits
@@ -34,7 +35,7 @@ All GraphQL traffic posts to `SITECORE_AUTHORING_ENDPOINT` with a bearer token. 
 
 ## Operations
 
-The plan carries seven documents (see `plan.graphql`): three queries — item by path, template by ID with own/inherited fields plus bases/icon/linked Standard Values, and one field value — and four mutations — `createItemTemplate`, `updateItemTemplate`, `createItem`, and `updateItem`. Template lookup first resolves the item by path, then uses its ID because current SitecoreAI returns an error rather than `null` for an absent `itemTemplate` path lookup. Everything composes from these primitives; there is no delete, rename, move, or clone operation in the set by design.
+The plan carries nine documents (see `plan.graphql`): five queries — item by path, template by ID with own/inherited fields plus bases/icon/linked Standard Values, one field value, Authoring `search`, and item children — and four mutations — `createItemTemplate`, `updateItemTemplate`, `createItem`, and `updateItem`. Template lookup first resolves the item by path, then uses its ID because current SitecoreAI returns an error rather than `null` for an absent `itemTemplate` path lookup. Everything composes from these primitives; there is no delete, rename, move, or clone operation in the set by design.
 
 ## Placeholder binding
 
@@ -67,6 +68,10 @@ For an emitted parent slot, reconcile touches three related surfaces additively:
 
 `required: true` appends the standard Required field rule — resolved by path from `/sitecore/system/Settings/Validation Rules/Field Rules/Required` — to the field item's `Validate Button` and `Workflow` validation bars. Existing rules on those bars are preserved. Other bars (`Quick Action Bar`, `Validation Rules`) are intentionally untouched in v1; add them manually if the project's authoring policy needs them.
 
+## Droplist option sources
+
+A Droplist field with `optionSource` does not write a `name=Value` list into Source — Sitecore Droplist Source is a path or a `query:` item query. The executor resolves the declared project `itemTemplate`, then searches under `searchRoot` with `_path` and `_template`. A folder is reusable only when its direct children exactly match the manifest's item names (case-sensitive stored Droplist values), `__Display name`, template ID, and `valueField` values. Those values come from the component spec; the runtime has no built-in Theme set. One exact match is reused. Multiple exact matches are a conflict; the tool does not pick. No match creates the explicit `fallback.path` with Common Folder and creates its children with `itemTemplate`, writing both `__Display name` and `valueField`. Existing wrong-template items cannot be retyped under the add-only contract and become conflicts. Source is bound to `query:<folder>/*`, with `#` wrapping for dashes and spaces in path segments. `check` performs the same resolution with zero mutations. `defaultValue` is the option item name written onto `__Standard Values`. SXA Enum templates are not used.
+
 ## System items resolved by path
 
 - Json Rendering template: `/sitecore/templates/Foundation/JavaScript Services/Json Rendering` — resolved and introspected for every binding field the manifest requests, including the inherited `Placeholders` field when the rendering owns an emitted slot.
@@ -75,6 +80,7 @@ For an emitted parent slot, reconcile touches three related surfaces additively:
 - Required rule: path above.
 - SXA templates, only when their operations are planned: Branch, Common Folder, Available Renderings, HeadlessVariants, Variant Definition, and Site `AddItem`.
 - SXA scaffold locations, only for `sxa.siteScaffolding`: the JSS Site branch's Data, Presentation/Available Renderings, and Presentation/Headless Variants items.
+- Folder template (optionSource fallbacks): `/sitecore/templates/Common/Folder` — resolved only when the plan has a `resolveOptionSource` op.
 
 These paths live in `plan.systemPaths` so a reviewer can see and, for a divergent environment, adjust them before pushing.
 

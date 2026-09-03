@@ -51,6 +51,12 @@ const TYPE_MAP = {
     renderer: "todo",
     todoNote: "Integer field — markup is design-driven; read the raw value.",
   },
+  droplist: {
+    tsType: "Field<string>",
+    typeImports: ["Field"],
+    renderer: "todo",
+    todoNote: "Droplist field — stored value is the selected item name; markup is design-driven.",
+  },
   droptree: {
     tsType: "unknown",
     typeImports: [],

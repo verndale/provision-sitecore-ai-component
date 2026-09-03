@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "component": "AwardCard",
+  "slug": "award-card",
+  "output": "src/components/award-card",
+  "templates": [
+    {
+      "role": "datasource",
+      "name": "Award Card",
+      "sections": [{
+        "name": "Content",
+        "fields": [{
+          "name": "theme",
+          "title": "Theme",
+          "sitecoreType": "Droplist",
+          "source": "query:/sitecore/content/T/Theme/*",
+          "optionSource": {
+            "searchRoot": "/sitecore/content/T",
+            "itemTemplate": "/sitecore/templates/Project/T/Option",
+            "valueField": "value",
+            "options": [{ "name": "light", "displayName": "Light", "value": "light" }],
+            "fallback": { "path": "/sitecore/content/T/Data/Theme" }
+          }
+        }]
+      }]
+    }
+  ]
+}
