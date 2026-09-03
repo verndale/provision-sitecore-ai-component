@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "component": "GeneralImageCardRow",
+  "slug": "general-image-card-row",
+  "output": "artifacts/general-image-card-row",
+  "confluence": {
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6723207300/CN+-+General+Image+Card+Row",
+    "pageId": "6723207300"
+  },
+  "templates": [
+    {
+      "role": "datasource",
+      "kind": "content",
+      "name": "General Image Card Row",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues"
+      ],
+      "icon": "Office/32x32/window_dialog.png",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "heading",
+              "title": "Heading",
+              "sitecoreType": "Single-Line Text",
+              "required": true,
+              "helpText": "Required section heading. The row does not render on the live site when this value is empty."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "datasource",
+      "kind": "folder",
+      "name": "General Image Card Row Folder",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template"
+      ],
+      "icon": "Office/32x32/folder_window.png",
+      "insertOptions": [
+        "General Image Card Row",
+        "General Image Card Row Folder"
+      ]
+    },
+    {
+      "role": "renderingParameters",
+      "kind": "renderingParameters",
+      "name": "General Image Card Row Parameters",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId"
+      ],
+      "icon": "sxa/16x16/promo.png"
+    }
+  ],
+  "rendering": {
+    "name": "General Image Card Row",
+    "componentName": "GeneralImageCardRow",
+    "datasourceTemplate": "General Image Card Row",
+    "parametersTemplate": "General Image Card Row Parameters",
+    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='General Image Card Row Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='General Image Card Row Folder']",
+    "openPropertiesAfterAdd": false,
+    "enableDatasourceQuery": true,
+    "dynamicPlaceholders": true,
+    "icon": "SXA_MDI/16x16/Promo.png"
+  },
+  "sxa": {
+    "folderTemplate": "General Image Card Row Folder",
+    "siteScaffolding": {
+      "branchRoot": "/sitecore/templates/Branches/Project/Training App Router",
+      "setupRoot": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+      "moduleName": "Training App Router",
+      "dataActionName": "Add General Image Card Row Data Item"
+    },
+    "sites": [
+      {
+        "siteRoot": "/sitecore/content/Training App Router/Basic Site",
+        "availableRenderingsCategory": "Training App Router",
+        "createDataFolder": true,
+        "createHeadlessVariant": true,
+        "createAvailableRenderingsCategory": true
+      }
+    ]
+  },
+  "placeholders": [
+    {
+      "name": "General Image Cards",
+      "key": "general-image-cards-{*}",
+      "emitInComponent": true,
+      "allowedControls": [
+        "/sitecore/layout/Renderings/Project/Training App Router/General Image Card"
+      ]
+    }
+  ],
+  "sitecorePaths": {
+    "templateRoots": {
+      "datasource": "/sitecore/templates/Project/Training App Router",
+      "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
+    },
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router",
+    "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/Training App Router"
+  }
+}

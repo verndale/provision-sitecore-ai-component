@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "component": "FullWidthImageCtaRow",
+  "slug": "full-width-image-cta-row",
+  "output": "artifacts/full-width-image-cta-row",
+  "confluence": {
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/7037026457/CN+-+Full+Width+Image+CTA+Row",
+    "pageId": "7037026457"
+  },
+  "templates": [
+    {
+      "role": "datasource",
+      "kind": "content",
+      "name": "Full Width Image CTA Row",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues"
+      ],
+      "icon": "Office/32x32/window_dialog.png",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "desktopBackgroundImage",
+              "title": "Desktop Background Image",
+              "sitecoreType": "Image",
+              "source": "query:$siteMedia",
+              "helpText": "Optional desktop background image. When populated, it visually overrides the background color on desktop."
+            },
+            {
+              "name": "mobileBackgroundImage",
+              "title": "Mobile Background Image",
+              "sitecoreType": "Image",
+              "source": "query:$siteMedia",
+              "helpText": "Optional mobile-specific image. When empty, mobile falls back to the desktop background image."
+            },
+            {
+              "name": "heading",
+              "title": "Heading",
+              "sitecoreType": "Single-Line Text",
+              "required": true,
+              "helpText": "Required section heading. The component does not render when this field is empty."
+            },
+            {
+              "name": "copy",
+              "title": "Copy",
+              "sitecoreType": "Multi-Line Text",
+              "helpText": "Optional supporting copy displayed below the heading."
+            },
+            {
+              "name": "primaryLink",
+              "title": "Primary Link",
+              "sitecoreType": "General Link",
+              "required": true,
+              "source": "query:$linkableHomes",
+              "helpText": "Required CTA. The link renders only when both link text and a destination are configured."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "datasource",
+      "kind": "folder",
+      "name": "Full Width Image CTA Row Folder",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template"
+      ],
+      "icon": "Office/32x32/folder_window.png",
+      "insertOptions": [
+        "Full Width Image CTA Row",
+        "Full Width Image CTA Row Folder"
+      ]
+    },
+    {
+      "role": "renderingParameters",
+      "kind": "renderingParameters",
+      "name": "Full Width Image CTA Row Parameters",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId"
+      ],
+      "icon": "sxa/16x16/promo.png"
+    }
+  ],
+  "rendering": {
+    "name": "Full Width Image CTA Row",
+    "componentName": "FullWidthImageCtaRow",
+    "datasourceTemplate": "Full Width Image CTA Row",
+    "parametersTemplate": "Full Width Image CTA Row Parameters",
+    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='Full Width Image CTA Row Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Full Width Image CTA Row Folder']",
+    "openPropertiesAfterAdd": false,
+    "dynamicPlaceholders": true,
+    "enableDatasourceQuery": true,
+    "icon": "SXA_MDI/16x16/Promo.png"
+  },
+  "sxa": {
+    "folderTemplate": "Full Width Image CTA Row Folder",
+    "siteScaffolding": {
+      "branchRoot": "/sitecore/templates/Branches/Project/Training App Router",
+      "setupRoot": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+      "moduleName": "Training App Router",
+      "dataActionName": "Add Full Width Image CTA Row Data Item"
+    },
+    "sites": [
+      {
+        "siteRoot": "/sitecore/content/Training App Router/Basic Site",
+        "availableRenderingsCategory": "Training App Router",
+        "createDataFolder": true,
+        "createHeadlessVariant": true,
+        "createAvailableRenderingsCategory": true
+      }
+    ]
+  },
+  "sitecorePaths": {
+    "templateRoots": {
+      "datasource": "/sitecore/templates/Project/Training App Router",
+      "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
+    },
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router"
+  }
+}

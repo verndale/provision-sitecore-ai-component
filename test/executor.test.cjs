@@ -43,29 +43,192 @@ const TEMPLATE_PATH = "/sitecore/templates/Project/T/Components/Award Card";
 const RENDERING_PATH = "/sitecore/layout/Renderings/Project/T/Award Card";
 const PLACEHOLDER_PATH = "/sitecore/layout/Placeholder Settings/Project/T/cards";
 
+const SXA_CONFIG = {
+  templateRoots: {
+    datasource: "/sitecore/templates/Project/Training App Router",
+    renderingParameters: "/sitecore/templates/Project/Training App Router/Rendering Parameters",
+  },
+  renderingRoot: "/sitecore/layout/Renderings/Project/Training App Router",
+};
+
+const SXA_QUERY = "./Data|query:$site/*[@@name='Data']/*[@@templatename='Codex Component Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Codex Component Folder']";
+const SXA_SITE_ROOT = "/sitecore/content/Training App Router/Basic Site";
+const SXA_CATEGORY_PATH = `${SXA_SITE_ROOT}/Presentation/Available Renderings/Training App Router`;
+const SXA_MANIFEST = {
+  version: 1,
+  component: "CodexComponent",
+  slug: "codex-component",
+  output: "src/components/codex-component",
+  templates: [
+    {
+      role: "datasource",
+      name: "Codex Component",
+      standardValues: true,
+      baseTemplates: [
+        "/sitecore/templates/System/Templates/Standard template",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+      ],
+      icon: "Office/32x32/window_dialog.png",
+      sections: [{ name: "Content", fields: [{ name: "copy", title: "Copy", sitecoreType: "Rich Text", source: "query:$xaRichTextProfile" }] }],
+    },
+    {
+      role: "datasource",
+      kind: "folder",
+      name: "Codex Component Folder",
+      standardValues: true,
+      baseTemplates: ["/sitecore/templates/System/Templates/Standard template"],
+      icon: "Office/32x32/folder_window.png",
+      insertOptions: ["Codex Component", "Codex Component Folder"],
+    },
+    {
+      role: "renderingParameters",
+      kind: "renderingParameters",
+      name: "Codex Component Parameters",
+      standardValues: true,
+      baseTemplates: [
+        "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId",
+      ],
+      icon: "sxa/16x16/promo.png",
+    },
+  ],
+  rendering: {
+    name: "Codex Component",
+    componentName: "CodexComponent",
+    datasourceTemplate: "Codex Component",
+    parametersTemplate: "Codex Component Parameters",
+    datasourceLocation: SXA_QUERY,
+    openPropertiesAfterAdd: false,
+    dynamicPlaceholders: true,
+    enableDatasourceQuery: true,
+    icon: "SXA_MDI/16x16/Promo.png",
+  },
+  sxa: {
+    folderTemplate: "Codex Component Folder",
+    siteScaffolding: {
+      branchRoot: "/sitecore/templates/Branches/Project/Training App Router",
+      setupRoot: "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+      moduleName: "Training App Router",
+      dataActionName: "Add Codex Components Data Item",
+    },
+    sites: [
+      {
+        siteRoot: SXA_SITE_ROOT,
+        availableRenderingsCategory: "Training App Router",
+        createDataFolder: true,
+        createHeadlessVariant: true,
+        createAvailableRenderingsCategory: true,
+      },
+    ],
+  },
+};
+
 function buildPlan(manifest = MANIFEST, config = CONFIG) {
   const { ok, errors, resolved } = validateManifest(manifest, config);
   assert.equal(ok, true, JSON.stringify(errors));
   return buildMutationPlan(manifest, resolved, "manifest.json");
 }
 
+test("read queries use the current SitecoreAI Item and ItemTemplate schema", () => {
+  const plan = buildPlan();
+  assert.match(plan.graphql.ITEM_BY_PATH, /template\s*\{\s*templateId/, "Item template identity is read through the nested template object");
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /itemTemplate\s*\(/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /itemId:\s*templateId/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /templateId:\s*\$templateId/);
+  assert.match(plan.graphql.TEMPLATE_BY_PATH, /allFields:\s*fields/);
+  assert.equal(SYSTEM_PATHS.requiredFieldRule, "/sitecore/system/Settings/Validation Rules/Field Rules/Required");
+});
+
 /** System + root items every scenario needs. */
 function baseItems() {
   return [
-    { itemId: "sys-section", name: "Template section", path: SYSTEM_PATHS.templateSectionTemplate },
-    { itemId: "sys-field", name: "Template field", path: SYSTEM_PATHS.templateFieldTemplate },
+    { itemId: "sys-section", name: "Template section", path: SYSTEM_PATHS.templateSectionTemplate, ownFields: [] },
+    {
+      itemId: "sys-field",
+      name: "Template field",
+      path: SYSTEM_PATHS.templateFieldTemplate,
+      ownFields: ["Type", "Title", "Source", "__Short description", "Validate Button", "Workflow"].map((name) => ({ name, type: "Single-Line Text" })),
+    },
     { itemId: "rule-req", name: "Required", path: SYSTEM_PATHS.requiredFieldRule },
     {
       itemId: "json-rendering",
       name: "Json Rendering",
       path: SYSTEM_PATHS.jsonRenderingTemplate,
-      ownFields: [{ name: "componentName", type: "Single-Line Text" }, { name: "Datasource Template", type: "Single-Line Text" }, { name: "Datasource Location", type: "Single-Line Text" }],
+      ownFields: [
+        "componentName",
+        "Datasource Template",
+        "Datasource Location",
+        "Parameters Template",
+        "Open Properties after Add",
+        "Enable Datasource Query",
+        "OtherProperties",
+        "__Icon",
+      ].map((name) => ({ name, type: "Single-Line Text" })),
     },
-    { itemId: "sys-placeholder", name: "Placeholder", path: SYSTEM_PATHS.placeholderSettingsTemplate },
+    {
+      itemId: "sys-placeholder",
+      name: "Placeholder",
+      path: SYSTEM_PATHS.placeholderSettingsTemplate,
+      ownFields: [
+        { name: "Placeholder Key", type: "Single-Line Text" },
+        { name: "Allowed Controls", type: "Treelist" },
+      ],
+    },
     { itemId: "root-tmpl", name: "Components", path: CONFIG.templateRoots.datasource },
     { itemId: "root-rend", name: "Project", path: CONFIG.renderingRoot },
     { itemId: "root-ph", name: "Project", path: CONFIG.placeholderSettingsRoot },
   ];
+}
+
+function sxaBaseItems({ existingCategory = false, categoryValue = "" } = {}) {
+  const items = [
+    ...baseItems(),
+    { itemId: "sxa-template-root", name: "Training App Router", path: SXA_CONFIG.templateRoots.datasource },
+    { itemId: "sxa-params-root", name: "Rendering Parameters", path: SXA_CONFIG.templateRoots.renderingParameters },
+    { itemId: "sxa-rendering-root", name: "Training App Router", path: SXA_CONFIG.renderingRoot },
+    { itemId: "sxa-branch-root", name: "Training App Router", path: SXA_MANIFEST.sxa.siteScaffolding.branchRoot },
+    { itemId: "sxa-setup-root", name: "Training App Router", path: SXA_MANIFEST.sxa.siteScaffolding.setupRoot },
+    { itemId: "sxa-data-root", name: "Data", path: `${SXA_SITE_ROOT}/Data` },
+    { itemId: "sxa-available-root", name: "Available Renderings", path: `${SXA_SITE_ROOT}/Presentation/Available Renderings` },
+    { itemId: "sxa-variants-root", name: "Headless Variants", path: `${SXA_SITE_ROOT}/Presentation/Headless Variants` },
+    { itemId: "base-standard", name: "Standard template", path: "/sitecore/templates/System/Templates/Standard template" },
+    { itemId: "base-per-site", name: "_PerSiteStandardValues", path: "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues" },
+    { itemId: "base-params", name: "BaseRenderingParameters", path: "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters" },
+    { itemId: "base-dynamic", name: "IDynamicPlaceholder", path: "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder" },
+    { itemId: "base-rendering-id", name: "IRenderingId", path: "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId" },
+    { itemId: "sxa-branch-template", name: "Branch", path: SYSTEM_PATHS.branchTemplate },
+    { itemId: "sxa-folder-template", name: "Folder", path: SYSTEM_PATHS.folderTemplate },
+    {
+      itemId: "sxa-available-template",
+      name: "Available Renderings",
+      path: SYSTEM_PATHS.availableRenderingsTemplate,
+      ownFields: [{ name: "Renderings", type: "Treelist" }],
+    },
+    { itemId: "sxa-headless-template", name: "HeadlessVariants", path: SYSTEM_PATHS.headlessVariantsTemplate, ownFields: [{ name: "__Icon", type: "Single-Line Text" }] },
+    { itemId: "sxa-variant-template", name: "Variant Definition", path: SYSTEM_PATHS.variantDefinitionTemplate },
+    {
+      itemId: "sxa-add-item-template",
+      name: "AddItem",
+      path: SYSTEM_PATHS.siteSetupAddItemTemplate,
+      ownFields: ["Location", "Template", "Name", "Fields"].map((name) => ({ name, type: "Single-Line Text" })),
+    },
+    { itemId: "sxa-scaffold-data", name: "Data", path: SYSTEM_PATHS.scaffoldDataLocation },
+    { itemId: "sxa-scaffold-available", name: "Available Renderings", path: SYSTEM_PATHS.scaffoldAvailableRenderingsLocation },
+    { itemId: "sxa-scaffold-variants", name: "Headless Variants", path: SYSTEM_PATHS.scaffoldHeadlessVariantsLocation },
+  ];
+  if (existingCategory) {
+    items.push({
+      itemId: "sxa-category",
+      name: "Training App Router",
+      path: SXA_CATEGORY_PATH,
+      templateId: "sxa-available-template",
+      fieldNames: ["Renderings"],
+    });
+  }
+  const fieldValues = existingCategory ? { [`${SXA_CATEGORY_PATH}::Renderings`]: categoryValue } : {};
+  return { items, fieldValues };
 }
 
 /** Items describing an already fully provisioned component. */
@@ -78,11 +241,23 @@ function provisionedItems() {
       path: TEMPLATE_PATH,
       ownFields: [{ name: "heading", type: "Single-Line Text" }, { name: "summary", type: "Multi-Line Text" }],
     },
-    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content` },
-    { itemId: "fld-heading", name: "heading", path: `${TEMPLATE_PATH}/Content/heading` },
-    { itemId: "fld-summary", name: "summary", path: `${TEMPLATE_PATH}/Content/summary` },
-    { itemId: "rend-award", name: "Award Card", path: RENDERING_PATH },
-    { itemId: "ph-cards", name: "cards", path: PLACEHOLDER_PATH },
+    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content`, templateId: "sys-section" },
+    { itemId: "fld-heading", name: "heading", path: `${TEMPLATE_PATH}/Content/heading`, templateId: "sys-field", fieldNames: ["Type", "Title", "Validate Button", "Workflow"] },
+    { itemId: "fld-summary", name: "summary", path: `${TEMPLATE_PATH}/Content/summary`, templateId: "sys-field", fieldNames: ["Type", "Title"] },
+    {
+      itemId: "rend-award",
+      name: "Award Card",
+      path: RENDERING_PATH,
+      templateId: "json-rendering",
+      fieldNames: ["componentName", "Datasource Template", "Datasource Location"],
+    },
+    {
+      itemId: "ph-cards",
+      name: "cards",
+      path: PLACEHOLDER_PATH,
+      templateId: "sys-placeholder",
+      fieldNames: ["Placeholder Key", "Allowed Controls"],
+    },
   ];
 }
 
@@ -123,6 +298,7 @@ test("push against a fully provisioned CMS is a no-op apart from idempotent conf
     fieldValues: {
       [`${TEMPLATE_PATH}/Content/heading::Validate Button`]: "{RULE-REQ}",
       [`${TEMPLATE_PATH}/Content/heading::Workflow`]: "{RULE-REQ}",
+      [`${PLACEHOLDER_PATH}::Placeholder Key`]: "cards",
       [`${PLACEHOLDER_PATH}::Allowed Controls`]: "{REND-AWARD}",
     },
   });
@@ -168,6 +344,14 @@ test("check mode issues zero mutations and reports per-op decisions", async () =
   assert.equal(cms.mutations.length, 0);
   assert.ok(outcome.results.some((r) => r.id === "ensure-template-0" && r.action === "create"));
   assert.ok(outcome.results.some((r) => r.id === "set-rendering-bindings" && r.action === "update"));
+  const templateLookups = cms.calls
+    .filter((c) => !String(c.url).includes("/oauth/token") && JSON.parse(c.init.body).query.includes("GetTemplate"))
+    .map((c) => JSON.parse(c.init.body).variables.templateId);
+  assert.deepEqual(
+    templateLookups,
+    ["sys-section", "sys-field", "sys-placeholder", "json-rendering"],
+    "only system templates are introspected; the absent component template stops after GetItem"
+  );
 });
 
 test("existing:true template that is absent aborts with a conflict", async () => {
@@ -246,6 +430,218 @@ test("insert options naming a later-declared manifest template resolve on the fi
   assert.ok(second && masters && masters.includes(second.itemId), "__Masters carries the created template id on the first push");
 });
 
+test("SXA push creates the clone-equivalent family, exact datasource query, and existing-site registrations", async () => {
+  const base = sxaBaseItems();
+  const cms = makeFakeCms(base);
+  const plan = buildPlan(SXA_MANIFEST, SXA_CONFIG);
+  const outcome = await runPlan(plan, { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+
+  assert.equal(outcome.ok, true);
+  const content = cms.state.items.find((item) => item.path === `${SXA_CONFIG.templateRoots.datasource}/Codex Component`);
+  const folder = cms.state.items.find((item) => item.path === `${SXA_CONFIG.templateRoots.datasource}/Codex Component Folder`);
+  const parameters = cms.state.items.find((item) => item.path === `${SXA_CONFIG.templateRoots.renderingParameters}/Codex Component Parameters`);
+  assert.ok(content && folder && parameters, "content, folder, and rendering-parameters templates are created");
+  assert.ok(content.standardValuesItem && folder.standardValuesItem && parameters.standardValuesItem, "all three templates have linked Standard Values");
+
+  const masters = cms.state.fieldValues[`${folder.path}/__Standard Values::__Masters`];
+  assert.ok(masters.includes(content.itemId), "folder allows component datasource items");
+  assert.ok(masters.includes(folder.itemId), "folder allows recursively nested folders");
+
+  const renderingPath = `${SXA_CONFIG.renderingRoot}/Codex Component`;
+  assert.equal(cms.state.fieldValues[`${renderingPath}::Datasource Location`], SXA_QUERY);
+  assert.equal(cms.state.fieldValues[`${renderingPath}::Parameters Template`], parameters.itemId);
+  assert.equal(cms.state.fieldValues[`${renderingPath}::Enable Datasource Query`], "1");
+  assert.equal(cms.state.fieldValues[`${renderingPath}::OtherProperties`], "IsRenderingsWithDynamicPlaceholders=true");
+  assert.equal(cms.state.fieldValues[`${SXA_SITE_ROOT}/Presentation/Headless Variants/Codex Component::__Icon`], "Office/32x32/window_dialog.png");
+
+  const rendering = cms.state.items.find((item) => item.path === renderingPath);
+  assert.ok(cms.state.fieldValues[`${SXA_CATEGORY_PATH}::Renderings`].includes(rendering.itemId), "rendering is registered in the site's Available Renderings category");
+  for (const requiredPath of [
+    `${SXA_SITE_ROOT}/Data/Codex Component`,
+    `${SXA_SITE_ROOT}/Presentation/Headless Variants/Codex Component`,
+    `${SXA_SITE_ROOT}/Presentation/Headless Variants/Codex Component/Default`,
+    `${SXA_MANIFEST.sxa.siteScaffolding.branchRoot}/Default Codex Component Variant/$name/Default`,
+    `${SXA_MANIFEST.sxa.siteScaffolding.branchRoot}/Available Headless Training App Router Renderings/$name`,
+    `${SXA_MANIFEST.sxa.siteScaffolding.setupRoot}/Add Codex Components Data Item`,
+    `${SXA_MANIFEST.sxa.siteScaffolding.setupRoot}/Add Available Renderings`,
+    `${SXA_MANIFEST.sxa.siteScaffolding.setupRoot}/Rendering Variants/Codex Component`,
+  ]) {
+    assert.ok(cms.state.items.some((item) => item.path === requiredPath), `created ${requiredPath}`);
+  }
+
+  const mutationCount = cms.mutations.length;
+  await runPlan(plan, { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  const secondRun = cms.mutations.slice(mutationCount);
+  assert.equal(secondRun.filter((mutation) => mutation.query.includes("CreateItem")).length, 0, "second push creates no SXA items");
+  assert.equal(secondRun.filter((mutation) => mutation.query.includes("CreateTemplate")).length, 0, "second push creates no templates");
+  const categoryEntries = cms.state.fieldValues[`${SXA_CATEGORY_PATH}::Renderings`].split("|").filter(Boolean);
+  assert.equal(categoryEntries.length, 1, "Available Renderings registration is not duplicated");
+});
+
+test("every existing rendering/SXA target collision aborts before the first mutation", async () => {
+  const plan = buildPlan(SXA_MANIFEST, SXA_CONFIG);
+  const preflight = plan.ops.find((op) => op.kind === "preflightDependencies");
+  assert.ok(preflight.itemChecks.length > 10, "the full SXA family is preflighted");
+
+  for (const [index, target] of preflight.itemChecks.entries()) {
+    const base = sxaBaseItems();
+    base.items.push({ itemId: `collision-${index}`, name: "Collision", path: target.targetPath, templateId: "wrong-template" });
+    const cms = makeFakeCms(base);
+    await assert.rejects(
+      runPlan(plan, { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+      (error) => error instanceof ExecutorError && error.kind === "conflict",
+      target.targetPath
+    );
+    assert.equal(cms.mutations.length, 0, `${target.targetPath} must fail before mutations`);
+  }
+});
+
+test("SXA system-template field mismatches abort before the first mutation", async () => {
+  for (const [templatePath, missingField] of [
+    [SYSTEM_PATHS.templateFieldTemplate, "Title"],
+    [SYSTEM_PATHS.jsonRenderingTemplate, "Parameters Template"],
+    [SYSTEM_PATHS.availableRenderingsTemplate, "Renderings"],
+    [SYSTEM_PATHS.siteSetupAddItemTemplate, "Fields"],
+  ]) {
+    const base = sxaBaseItems();
+    const template = base.items.find((item) => item.path === templatePath);
+    template.ownFields = template.ownFields.filter((field) => field.name !== missingField);
+    const cms = makeFakeCms(base);
+    await assert.rejects(
+      runPlan(buildPlan(SXA_MANIFEST, SXA_CONFIG), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+      (error) => error instanceof ExecutorError && error.kind === "conflict" && error.message.includes(missingField)
+    );
+    assert.equal(cms.mutations.length, 0, `${missingField} mismatch must fail before mutations`);
+  }
+});
+
+test("ordinary items cannot masquerade as system/base templates or manifest template targets", async () => {
+  for (const targetPath of [SYSTEM_PATHS.templateFieldTemplate, "/sitecore/templates/System/Templates/Standard template", `${SXA_CONFIG.templateRoots.datasource}/Codex Component`]) {
+    const base = sxaBaseItems();
+    const existing = base.items.find((item) => item.path === targetPath);
+    if (existing) existing.isTemplate = false;
+    else base.items.push({ itemId: "not-template", name: "Codex Component", path: targetPath, isTemplate: false });
+    const cms = makeFakeCms(base);
+    await assert.rejects(
+      runPlan(buildPlan(SXA_MANIFEST, SXA_CONFIG), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+      (error) => error instanceof ExecutorError && error.kind === "conflict"
+    );
+    assert.equal(cms.mutations.length, 0);
+  }
+});
+
+test("template section and field path collisions abort before the first mutation", async () => {
+  for (const targetPath of [`${TEMPLATE_PATH}/Content`, `${TEMPLATE_PATH}/Content/heading`]) {
+    const items = provisionedItems();
+    items.find((item) => item.path === targetPath).templateId = "wrong-template";
+    const cms = makeFakeCms({ items });
+    await assert.rejects(
+      runPlan(buildPlan(), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+      (error) => error instanceof ExecutorError && error.kind === "conflict" && error.message.includes(targetPath)
+    );
+    assert.equal(cms.mutations.length, 0, `${targetPath} must fail before mutations`);
+  }
+});
+
+test("sites-only SXA checks do not require unused branch/setup dependencies", async () => {
+  const manifest = JSON.parse(JSON.stringify(SXA_MANIFEST));
+  delete manifest.sxa.siteScaffolding;
+  const unusedPaths = new Set([
+    SYSTEM_PATHS.branchTemplate,
+    SYSTEM_PATHS.folderTemplate,
+    SYSTEM_PATHS.siteSetupAddItemTemplate,
+    SYSTEM_PATHS.scaffoldDataLocation,
+    SYSTEM_PATHS.scaffoldAvailableRenderingsLocation,
+    SYSTEM_PATHS.scaffoldHeadlessVariantsLocation,
+    SXA_MANIFEST.sxa.siteScaffolding.branchRoot,
+    SXA_MANIFEST.sxa.siteScaffolding.setupRoot,
+  ]);
+  const base = sxaBaseItems();
+  base.items = base.items.filter((item) => !unusedPaths.has(item.path));
+  const cms = makeFakeCms(base);
+
+  const outcome = await runPlan(buildPlan(manifest, SXA_CONFIG), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(outcome.ok, true);
+  assert.equal(cms.mutations.length, 0);
+});
+
+test("dynamic-placeholder rendering properties reconcile without erasing unrelated values", async () => {
+  const existing = provisionedItems();
+  const rendering = existing.find((item) => item.path === RENDERING_PATH);
+  rendering.fieldNames.push("OtherProperties");
+
+  const enabled = JSON.parse(JSON.stringify(MANIFEST));
+  enabled.rendering.dynamicPlaceholders = true;
+  const enabledCms = makeFakeCms({ items: existing, fieldValues: { [`${RENDERING_PATH}::OtherProperties`]: "Foo=bar" } });
+  await runPlan(buildPlan(enabled), { mode: "push", env: FAKE_ENV, fetchImpl: enabledCms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(enabledCms.state.fieldValues[`${RENDERING_PATH}::OtherProperties`], "Foo=bar&IsRenderingsWithDynamicPlaceholders=true");
+
+  const disabled = JSON.parse(JSON.stringify(MANIFEST));
+  disabled.rendering.dynamicPlaceholders = false;
+  const disabledCms = makeFakeCms({ items: existing, fieldValues: { [`${RENDERING_PATH}::OtherProperties`]: "IsRenderingsWithDynamicPlaceholders=true&Foo=bar" } });
+  const outcome = await runPlan(buildPlan(disabled), { mode: "push", env: FAKE_ENV, fetchImpl: disabledCms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(disabledCms.state.fieldValues[`${RENDERING_PATH}::OtherProperties`], "IsRenderingsWithDynamicPlaceholders=true&Foo=bar");
+  assert.ok(outcome.followUps.some((entry) => entry.includes("add-only reconcile will not remove")));
+
+  const alreadyDisabledCms = makeFakeCms({ items: existing, fieldValues: { [`${RENDERING_PATH}::OtherProperties`]: "IsRenderingsWithDynamicPlaceholders=false&Foo=bar" } });
+  const alreadyDisabled = await runPlan(buildPlan(disabled), { mode: "push", env: FAKE_ENV, fetchImpl: alreadyDisabledCms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(alreadyDisabledCms.state.fieldValues[`${RENDERING_PATH}::OtherProperties`], "IsRenderingsWithDynamicPlaceholders=false&Foo=bar");
+  assert.ok(!alreadyDisabled.followUps.some((entry) => entry.includes("OtherProperties")));
+  const otherPropertiesWrites = alreadyDisabledCms.mutations.filter((mutation) =>
+    (mutation.variables.input && mutation.variables.input.fields || []).some((field) => field.name === "OtherProperties")
+  );
+  assert.equal(otherPropertiesWrites.length, 0);
+});
+
+test("SXA Available Renderings append preserves unrelated controls", async () => {
+  const base = sxaBaseItems({ existingCategory: true, categoryValue: "{OTHER-RENDERING}" });
+  const cms = makeFakeCms(base);
+  await runPlan(buildPlan(SXA_MANIFEST, SXA_CONFIG), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+
+  const value = cms.state.fieldValues[`${SXA_CATEGORY_PATH}::Renderings`];
+  assert.match(value, /^\{OTHER-RENDERING\}\|/);
+  assert.equal(value.split("|").filter(Boolean).length, 2);
+});
+
+test("missing reviewed Available Renderings category aborts in preflight before any mutation", async () => {
+  const manifest = JSON.parse(JSON.stringify(SXA_MANIFEST));
+  manifest.sxa.sites[0].createAvailableRenderingsCategory = false;
+  const cms = makeFakeCms(sxaBaseItems());
+
+  await assert.rejects(
+    runPlan(buildPlan(manifest, SXA_CONFIG), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+    (error) => error instanceof ExecutorError && error.kind === "conflict" && /Required existing item not found/.test(error.message)
+  );
+  assert.equal(cms.mutations.length, 0, "the late site dependency is checked before templates or renderings mutate");
+});
+
+test("existing template without linked Standard Values is repaired through updateItemTemplate", async () => {
+  const manifest = {
+    ...MANIFEST,
+    rendering: null,
+    placeholders: [],
+    templates: [{ ...MANIFEST.templates[0], standardValues: true }],
+  };
+  const items = [
+    ...baseItems(),
+    {
+      itemId: "tmpl-award",
+      name: "Award Card",
+      path: TEMPLATE_PATH,
+      ownFields: [{ name: "heading", type: "Single-Line Text" }, { name: "summary", type: "Multi-Line Text" }],
+    },
+    { itemId: "fld-heading", name: "heading", path: `${TEMPLATE_PATH}/Content/heading`, templateId: "sys-field", fieldNames: ["Type", "Title", "Validate Button", "Workflow"] },
+    { itemId: "fld-summary", name: "summary", path: `${TEMPLATE_PATH}/Content/summary`, templateId: "sys-field", fieldNames: ["Type", "Title"] },
+  ];
+  const cms = makeFakeCms({ items });
+  await runPlan(buildPlan(manifest), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+
+  const update = cms.mutations.find((mutation) => mutation.query.includes("UpdateTemplate"));
+  assert.equal(update.variables.input.createStandardValuesItem, true);
+  assert.ok(cms.state.items.find((item) => item.itemId === "tmpl-award").standardValuesItem, "template links the created Standard Values item");
+  assert.equal(cms.mutations.some((mutation) => mutation.query.includes("CreateItem") && mutation.variables.input.name === "__Standard Values"), false, "no raw orphan child is created");
+});
+
 test("a field living under a different section becomes a conflict follow-up, not a mid-run abort", async () => {
   const items = provisionedItems().filter((i) => !i.path.endsWith("/Content/heading"));
   items.push({ itemId: "fld-heading", name: "heading", path: `${TEMPLATE_PATH}/Details/heading` });
@@ -264,5 +660,293 @@ test("listMerge appends only when missing, normalizing braces and case", () => {
   assert.equal(listMerge(null, "id-1"), "id-1");
   assert.equal(listMerge("id-1", "id-2"), "id-1|id-2");
   assert.equal(listMerge("{ID-1}|id-2", "id-1"), null, "brace/case-insensitive duplicate → no-op");
-  assert.equal(normalizeId("{ABC-Def}"), "abc-def");
+  assert.equal(listMerge("|{4E01C8EC-6EFD-4EFF-895B-BF0F0E5416F2}", "4e01c8ec6efd4eff895bbf0f0e5416f2"), null, "Sitecore's hyphenated field value matches an API compact id");
+  assert.equal(normalizeId("{ABC-Def}"), "abcdef");
+});
+
+const THEME_FALLBACK = "/sitecore/content/T/Basic Site/Data/Theme";
+const THEME_QUERY = "query:/sitecore/content/T/#Basic Site#/Data/Theme/*";
+const OPTION_TEMPLATE_PATH = `${CONFIG.templateRoots.datasource}/Option`;
+
+function themeField(overrides = {}) {
+  return {
+    name: "theme",
+    title: "Theme",
+    sitecoreType: "Droplist",
+    required: true,
+    defaultValue: "light",
+    optionSource: {
+      searchRoot: "/sitecore/content/T",
+      itemTemplate: "Option",
+      valueField: "value",
+      options: [
+        { name: "light", displayName: "Light", value: "light" },
+        { name: "dark", displayName: "Dark", value: "dark" },
+      ],
+      fallback: { path: THEME_FALLBACK },
+    },
+    ...overrides,
+  };
+}
+
+function droplistManifest() {
+  return {
+    ...MANIFEST,
+    rendering: null,
+    placeholders: [],
+    templates: [
+      {
+        role: "datasource",
+        name: "Award Card",
+        sections: [{ name: "Content", fields: [themeField()] }],
+      },
+      {
+        parentPath: CONFIG.templateRoots.datasource,
+        name: "Option",
+        sections: [{ name: "Data", fields: [{ name: "value", title: "Value", sitecoreType: "Single-Line Text" }] }],
+      },
+    ],
+  };
+}
+
+function contentTree() {
+  return [
+    { itemId: "sys-folder", name: "Folder", path: SYSTEM_PATHS.folderTemplate },
+    { itemId: "sitecore", name: "sitecore", path: "/sitecore" },
+    { itemId: "content", name: "content", path: "/sitecore/content" },
+    { itemId: "tenant", name: "T", path: "/sitecore/content/T" },
+    { itemId: "site", name: "Basic Site", path: "/sitecore/content/T/Basic Site" },
+    { itemId: "data", name: "Data", path: "/sitecore/content/T/Basic Site/Data" },
+    {
+      itemId: "option-template",
+      name: "Option",
+      path: OPTION_TEMPLATE_PATH,
+      ownFields: [{ name: "value", type: "Single-Line Text" }],
+    },
+  ];
+}
+
+function optionChildren(folderPath, entries) {
+  return entries.map((entry, i) => ({
+    itemId: `opt-${entry.name}-${i}`,
+    name: entry.name,
+    displayName: entry.displayName,
+    path: `${folderPath}/${entry.name}`,
+    templateId: entry.templateId || "option-template",
+    fields: { value: entry.value || entry.name },
+  }));
+}
+
+test("plan resolves typed option items after all template ensure ops and before field config", () => {
+  const plan = buildPlan(droplistManifest());
+  assert.match(plan.graphql.SEARCH_ITEMS, /search\(query: \$query\)/);
+  assert.match(plan.graphql.ITEM_CHILDREN, /GetItemChildren/);
+  assert.equal(plan.systemPaths.folderTemplate, "/sitecore/templates/Common/Folder");
+  const resolve = plan.ops.find((op) => op.kind === "resolveOptionSource");
+  assert.ok(resolve);
+  assert.equal(resolve.fallbackPath, THEME_FALLBACK);
+  assert.equal(resolve.itemTemplate.path, OPTION_TEMPLATE_PATH);
+  assert.equal(resolve.itemTemplate.placeholder, "__TEMPLATE_1_ID__");
+  assert.equal(resolve.valueField, "value");
+  const configure = plan.ops.find((op) => op.id.includes("configure-field-0-Content-theme"));
+  assert.ok(configure.set.variables.input.fields.some((f) => f.name === "Source" && f.value === resolve.sourcePlaceholder));
+  assert.ok(plan.ops.findIndex((op) => op.id === "ensure-template-1") < plan.ops.indexOf(resolve));
+  assert.ok(plan.ops.indexOf(resolve) < plan.ops.indexOf(configure));
+  assert.ok(plan.ops.some((op) => op.kind === "ensureFieldDefaults"));
+});
+
+test("executor reuses a tenant folder whose children match name and displayName exactly", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+    {
+      itemId: "tmpl-award",
+      name: "Award Card",
+      path: TEMPLATE_PATH,
+      ownFields: [{ name: "theme", type: "Droplist" }],
+    },
+    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content`, templateId: "sys-section" },
+    { itemId: "fld-theme", name: "theme", path: `${TEMPLATE_PATH}/Content/theme`, templateId: "sys-field", fieldNames: ["Type", "Title", "Source", "Validate Button", "Workflow"] },
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(outcome.ok, true);
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "no-op"));
+  assert.equal(cms.mutations.filter((m) => m.query.includes("CreateItem") && m.variables.input.name === "Theme").length, 0);
+  const sourceWrite = cms.mutations.find(
+    (m) => m.query.includes("UpdateItem") && m.variables.input.itemId === "fld-theme" && (m.variables.input.fields || []).some((f) => f.name === "Source")
+  );
+  assert.ok(sourceWrite);
+  assert.equal(sourceWrite.variables.input.fields.find((f) => f.name === "Source").value, `query:${folder}/*`);
+});
+
+test("executor does not reuse a folder outside searchRoot even when names look similar", async () => {
+  const facebook = "/sitecore/system/Settings/Feature/Experience Accelerator/Engagement/Enums/Facebook comments";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "fb", name: "Facebook comments", path: facebook },
+    ...optionChildren(facebook, [
+      { name: "Light", displayName: "Light" },
+      { name: "Dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/light`));
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/dark`));
+  const createdOptions = cms.mutations.filter(
+    (mutation) => mutation.query.includes("CreateItem") && ["light", "dark"].includes(mutation.variables.input.name)
+  );
+  assert.equal(createdOptions.length, 2);
+  assert.ok(createdOptions.every((mutation) => mutation.variables.input.templateId === "option-template"));
+  assert.deepEqual(
+    createdOptions.map((mutation) => mutation.variables.input.fields.find((field) => field.name === "value").value).sort(),
+    ["dark", "light"]
+  );
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "created"));
+});
+
+test("executor treats a name/displayName mismatch as not reusable and falls back", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "Light", displayName: "Light" },
+      { name: "Dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/light` && i.displayName === "Light"));
+});
+
+test("executor rejects matching names on the wrong item template and creates typed fallback items", async () => {
+  const folder = "/sitecore/content/T/Shared/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "theme-folder", name: "Theme", path: folder },
+    ...optionChildren(folder, [
+      { name: "light", displayName: "Light", templateId: "sys-folder" },
+      { name: "dark", displayName: "Dark", templateId: "sys-folder" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(cms.state.items.some((item) => item.path === `${THEME_FALLBACK}/light` && item.templateId === "option-template"));
+  assert.ok(cms.state.items.some((item) => item.path === `${THEME_FALLBACK}/dark` && item.templateId === "option-template"));
+});
+
+test("multiple exact matches abort as a conflict and do not pick a folder", async () => {
+  const a = "/sitecore/content/T/A/Theme";
+  const b = "/sitecore/content/T/B/Theme";
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "fa", name: "Theme", path: a },
+    { itemId: "fb", name: "Theme", path: b },
+    ...optionChildren(a, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+    ...optionChildren(b, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+    ]),
+  ];
+  const cms = makeFakeCms({ items });
+  await assert.rejects(
+    runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 }),
+    (error) => error instanceof ExecutorError && error.kind === "conflict" && /Multiple folders/.test(error.message) && error.message.includes(a) && error.message.includes(b)
+  );
+  assert.equal(cms.mutations.length, 0);
+});
+
+test("fallback extras are reported and never deleted; Source still points at the folder", async () => {
+  const items = [
+    ...baseItems(),
+    ...contentTree(),
+    { itemId: "enum", name: "Enumerations", path: "/sitecore/content/T/Basic Site/Data/Enumerations" },
+    { itemId: "row", name: "Image CTA Row", path: "/sitecore/content/T/Basic Site/Data/Enumerations/Image CTA Row" },
+    { itemId: "theme", name: "Theme", path: THEME_FALLBACK, templateId: "sys-folder" },
+    ...optionChildren(THEME_FALLBACK, [
+      { name: "light", displayName: "Light" },
+      { name: "dark", displayName: "Dark" },
+      { name: "contrast", displayName: "Contrast" },
+    ]),
+    {
+      itemId: "tmpl-award",
+      name: "Award Card",
+      path: TEMPLATE_PATH,
+      ownFields: [{ name: "theme", type: "Droplist" }],
+    },
+    { itemId: "sec-content", name: "Content", path: `${TEMPLATE_PATH}/Content`, templateId: "sys-section" },
+    { itemId: "fld-theme", name: "theme", path: `${TEMPLATE_PATH}/Content/theme`, templateId: "sys-field", fieldNames: ["Type", "Title", "Source", "Validate Button", "Workflow"] },
+  ];
+  const cms = makeFakeCms({ items });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.ok(outcome.followUps.some((f) => f.includes("contrast") && f.includes("never deleted")));
+  assert.ok(cms.state.items.some((i) => i.path === `${THEME_FALLBACK}/contrast`));
+  const sourceWrite = cms.mutations.find(
+    (m) => m.query.includes("UpdateItem") && (m.variables.input.fields || []).some((f) => f.name === "Source" && f.value === THEME_QUERY)
+  );
+  assert.ok(sourceWrite);
+});
+
+test("check mode with optionSource issues zero mutations and still predicts fallback creates", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(cms.mutations.length, 0);
+  assert.ok(outcome.results.some((r) => r.id.startsWith("resolve-option-source") && r.action === "create"));
+  assert.ok(outcome.results.some((r) => r.kind === undefined && r.id.startsWith("ensure-field-defaults") && r.action === "create"));
+});
+
+test("push writes defaultValue onto __Standard Values as the option item name", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  await runPlan(buildPlan(droplistManifest()), { mode: "push", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  assert.equal(cms.state.fieldValues[`${TEMPLATE_PATH}/__Standard Values::theme`], "light");
+});
+
+test("optionSource search paginates under the tenant root", async () => {
+  const extras = [];
+  for (let i = 0; i < 101; i += 1) {
+    extras.push({
+      itemId: `pad-${i}`,
+      name: `pad-${i}`,
+      path: `/sitecore/content/T/pad-${i}`,
+      templateId: "option-template",
+      fields: { value: `pad-${i}` },
+    });
+  }
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree(), ...extras] });
+  await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0 });
+  const searches = cms.calls.filter((c) => !String(c.url).includes("/oauth/token") && JSON.parse(c.init.body).query.includes("SearchItems"));
+  assert.ok(searches.length >= 2, "tenant search must page past the first 100 hits");
+  const firstQuery = JSON.parse(searches[0].init.body).variables.query;
+  assert.equal(firstQuery.searchStatement.criteria[0].operator, "MUST");
+  assert.equal(firstQuery.searchStatement.criteria[0].criteriaType, "CONTAINS");
+  assert.deepEqual(firstQuery.searchStatement.criteria[1], {
+    field: "_template",
+    operator: "MUST",
+    criteriaType: "EXACT",
+    value: "option-template",
+  });
+});
+
+test("optionSource logs never include authoring secrets", async () => {
+  const cms = makeFakeCms({ items: [...baseItems(), ...contentTree()] });
+  const logLines = [];
+  const outcome = await runPlan(buildPlan(droplistManifest()), { mode: "check", env: FAKE_ENV, fetchImpl: cms.fetchImpl, retryDelayMs: 0, log: (l) => logLines.push(l) });
+  const blob = logLines.join("\n") + JSON.stringify(outcome.results);
+  assert.ok(!blob.includes(FAKE_ENV.SITECORE_AUTHORING_CLIENT_SECRET));
+  assert.ok(!blob.includes(FAKE_ENV.SITECORE_AUTHORING_CLIENT_ID));
 });

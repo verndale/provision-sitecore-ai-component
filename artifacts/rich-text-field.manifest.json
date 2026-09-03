@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "component": "RichTextField",
+  "slug": "rich-text-field",
+  "output": "artifacts/rich-text-field",
+  "confluence": {
+    "url": "https://verndale.atlassian.net/wiki/spaces/CN/pages/6768361487/CN+-+Rich+Text+Field",
+    "pageId": "6768361487"
+  },
+  "templates": [
+    {
+      "role": "datasource",
+      "kind": "content",
+      "name": "Rich Text Field",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues"
+      ],
+      "icon": "Office/32x32/window_dialog.png",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "copy",
+              "title": "Copy",
+              "sitecoreType": "Rich Text",
+              "required": true,
+              "source": "query:$xaRichTextProfile",
+              "helpText": "Single rich text field supporting headings, body text, bold/italic, inline links, numbered and bulleted lists, blockquotes, tables, and images with optional captions. If empty, the component does not render."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "datasource",
+      "kind": "folder",
+      "name": "Rich Text Field Folder",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template"
+      ],
+      "icon": "Office/32x32/folder_window.png",
+      "insertOptions": [
+        "Rich Text Field",
+        "Rich Text Field Folder"
+      ]
+    },
+    {
+      "role": "renderingParameters",
+      "kind": "renderingParameters",
+      "name": "Rich Text Field Parameters",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId"
+      ],
+      "icon": "sxa/16x16/promo.png"
+    }
+  ],
+  "rendering": {
+    "name": "Rich Text Field",
+    "componentName": "RichTextField",
+    "datasourceTemplate": "Rich Text Field",
+    "parametersTemplate": "Rich Text Field Parameters",
+    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='Rich Text Field Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Rich Text Field Folder']",
+    "openPropertiesAfterAdd": false,
+    "enableDatasourceQuery": true,
+    "icon": "SXA_MDI/16x16/Promo.png"
+  },
+  "sxa": {
+    "folderTemplate": "Rich Text Field Folder",
+    "siteScaffolding": {
+      "branchRoot": "/sitecore/templates/Branches/Project/Training App Router",
+      "setupRoot": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+      "moduleName": "Training App Router",
+      "dataActionName": "Add Rich Text Field Data Item"
+    },
+    "sites": [
+      {
+        "siteRoot": "/sitecore/content/Training App Router/Basic Site",
+        "availableRenderingsCategory": "Training App Router",
+        "createDataFolder": true,
+        "createHeadlessVariant": true,
+        "createAvailableRenderingsCategory": true
+      }
+    ]
+  },
+  "sitecorePaths": {
+    "templateRoots": {
+      "datasource": "/sitecore/templates/Project/Training App Router/Hackathon",
+      "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
+    },
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router"
+  }
+}

@@ -127,15 +127,18 @@ function applyEnvFile(file, env) {
     const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
     if (!match) continue;
     const key = match[1];
-    if (env[key] !== undefined) continue;
-    env[key] = match[2].replace(/^["']|["']$/g, "");
+    if (env[key] !== undefined && String(env[key]).trim() !== "") continue;
+    const value = match[2].replace(/^["']|["']$/g, "");
+    if (value.trim() === "") continue;
+    env[key] = value;
   }
 }
 
 /**
  * Minimal .env loader (KEY=VALUE lines; existing process env wins). No dependency.
- * Resolution order: process env → ./.env (per-repo override) → the per-machine
- * ~/.config/provision-sitecore-ai-component/.env written by setup.sh.
+ * Resolution order for non-empty values: process env → ./.env (per-repo
+ * override) → the per-machine ~/.config/provision-sitecore-ai-component/.env
+ * written by setup.sh. Blank entries are treated as unset.
  */
 function loadDotEnv(cwd, env) {
   applyEnvFile(path.join(cwd, ".env"), env);
@@ -158,7 +161,7 @@ function emitTsxPair(manifest, resolved, cwd, { forceTsx }) {
   fs.mkdirSync(outDir, { recursive: true });
   const files = [
     { name: `${manifest.component}.types.ts`, content: emitTypes(manifest, resolved) },
-    { name: `${manifest.component}.tsx`, content: emitComponent(manifest) },
+    { name: `${manifest.component}.tsx`, content: emitComponent(manifest, resolved) },
   ];
   const lines = [];
   for (const file of files) {
