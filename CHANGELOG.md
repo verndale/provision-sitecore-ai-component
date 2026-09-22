@@ -1,3 +1,51 @@
+# v2.1.0 — 2026-09-22
+
+## Summary (AI, bounded)
+- Added full width image CTA row artifacts to the provision module (ceb1e76)
+- Provisioned a general image card placeholder family in the sitecore AI component (1d95b43)
+- Fixed alignment of Windows skill installation for the testing environment (1910937)
+- Updated the repository for the sitecore AI component (37befc6)
+- Merged pull request #36 with enhancements for SXA placeholders and option sources (c2d6a90)
+
+## Highlights
+- commit: Merge pull request #36 from verndale/feat/sxa-placeholders-and-option-sources (c2d6a90)
+- chore(provision-sitecore-ai-component): Repository updates (37befc6)
+- feat(provision-sitecore-ai-component): provision general image card placeholder family (1d95b43)
+- feat(provision): add full width image CTA row artifacts (ceb1e76)
+- fix(setup): align windows skill install for testing env (1910937)
+- commit: Merge pull request #34 from verndale/bot/wiki-sync/33 (b54fd49)
+- docs(wiki): reconcile merged PR #33 (538abe4)
+
+## Breaking changes
+- None
+
+## Changes by type
+### Features
+- feat(provision): add full width image CTA row artifacts (ceb1e76)
+- feat(provision-sitecore-ai-component): provision general image card placeholder family (1d95b43)
+
+### Fixes
+- fix(setup): align windows skill install for testing env (1910937)
+
+### Docs
+- docs(wiki): reconcile merged PR #33 (538abe4)
+
+### Chore
+- chore(provision-sitecore-ai-component): Repository updates (37befc6)
+
+### Other (unknown)
+- commit: Merge pull request #34 from verndale/bot/wiki-sync/33 (b54fd49)
+- commit: Merge pull request #36 from verndale/feat/sxa-placeholders-and-option-sources (c2d6a90)
+
+## Full commit list
+- c2d6a90 commit: Merge pull request #36 from verndale/feat/sxa-placeholders-and-option-sources
+- 37befc6 chore(provision-sitecore-ai-component): Repository updates
+- 1d95b43 feat(provision-sitecore-ai-component): provision general image card placeholder family
+- ceb1e76 feat(provision): add full width image CTA row artifacts
+- 1910937 fix(setup): align windows skill install for testing env
+- b54fd49 commit: Merge pull request #34 from verndale/bot/wiki-sync/33
+- 538abe4 docs(wiki): reconcile merged PR #33
+
 # v2.0.0 — 2026-08-27
 
 ## Summary (AI, bounded)
