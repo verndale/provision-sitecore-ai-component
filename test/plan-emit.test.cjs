@@ -28,6 +28,14 @@ const GOLDENS = [
     configFile: "provision.config.json",
     configKey: null,
   },
+  {
+    fixture: "sxa-component",
+    slug: "codex-component",
+    component: "CodexComponent",
+    output: "src/components/codex-component",
+    configFile: "provision.config.json",
+    configKey: null,
+  },
 ];
 
 for (const golden of GOLDENS) {

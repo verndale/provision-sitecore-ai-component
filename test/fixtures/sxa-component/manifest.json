@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "component": "CodexComponent",
+  "slug": "codex-component",
+  "output": "src/components/codex-component",
+  "templates": [
+    {
+      "role": "datasource",
+      "kind": "content",
+      "name": "Codex Component",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues"
+      ],
+      "icon": "Office/32x32/window_dialog.png",
+      "sections": [
+        {
+          "name": "Content",
+          "fields": [
+            {
+              "name": "copy",
+              "title": "Copy",
+              "sitecoreType": "Rich Text",
+              "required": true,
+              "source": "query:$xaRichTextProfile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "datasource",
+      "kind": "folder",
+      "name": "Codex Component Folder",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/System/Templates/Standard template"
+      ],
+      "icon": "Office/32x32/folder_window.png",
+      "insertOptions": [
+        "Codex Component",
+        "Codex Component Folder"
+      ]
+    },
+    {
+      "role": "renderingParameters",
+      "kind": "renderingParameters",
+      "name": "Codex Component Parameters",
+      "standardValues": true,
+      "baseTemplates": [
+        "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId"
+      ],
+      "icon": "sxa/16x16/promo.png"
+    }
+  ],
+  "rendering": {
+    "name": "Codex Component",
+    "componentName": "CodexComponent",
+    "datasourceTemplate": "Codex Component",
+    "parametersTemplate": "Codex Component Parameters",
+    "datasourceLocation": "./Data|query:$site/*[@@name='Data']/*[@@templatename='Codex Component Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='Codex Component Folder']",
+    "openPropertiesAfterAdd": false,
+    "dynamicPlaceholders": true,
+    "enableDatasourceQuery": true,
+    "icon": "SXA_MDI/16x16/Promo.png"
+  },
+  "sxa": {
+    "folderTemplate": "Codex Component Folder",
+    "siteScaffolding": {
+      "branchRoot": "/sitecore/templates/Branches/Project/Training App Router",
+      "setupRoot": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+      "moduleName": "Training App Router",
+      "dataActionName": "Add Codex Components Data Item"
+    },
+    "sites": [
+      {
+        "siteRoot": "/sitecore/content/Training App Router/Basic Site",
+        "availableRenderingsCategory": "Training App Router",
+        "createDataFolder": true,
+        "createHeadlessVariant": true,
+        "createAvailableRenderingsCategory": true
+      }
+    ]
+  }
+}

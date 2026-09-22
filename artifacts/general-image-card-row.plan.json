@@ -1,0 +1,1230 @@
+{
+  "version": 1,
+  "component": "GeneralImageCardRow",
+  "slug": "general-image-card-row",
+  "generatedFrom": "general-image-card-row.manifest.json",
+  "resolvedPaths": {
+    "templateRoots": {
+      "datasource": "/sitecore/templates/Project/Training App Router",
+      "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
+    },
+    "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router",
+    "placeholderSettingsRoot": "/sitecore/layout/Placeholder Settings/Project/Training App Router",
+    "datasourceLocation": null
+  },
+  "systemPaths": {
+    "jsonRenderingTemplate": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+    "templateSectionTemplate": "/sitecore/templates/System/Templates/Template section",
+    "templateFieldTemplate": "/sitecore/templates/System/Templates/Template field",
+    "requiredFieldRule": "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
+    "placeholderSettingsTemplate": "/sitecore/templates/System/Layout/Placeholder",
+    "branchTemplate": "/sitecore/templates/System/Branches/Branch",
+    "folderTemplate": "/sitecore/templates/Common/Folder",
+    "availableRenderingsTemplate": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+    "headlessVariantsTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+    "variantDefinitionTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+    "siteSetupAddItemTemplate": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+    "scaffoldDataLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Data",
+    "scaffoldAvailableRenderingsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Available Renderings",
+    "scaffoldHeadlessVariantsLocation": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Headless Variants"
+  },
+  "graphql": {
+    "ITEM_BY_PATH": "query GetItem($path: String!) { item(where: { database: \"master\", path: $path }) { itemId name path template { templateId name fullName } } }",
+    "TEMPLATE_BY_PATH": "query GetTemplate($templateId: ID!) { itemTemplate(where: { database: \"master\", templateId: $templateId }) { itemId: templateId name icon baseTemplates(first: 100, directOnly: true) { nodes { templateId name fullName } } standardValuesItem(language: \"en\") { itemId path } ownFields(first: 500) { nodes { name type } } allFields: fields(first: 500) { nodes { name type } } } }",
+    "FIELD_VALUE": "query GetFieldValue($path: String!, $field: String!) { item(where: { database: \"master\", path: $path }) { itemId field(name: $field) { name value } } }",
+    "CREATE_ITEM_TEMPLATE": "mutation CreateTemplate($input: CreateItemTemplateInput!) { createItemTemplate(input: $input) { itemTemplate { templateId name } } }",
+    "UPDATE_ITEM_TEMPLATE": "mutation UpdateTemplate($input: UpdateItemTemplateInput!) { updateItemTemplate(input: $input) { itemTemplate { templateId name } } }",
+    "CREATE_ITEM": "mutation CreateItem($input: CreateItemInput!) { createItem(input: $input) { item { itemId name path } } }",
+    "UPDATE_ITEM": "mutation UpdateItem($input: UpdateItemInput!) { updateItem(input: $input) { item { itemId path } } }"
+  },
+  "ops": [
+    {
+      "id": "resolve-system-items",
+      "kind": "resolveSystemItems",
+      "query": "ITEM_BY_PATH",
+      "resolves": {
+        "__REQUIRED_RULE_ID__": "/sitecore/system/Settings/Validation Rules/Field Rules/Required",
+        "__SXA_SCAFFOLD_DATA_LOCATION_ID__": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Data",
+        "__SXA_SCAFFOLD_AVAILABLE_RENDERINGS_LOCATION_ID__": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Available Renderings",
+        "__SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__": "/sitecore/templates/Branches/Foundation/JSS Experience Accelerator/Scaffolding/JSS Tenant Folder/JSS Tenant Folder/JSS Tenant/JSS Site/Presentation/Headless Variants"
+      },
+      "note": "Well-known system items are resolved by path before any mutation. The Required rule is fetched only when a field is required."
+    },
+    {
+      "id": "preflight-dependencies",
+      "kind": "preflightDependencies",
+      "resolves": {
+        "__TEMPLATE_0_PARENT_ID__": "/sitecore/templates/Project/Training App Router",
+        "__TEMPLATE_1_PARENT_ID__": "/sitecore/templates/Project/Training App Router",
+        "__TEMPLATE_2_PARENT_ID__": "/sitecore/templates/Project/Training App Router/Rendering Parameters",
+        "__RENDERING_ROOT_ID__": "/sitecore/layout/Renderings/Project/Training App Router",
+        "__PLACEHOLDER_ROOT_ID__": "/sitecore/layout/Placeholder Settings/Project/Training App Router",
+        "__PLACEHOLDER_0_ALLOWED_CONTROL_0_ID__": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card",
+        "__SXA_BRANCH_ROOT_ID__": "/sitecore/templates/Branches/Project/Training App Router",
+        "__SXA_SETUP_ROOT_ID__": "/sitecore/system/Settings/Project/Training App Router/Training App Router ",
+        "__SXA_SITE_0_DATA_ROOT_ID__": "/sitecore/content/Training App Router/Basic Site/Data",
+        "__SXA_SITE_0_AVAILABLE_ROOT_ID__": "/sitecore/content/Training App Router/Basic Site/Presentation/Available Renderings",
+        "__SXA_SITE_0_VARIANTS_ROOT_ID__": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants"
+      },
+      "templateResolves": {
+        "__TEMPLATE_0_BASE_0_ID__": "/sitecore/templates/System/Templates/Standard template",
+        "__TEMPLATE_0_BASE_1_ID__": "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "__TEMPLATE_1_BASE_0_ID__": "/sitecore/templates/System/Templates/Standard template",
+        "__TEMPLATE_2_BASE_0_ID__": "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+        "__TEMPLATE_2_BASE_1_ID__": "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+        "__TEMPLATE_2_BASE_2_ID__": "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+        "__TEMPLATE_2_BASE_3_ID__": "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId"
+      },
+      "templateChecks": [
+        {
+          "path": "/sitecore/templates/System/Templates/Template section",
+          "into": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/System/Templates/Template field",
+          "into": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "fields": [
+            "Type",
+            "Title",
+            "__Short description",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/System/Layout/Placeholder",
+          "into": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+          "fields": [
+            "Placeholder Key",
+            "Allowed Controls"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "into": "__JSON_RENDERING_TEMPLATE_ID__",
+          "fields": [
+            "componentName",
+            "Datasource Template",
+            "Datasource Location",
+            "Parameters Template",
+            "Open Properties after Add",
+            "Enable Datasource Query",
+            "__Icon",
+            "OtherProperties",
+            "Placeholders"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+          "into": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+          "fields": [
+            "Renderings"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+          "into": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+          "fields": [
+            "__Icon"
+          ]
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+          "into": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/System/Branches/Branch",
+          "into": "__SXA_BRANCH_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/Common/Folder",
+          "into": "__SXA_FOLDER_ITEM_TEMPLATE_ID__",
+          "fields": []
+        },
+        {
+          "path": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+          "into": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+          "fields": [
+            "Location",
+            "Template",
+            "Name",
+            "Fields"
+          ]
+        }
+      ],
+      "templateTargets": [
+        {
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row",
+          "mustExist": false
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder",
+          "mustExist": false
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters",
+          "mustExist": false
+        }
+      ],
+      "itemChecks": [
+        {
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row/Content",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template section",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row/Content/heading",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Templates/Template field",
+          "requiredFields": [
+            "Type",
+            "Title",
+            "__Short description",
+            "Validate Button",
+            "Workflow"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/layout/Placeholder Settings/Project/Training App Router/General Image Cards",
+          "createIfMissing": true,
+          "expectedTemplateId": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Layout/Placeholder",
+          "requiredFields": [
+            "Placeholder Key",
+            "Allowed Controls"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card",
+          "createIfMissing": false,
+          "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card Row",
+          "createIfMissing": true,
+          "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JavaScript Services/Json Rendering",
+          "requiredFields": [
+            "componentName",
+            "Datasource Template",
+            "Datasource Location",
+            "Parameters Template",
+            "Open Properties after Add",
+            "Enable Datasource Query",
+            "__Icon",
+            "OtherProperties",
+            "Placeholders"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Branches/Branch",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant/$name",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant/$name/Default",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Available Headless Training App Router Renderings",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/System/Branches/Branch",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Available Headless Training App Router Renderings/$name",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+          "requiredFields": [
+            "Renderings"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add General Image Card Row Data Item",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+          "requiredFields": [
+            "Location",
+            "Template",
+            "Name"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add Available Renderings",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+          "requiredFields": [
+            "Location",
+            "Template",
+            "Name"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_FOLDER_ITEM_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Common/Folder",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/General Image Card Row",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Scaffolding/Actions/Site/AddItem",
+          "requiredFields": [
+            "Location",
+            "Template",
+            "Name",
+            "Fields"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/General Image Card Row",
+          "createIfMissing": true,
+          "expectedTemplateId": "__TEMPLATE_1_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder",
+          "requiredFields": []
+        },
+        {
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Available Renderings/Training App Router",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/Experience Accelerator/Presentation/Available Renderings/Available Renderings",
+          "requiredFields": [
+            "Renderings"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card Row",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/HeadlessVariants",
+          "requiredFields": [
+            "__Icon"
+          ]
+        },
+        {
+          "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card Row/Default",
+          "createIfMissing": true,
+          "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+          "expectedTemplatePath": "/sitecore/templates/Foundation/JSS Experience Accelerator/Headless Variants/Variant Definition",
+          "requiredFields": []
+        }
+      ],
+      "note": "Every external dependency and discoverable template/rendering/SXA collision is checked before the first mutation."
+    },
+    {
+      "id": "ensure-template-0",
+      "kind": "ensureTemplate",
+      "templateName": "General Image Card Row",
+      "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row",
+      "existing": false,
+      "preflight": {
+        "query": "TEMPLATE_BY_PATH",
+        "variables": {
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card Row"
+        }
+      },
+      "desired": {
+        "baseTemplates": [
+          {
+            "path": "/sitecore/templates/System/Templates/Standard template",
+            "id": "__TEMPLATE_0_BASE_0_ID__"
+          },
+          {
+            "path": "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+            "id": "__TEMPLATE_0_BASE_1_ID__"
+          }
+        ],
+        "standardValues": true,
+        "icon": "Office/32x32/window_dialog.png"
+      },
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM_TEMPLATE",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row",
+            "parent": "__TEMPLATE_0_PARENT_ID__",
+            "sections": [
+              {
+                "name": "Content",
+                "fields": [
+                  {
+                    "name": "heading",
+                    "type": "Single-Line Text"
+                  }
+                ]
+              }
+            ],
+            "baseTemplates": [
+              "__TEMPLATE_0_BASE_0_ID__",
+              "__TEMPLATE_0_BASE_1_ID__"
+            ],
+            "createStandardValuesItem": true,
+            "icon": "Office/32x32/window_dialog.png"
+          }
+        }
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
+      },
+      "resolves": {
+        "__TEMPLATE_0_ID__": "itemId"
+      }
+    },
+    {
+      "id": "ensure-template-fields-0",
+      "kind": "ensureTemplateFields",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Row",
+      "sections": [
+        {
+          "name": "Content",
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card Row/Content",
+          "fields": [
+            {
+              "name": "heading",
+              "type": "Single-Line Text"
+            }
+          ]
+        }
+      ],
+      "reconcile": {
+        "addMissingSection": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__SECTION_NAME__",
+              "templateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+              "parent": "__TEMPLATE_0_ID__",
+              "language": "en"
+            }
+          }
+        },
+        "addMissingField": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__FIELD_NAME__",
+              "templateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+              "parent": "__SECTION_ID__",
+              "language": "en",
+              "fields": [
+                {
+                  "name": "Type",
+                  "value": "__FIELD_TYPE__"
+                }
+              ]
+            }
+          }
+        },
+        "onExtraCmsField": "report — never deleted",
+        "onTypeMismatch": "conflict — reported, never retyped"
+      }
+    },
+    {
+      "id": "configure-field-0-Content-heading",
+      "kind": "configureField",
+      "fieldPath": "/sitecore/templates/Project/Training App Router/General Image Card Row/Content/heading",
+      "set": {
+        "mutation": "UPDATE_ITEM",
+        "variables": {
+          "input": {
+            "itemId": "__FIELD_ITEM_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Type",
+                "value": "Single-Line Text"
+              },
+              {
+                "name": "Title",
+                "value": "Heading"
+              },
+              {
+                "name": "__Short description",
+                "value": "Required section heading. The row does not render on the live site when this value is empty."
+              }
+            ]
+          }
+        }
+      },
+      "required": {
+        "appendRuleTo": [
+          "Validate Button",
+          "Workflow"
+        ],
+        "ruleIdPlaceholder": "__REQUIRED_RULE_ID__",
+        "note": "Read-modify-write: Required is appended to each validation bar only when missing."
+      }
+    },
+    {
+      "id": "ensure-template-1",
+      "kind": "ensureTemplate",
+      "templateName": "General Image Card Row Folder",
+      "targetPath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder",
+      "existing": false,
+      "preflight": {
+        "query": "TEMPLATE_BY_PATH",
+        "variables": {
+          "path": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder"
+        }
+      },
+      "desired": {
+        "baseTemplates": [
+          {
+            "path": "/sitecore/templates/System/Templates/Standard template",
+            "id": "__TEMPLATE_1_BASE_0_ID__"
+          }
+        ],
+        "standardValues": true,
+        "icon": "Office/32x32/folder_window.png"
+      },
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM_TEMPLATE",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row Folder",
+            "parent": "__TEMPLATE_1_PARENT_ID__",
+            "baseTemplates": [
+              "__TEMPLATE_1_BASE_0_ID__"
+            ],
+            "createStandardValuesItem": true,
+            "icon": "Office/32x32/folder_window.png"
+          }
+        }
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
+      },
+      "resolves": {
+        "__TEMPLATE_1_ID__": "itemId"
+      }
+    },
+    {
+      "id": "ensure-template-fields-1",
+      "kind": "ensureTemplateFields",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder",
+      "sections": [],
+      "reconcile": {
+        "addMissingSection": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__SECTION_NAME__",
+              "templateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+              "parent": "__TEMPLATE_1_ID__",
+              "language": "en"
+            }
+          }
+        },
+        "addMissingField": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__FIELD_NAME__",
+              "templateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+              "parent": "__SECTION_ID__",
+              "language": "en",
+              "fields": [
+                {
+                  "name": "Type",
+                  "value": "__FIELD_TYPE__"
+                }
+              ]
+            }
+          }
+        },
+        "onExtraCmsField": "report — never deleted",
+        "onTypeMismatch": "conflict — reported, never retyped"
+      }
+    },
+    {
+      "id": "ensure-template-2",
+      "kind": "ensureTemplate",
+      "templateName": "General Image Card Row Parameters",
+      "targetPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters",
+      "existing": false,
+      "preflight": {
+        "query": "TEMPLATE_BY_PATH",
+        "variables": {
+          "path": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters"
+        }
+      },
+      "desired": {
+        "baseTemplates": [
+          {
+            "path": "/sitecore/templates/Foundation/JSS Experience Accelerator/Presentation/Rendering Parameters/BaseRenderingParameters",
+            "id": "__TEMPLATE_2_BASE_0_ID__"
+          },
+          {
+            "path": "/sitecore/templates/Foundation/Experience Accelerator/Dynamic Placeholders/Rendering Parameters/IDynamicPlaceholder",
+            "id": "__TEMPLATE_2_BASE_1_ID__"
+          },
+          {
+            "path": "/sitecore/templates/Foundation/Experience Accelerator/StandardValues/_PerSiteStandardValues",
+            "id": "__TEMPLATE_2_BASE_2_ID__"
+          },
+          {
+            "path": "/sitecore/templates/Foundation/Experience Accelerator/Markup Decorator/Rendering Parameters/IRenderingId",
+            "id": "__TEMPLATE_2_BASE_3_ID__"
+          }
+        ],
+        "standardValues": true,
+        "icon": "sxa/16x16/promo.png"
+      },
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM_TEMPLATE",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row Parameters",
+            "parent": "__TEMPLATE_2_PARENT_ID__",
+            "baseTemplates": [
+              "__TEMPLATE_2_BASE_0_ID__",
+              "__TEMPLATE_2_BASE_1_ID__",
+              "__TEMPLATE_2_BASE_2_ID__",
+              "__TEMPLATE_2_BASE_3_ID__"
+            ],
+            "createStandardValuesItem": true,
+            "icon": "sxa/16x16/promo.png"
+          }
+        }
+      },
+      "whenPresent": {
+        "mutation": "UPDATE_ITEM_TEMPLATE"
+      },
+      "resolves": {
+        "__TEMPLATE_2_ID__": "itemId"
+      }
+    },
+    {
+      "id": "ensure-template-fields-2",
+      "kind": "ensureTemplateFields",
+      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters",
+      "sections": [],
+      "reconcile": {
+        "addMissingSection": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__SECTION_NAME__",
+              "templateId": "__TEMPLATE_SECTION_TEMPLATE_ID__",
+              "parent": "__TEMPLATE_2_ID__",
+              "language": "en"
+            }
+          }
+        },
+        "addMissingField": {
+          "mutation": "CREATE_ITEM",
+          "variables": {
+            "input": {
+              "name": "__FIELD_NAME__",
+              "templateId": "__TEMPLATE_FIELD_TEMPLATE_ID__",
+              "parent": "__SECTION_ID__",
+              "language": "en",
+              "fields": [
+                {
+                  "name": "Type",
+                  "value": "__FIELD_TYPE__"
+                }
+              ]
+            }
+          }
+        },
+        "onExtraCmsField": "report — never deleted",
+        "onTypeMismatch": "conflict — reported, never retyped"
+      }
+    },
+    {
+      "id": "ensure-standard-values-0",
+      "kind": "ensureStandardValues",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Row",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/General Image Card Row/__Standard Values",
+      "insertOptions": {
+        "field": "__Masters",
+        "paths": [],
+        "note": "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved."
+      }
+    },
+    {
+      "id": "ensure-standard-values-1",
+      "kind": "ensureStandardValues",
+      "templatePath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/General Image Card Row Folder/__Standard Values",
+      "insertOptions": {
+        "field": "__Masters",
+        "paths": [
+          "/sitecore/templates/Project/Training App Router/General Image Card Row",
+          "/sitecore/templates/Project/Training App Router/General Image Card Row Folder"
+        ],
+        "note": "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved."
+      }
+    },
+    {
+      "id": "ensure-standard-values-2",
+      "kind": "ensureStandardValues",
+      "templatePath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters",
+      "standardValuesPath": "/sitecore/templates/Project/Training App Router/Rendering Parameters/General Image Card Row Parameters/__Standard Values",
+      "insertOptions": {
+        "field": "__Masters",
+        "paths": [],
+        "note": "Each insert-option template id is appended to __Masters only when missing; existing entries are preserved."
+      }
+    },
+    {
+      "id": "ensure-rendering",
+      "kind": "ensureRendering",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card Row",
+      "expectedTemplateId": "__JSON_RENDERING_TEMPLATE_ID__",
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row",
+            "templateId": "__JSON_RENDERING_TEMPLATE_ID__",
+            "parent": "__RENDERING_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "resolves": {
+        "__RENDERING_ID__": "itemId"
+      }
+    },
+    {
+      "id": "set-rendering-bindings",
+      "kind": "setRenderingBindings",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card Row",
+      "always": {
+        "mutation": "UPDATE_ITEM",
+        "variables": {
+          "input": {
+            "itemId": "__RENDERING_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "componentName",
+                "value": "GeneralImageCardRow"
+              },
+              {
+                "name": "Datasource Template",
+                "value": "/sitecore/templates/Project/Training App Router/General Image Card Row"
+              },
+              {
+                "name": "Datasource Location",
+                "value": "./Data|query:$site/*[@@name='Data']/*[@@templatename='General Image Card Row Folder']|query:$sharedSites/*[@@name='Data']/*[@@templatename='General Image Card Row Folder']"
+              },
+              {
+                "name": "Parameters Template",
+                "value": "__TEMPLATE_2_ID__"
+              },
+              {
+                "name": "Open Properties after Add",
+                "value": "0"
+              },
+              {
+                "name": "Enable Datasource Query",
+                "value": "1"
+              },
+              {
+                "name": "__Icon",
+                "value": "SXA_MDI/16x16/Promo.png"
+              }
+            ]
+          }
+        }
+      },
+      "dynamicPlaceholders": true,
+      "note": "Idempotent set of the reviewed rendering contract."
+    },
+    {
+      "id": "ensure-sxa-default-variant-branch",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant",
+      "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Default General Image Card Row Variant",
+            "templateId": "__SXA_BRANCH_TEMPLATE_ID__",
+            "parent": "__SXA_BRANCH_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "resolves": {
+        "__SXA_DEFAULT_VARIANT_BRANCH_ID__": "itemId"
+      },
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-default-variant-branch-root",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant/$name",
+      "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "$name",
+            "templateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+            "parent": "__SXA_DEFAULT_VARIANT_BRANCH_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "resolves": {
+        "__SXA_DEFAULT_VARIANT_BRANCH_ROOT_ID__": "itemId"
+      },
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-default-variant-branch-default",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Default General Image Card Row Variant/$name/Default",
+      "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Default",
+            "templateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+            "parent": "__SXA_DEFAULT_VARIANT_BRANCH_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-available-renderings-branch",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Available Headless Training App Router Renderings",
+      "expectedTemplateId": "__SXA_BRANCH_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Available Headless Training App Router Renderings",
+            "templateId": "__SXA_BRANCH_TEMPLATE_ID__",
+            "parent": "__SXA_BRANCH_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "resolves": {
+        "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__": "itemId"
+      },
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-available-renderings-branch-category",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/templates/Branches/Project/Training App Router/Available Headless Training App Router Renderings/$name",
+      "expectedTemplateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "$name",
+            "templateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+            "parent": "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Renderings",
+                "value": "__RENDERING_ID__"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [
+        {
+          "name": "Renderings",
+          "append": "__RENDERING_ID__"
+        }
+      ],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-setup-add-data",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add General Image Card Row Data Item",
+      "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Add General Image Card Row Data Item",
+            "templateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+            "parent": "__SXA_SETUP_ROOT_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Location",
+                "value": "__SXA_SCAFFOLD_DATA_LOCATION_ID__"
+              },
+              {
+                "name": "Template",
+                "value": "__TEMPLATE_1_ID__"
+              },
+              {
+                "name": "Name",
+                "value": "General Image Card Row"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [
+        {
+          "name": "Location",
+          "value": "__SXA_SCAFFOLD_DATA_LOCATION_ID__"
+        },
+        {
+          "name": "Template",
+          "value": "__TEMPLATE_1_ID__"
+        },
+        {
+          "name": "Name",
+          "value": "General Image Card Row"
+        }
+      ],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-setup-add-available-renderings",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Add Available Renderings",
+      "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Add Available Renderings",
+            "templateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+            "parent": "__SXA_SETUP_ROOT_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Location",
+                "value": "__SXA_SCAFFOLD_AVAILABLE_RENDERINGS_LOCATION_ID__"
+              },
+              {
+                "name": "Template",
+                "value": "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__"
+              },
+              {
+                "name": "Name",
+                "value": "Training App Router"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [
+        {
+          "name": "Location",
+          "value": "__SXA_SCAFFOLD_AVAILABLE_RENDERINGS_LOCATION_ID__"
+        },
+        {
+          "name": "Template",
+          "value": "__SXA_AVAILABLE_RENDERINGS_BRANCH_ID__"
+        },
+        {
+          "name": "Name",
+          "value": "Training App Router"
+        }
+      ],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-setup-rendering-variants-folder",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants",
+      "expectedTemplateId": "__SXA_FOLDER_ITEM_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Rendering Variants",
+            "templateId": "__SXA_FOLDER_ITEM_TEMPLATE_ID__",
+            "parent": "__SXA_SETUP_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "resolves": {
+        "__SXA_SETUP_RENDERING_VARIANTS_FOLDER_ID__": "itemId"
+      },
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-setup-rendering-variant",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/system/Settings/Project/Training App Router/Training App Router /Rendering Variants/General Image Card Row",
+      "expectedTemplateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row",
+            "templateId": "__SXA_SITE_SETUP_ADD_ITEM_TEMPLATE_ID__",
+            "parent": "__SXA_SETUP_RENDERING_VARIANTS_FOLDER_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Location",
+                "value": "__SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__"
+              },
+              {
+                "name": "Template",
+                "value": "__SXA_DEFAULT_VARIANT_BRANCH_ID__"
+              },
+              {
+                "name": "Name",
+                "value": "General Image Card Row"
+              },
+              {
+                "name": "Fields",
+                "value": "__Icon=Office%2F32x32%2Fwindow_dialog.png"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [
+        {
+          "name": "Location",
+          "value": "__SXA_SCAFFOLD_HEADLESS_VARIANTS_LOCATION_ID__"
+        },
+        {
+          "name": "Template",
+          "value": "__SXA_DEFAULT_VARIANT_BRANCH_ID__"
+        },
+        {
+          "name": "Name",
+          "value": "General Image Card Row"
+        },
+        {
+          "name": "Fields",
+          "value": "__Icon=Office%2F32x32%2Fwindow_dialog.png"
+        }
+      ],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-site-0-data-folder",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Data/General Image Card Row",
+      "expectedTemplateId": "__TEMPLATE_1_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row",
+            "templateId": "__TEMPLATE_1_ID__",
+            "parent": "__SXA_SITE_0_DATA_ROOT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-site-0-available-renderings",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Available Renderings/Training App Router",
+      "expectedTemplateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Training App Router",
+            "templateId": "__SXA_AVAILABLE_RENDERINGS_TEMPLATE_ID__",
+            "parent": "__SXA_SITE_0_AVAILABLE_ROOT_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Renderings",
+                "value": "__RENDERING_ID__"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [
+        {
+          "name": "Renderings",
+          "append": "__RENDERING_ID__"
+        }
+      ],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-site-0-variant",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card Row",
+      "expectedTemplateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "General Image Card Row",
+            "templateId": "__SXA_HEADLESS_VARIANTS_TEMPLATE_ID__",
+            "parent": "__SXA_SITE_0_VARIANTS_ROOT_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "__Icon",
+                "value": "Office/32x32/window_dialog.png"
+              }
+            ]
+          }
+        }
+      },
+      "fields": [
+        {
+          "name": "__Icon",
+          "value": "Office/32x32/window_dialog.png"
+        }
+      ],
+      "listFields": [],
+      "resolves": {
+        "__SXA_SITE_0_VARIANT_ID__": "itemId"
+      },
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-sxa-site-0-variant-default",
+      "kind": "ensureItem",
+      "targetPath": "/sitecore/content/Training App Router/Basic Site/Presentation/Headless Variants/General Image Card Row/Default",
+      "expectedTemplateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+      "createIfMissing": true,
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "Default",
+            "templateId": "__SXA_VARIANT_DEFINITION_TEMPLATE_ID__",
+            "parent": "__SXA_SITE_0_VARIANT_ID__",
+            "language": "en"
+          }
+        }
+      },
+      "fields": [],
+      "listFields": [],
+      "reconcile": "Scalar fields are filled only when empty; differing values become manual conflicts. List fields are append-only."
+    },
+    {
+      "id": "ensure-placeholder-settings-0",
+      "kind": "ensurePlaceholderSettings",
+      "targetPath": "/sitecore/layout/Placeholder Settings/Project/Training App Router/General Image Cards",
+      "preflight": {
+        "query": "ITEM_BY_PATH",
+        "variables": {
+          "path": "/sitecore/layout/Placeholder Settings/Project/Training App Router/General Image Cards"
+        }
+      },
+      "resolveTemplate": {
+        "into": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__"
+      },
+      "whenAbsent": {
+        "mutation": "CREATE_ITEM",
+        "variables": {
+          "input": {
+            "name": "General Image Cards",
+            "templateId": "__PLACEHOLDER_SETTINGS_TEMPLATE_ID__",
+            "parent": "__PLACEHOLDER_ROOT_ID__",
+            "language": "en",
+            "fields": [
+              {
+                "name": "Placeholder Key",
+                "value": "general-image-cards-{*}"
+              }
+            ]
+          }
+        }
+      },
+      "key": {
+        "field": "Placeholder Key",
+        "value": "general-image-cards-{*}"
+      },
+      "resolves": {
+        "__PLACEHOLDER_0_ID__": "itemId"
+      },
+      "allowedControls": {
+        "field": "Allowed Controls",
+        "append": [
+          "__PLACEHOLDER_0_ALLOWED_CONTROL_0_ID__"
+        ],
+        "note": "Each reviewed rendering id is appended to Allowed Controls only when missing."
+      }
+    },
+    {
+      "id": "link-rendering-placeholders",
+      "kind": "linkRenderingPlaceholders",
+      "targetPath": "/sitecore/layout/Renderings/Project/Training App Router/General Image Card Row",
+      "field": "Placeholders",
+      "append": [
+        "__PLACEHOLDER_0_ID__"
+      ],
+      "note": "Each emitted placeholder settings item is linked to the parent rendering add-only."
+    }
+  ],
+  "manualFollowUps": []
+}

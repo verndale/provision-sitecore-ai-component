@@ -18,9 +18,9 @@
           "fields": [
             { "name": "personName", "title": "Person Name", "sitecoreType": "Single-Line Text", "required": true },
             { "name": "personJobTitle", "title": "Person Job Title", "sitecoreType": "Single-Line Text", "required": true },
-            { "name": "profileImage", "title": "Profile Image", "sitecoreType": "Image", "required": true },
+            { "name": "profileImage", "title": "Profile Image", "sitecoreType": "Image", "required": true, "source": "query:$siteMedia" },
             { "name": "roleStartDate", "title": "Role Start Date", "sitecoreType": "Date" },
-            { "name": "biographyText", "title": "Biography Text", "sitecoreType": "Rich Text", "required": true }
+            { "name": "biographyText", "title": "Biography Text", "sitecoreType": "Rich Text", "required": true, "source": "query:$xaRichTextProfile" }
           ]
         }
       ]

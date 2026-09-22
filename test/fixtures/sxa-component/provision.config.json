@@ -1,0 +1,8 @@
+{
+  "templateRoots": {
+    "datasource": "/sitecore/templates/Project/Training App Router",
+    "renderingParameters": "/sitecore/templates/Project/Training App Router/Rendering Parameters"
+  },
+  "renderingRoot": "/sitecore/layout/Renderings/Project/Training App Router",
+  "componentPropsImport": "lib/component-props"
+}

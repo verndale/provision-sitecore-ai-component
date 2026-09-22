@@ -15,6 +15,13 @@ const INVALID_CASES = [
   { manifest: "path-escape.json", pattern: /output \("\.\.\/outside\/award-card"\) is invalid/ },
   { manifest: "unknown-ds-template.json", pattern: /datasourceTemplate \("Card That Does Not Exist"\) is unknown/ },
   { manifest: "bad-section.json", pattern: /sections\[0\]\.name \("Content "\) is invalid/ },
+  { manifest: "both-source-and-option-source.json", pattern: /has both source and optionSource/ },
+  { manifest: "option-source-missing-fallback.json", pattern: /optionSource\.fallback\.path is missing or invalid/ },
+  { manifest: "default-value-not-in-options.json", pattern: /defaultValue \("contrast"\) is not an option name/ },
+  { manifest: "option-source-on-text.json", pattern: /optionSource is only valid on Droplist fields/ },
+  { manifest: "option-source-missing-template.json", pattern: /optionSource\.itemTemplate is missing/ },
+  { manifest: "option-source-missing-value.json", pattern: /options\[0\]\.value is missing/ },
+  { manifest: "option-source-unknown-template.json", pattern: /itemTemplate \("Option"\) is unknown/ },
 ];
 
 for (const { manifest, pattern } of INVALID_CASES) {
@@ -78,4 +85,49 @@ test("resolveType falls back to a complete generic entry for every unmapped type
   }
   assert.equal(resolveType("single-line text").tsType, "Field<string>");
   assert.equal(resolveType("Rich Text").renderer, "richtext");
+  assert.equal(resolveType("Droplist").tsType, "Field<string>");
+  assert.equal(resolveType("Droplist").renderer, "todo");
+});
+
+const { sitecoreQuerySource, folderMatchesOptions, ancestorPaths } = require("../src/option-source.cjs");
+
+test("sitecoreQuerySource escapes dashed segments and builds query:<folder>/*", () => {
+  assert.equal(
+    sitecoreQuerySource("/sitecore/content/Training App Router/Basic Site/Data/Enumerations/Image CTA Row/Theme"),
+    "query:/sitecore/content/#Training App Router#/#Basic Site#/Data/Enumerations/#Image CTA Row#/Theme/*"
+  );
+  assert.equal(sitecoreQuerySource("/sitecore/content/T/meta-data"), "query:/sitecore/content/T/#meta-data#/*");
+  assert.deepEqual(ancestorPaths("/sitecore/content/T/Data/Theme").slice(-2), [
+    "/sitecore/content/T/Data",
+    "/sitecore/content/T/Data/Theme",
+  ]);
+});
+
+test("folderMatchesOptions requires case-sensitive item names and exact displayName", () => {
+  const options = [
+    { name: "light", displayName: "Light" },
+    { name: "dark", displayName: "Dark" },
+  ];
+  assert.equal(
+    folderMatchesOptions(
+      [
+        { name: "light", displayName: "Light" },
+        { name: "dark", displayName: "Dark" },
+      ],
+      options
+    ),
+    true
+  );
+  assert.equal(
+    folderMatchesOptions(
+      [
+        { name: "Light", displayName: "Light" },
+        { name: "Dark", displayName: "Dark" },
+      ],
+      options
+    ),
+    false,
+    "Facebook-style Light/Dark item names must not match light/dark"
+  );
+  assert.equal(folderMatchesOptions([{ name: "light", displayName: "Light" }, { name: "dark", displayName: "Dark" }, { name: "extra", displayName: "Extra" }], options), false);
 });
