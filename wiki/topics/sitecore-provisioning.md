@@ -27,6 +27,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Decisions
 
+- 2026-09-29 — fix(ci): preserve main Quality release handoff ([verndale/provision-sitecore-ai-component PR #49](https://github.com/verndale/provision-sitecore-ai-component/pull/49); [verndale/provision-sitecore-ai-component issue #48](https://github.com/verndale/provision-sitecore-ai-component/issues/48))
 - 2026-09-22 — feat(provision-sitecore-ai-component): provision general image card plac ([verndale/provision-sitecore-ai-component PR #36](https://github.com/verndale/provision-sitecore-ai-component/pull/36))
 - 2026-09-29 — fix(ci): scope wiki quality and bot PR replay ([verndale/provision-sitecore-ai-component PR #46](https://github.com/verndale/provision-sitecore-ai-component/pull/46); [verndale/provision-sitecore-ai-component issue #45](https://github.com/verndale/provision-sitecore-ai-component/issues/45))
 - 2026-09-29 — chore(git): reject hidden PR descriptions ([verndale/provision-sitecore-ai-component PR #43](https://github.com/verndale/provision-sitecore-ai-component/pull/43); [verndale/provision-sitecore-ai-component issue #42](https://github.com/verndale/provision-sitecore-ai-component/issues/42))
