@@ -1,3 +1,37 @@
+# v2.1.2 — 2026-09-29
+
+## Highlights
+- commit: Merge pull request #49 from verndale/codex/48-preserve-release-handoff (2820c68)
+- fix(ci): preserve main Quality release handoff (5768187)
+- commit: Merge pull request #38 from verndale/bot/wiki-sync/36 (ef9c40b)
+- docs(wiki): reconcile merged PR #36 (d7c83cb)
+- commit: Merge pull request #47 from verndale/bot/wiki-sync/46 (ef81d31)
+- docs(wiki): reconcile merged PR #46 (bb16b54)
+
+## Breaking changes
+- None
+
+## Changes by type
+### Fixes
+- fix(ci): preserve main Quality release handoff (5768187)
+
+### Docs
+- docs(wiki): reconcile merged PR #36 (d7c83cb)
+- docs(wiki): reconcile merged PR #46 (bb16b54)
+
+### Other (unknown)
+- commit: Merge pull request #38 from verndale/bot/wiki-sync/36 (ef9c40b)
+- commit: Merge pull request #47 from verndale/bot/wiki-sync/46 (ef81d31)
+- commit: Merge pull request #49 from verndale/codex/48-preserve-release-handoff (2820c68)
+
+## Full commit list
+- 2820c68 commit: Merge pull request #49 from verndale/codex/48-preserve-release-handoff
+- 5768187 fix(ci): preserve main Quality release handoff
+- ef9c40b commit: Merge pull request #38 from verndale/bot/wiki-sync/36
+- d7c83cb docs(wiki): reconcile merged PR #36
+- ef81d31 commit: Merge pull request #47 from verndale/bot/wiki-sync/46
+- bb16b54 docs(wiki): reconcile merged PR #46
+
 # v2.1.1 — 2026-09-29
 
 ## Highlights
