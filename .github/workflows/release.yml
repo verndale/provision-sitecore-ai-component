@@ -85,7 +85,7 @@ jobs:
 
       - name: Run unit tests
         if: steps.scope.outputs.substantive == 'true'
-        run: pnpm run test:unit
+        run: pnpm test
 
       - name: Adopt wiki-only main descendants
         if: steps.scope.outputs.substantive == 'true'

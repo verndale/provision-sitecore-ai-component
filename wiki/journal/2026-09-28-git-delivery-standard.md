@@ -16,7 +16,7 @@ issues: [https://github.com/verndale/provision-sitecore-ai-component/issues/39]
 - Contributors create a labeled issue, branch from updated main, use standalone Commitlint and deterministic PR content, and leave the PR open for review.
 - Pre-push blocks direct main updates, and the Sitecore CMS push approval boundary remains intact.
 - Wiki bot writers use direct GitHub CLI with `BOT_TOKEN`.
-- Release waits for successful Quality on the pushed main revision.
+- Release waits for successful Quality on the pushed main revision and runs the repository's `pnpm test` command before release analysis.
 - Wiki issue-state reconciliation now runs Mondays at 11:30 UTC, matching agent-review-workflows.
 
 ## Files
