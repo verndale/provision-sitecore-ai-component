@@ -2,7 +2,7 @@
 date: 2026-09-01
 topics: [sitecore-provisioning]
 plan: plans/2026-09-01-droplist-items-based-on-option-template.md
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/36
 ---
 # Droplist options use project item templates
 

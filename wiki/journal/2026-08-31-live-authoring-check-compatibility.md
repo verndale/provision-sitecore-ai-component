@@ -2,7 +2,7 @@
 date: 2026-08-31
 topics: [sitecore-provisioning]
 plan: none
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/36
 ---
 # Live SitecoreAI authoring check compatibility
 
