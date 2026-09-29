@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 100,
-    "edges": 231,
+    "nodes": 102,
+    "edges": 234,
     "byType": {
       "hook": 6,
       "root-doc": 4,
@@ -10,20 +10,20 @@
       "reference": 6,
       "skill": 1,
       "source": 9,
-      "test": 15,
+      "test": 16,
       "wiki-index": 3,
-      "wiki-journal": 19,
+      "wiki-journal": 20,
       "wiki-plan": 12,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 11,
       "invokes": 5,
-      "links-to": 100,
+      "links-to": 102,
       "plan": 12,
       "references": 6,
       "requires": 70,
-      "topic": 27
+      "topic": 28
     }
   },
   "nodes": [
@@ -769,6 +769,19 @@
       "degree": 5
     },
     {
+      "id": "test/pr-body.test.cjs",
+      "label": "pr-body.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 2470,
+      "degree": 0
+    },
+    {
       "id": "test/push-gate.test.cjs",
       "label": "push-gate.test.cjs",
       "type": "test",
@@ -869,8 +882,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7578,
-      "degree": 26
+      "bytes": 7744,
+      "degree": 27
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1315,6 +1328,30 @@
       "degree": 4
     },
     {
+      "id": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "label": "Reject hidden PR descriptions",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "42"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 42,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/42"
+        }
+      ],
+      "bytes": 770,
+      "degree": 3
+    },
+    {
       "id": "wiki/MECHANICS.md",
       "label": "Wiki Mechanics",
       "type": "wiki-index",
@@ -1732,10 +1769,17 @@
         "7"
       ],
       "issues": [
+        "42",
         "39",
         "29"
       ],
       "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 42,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/42"
+        },
         {
           "kind": "issue",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -1767,8 +1811,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 5925,
-      "degree": 19
+      "bytes": 6223,
+      "degree": 21
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
@@ -2306,6 +2350,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2470,6 +2521,13 @@
       "target": "wiki/journal/2026-09-28-git-delivery-standard.md",
       "type": "links-to",
       "count": 2,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "type": "links-to",
+      "count": 1,
       "anchors": []
     },
     {
@@ -3209,6 +3267,11 @@
     },
     {
       "source": "wiki/journal/2026-09-28-git-delivery-standard.md",
+      "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-29-pr-body-validation.md",
       "target": "wiki/topics/knowledge-graph.md",
       "type": "topic"
     },

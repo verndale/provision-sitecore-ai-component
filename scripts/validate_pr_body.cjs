@@ -20,8 +20,55 @@ const REQUIRED_CHECKS = [
   '`pnpm run verify:ci` passes.',
 ];
 
+function fenceMarker(line) {
+  return /^[\t ]{0,3}(`{3,}|~{3,})(.*)$/.exec(line.replace(/\r$/, ''));
+}
+
+function closesFence(marker, fence) {
+  return marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim();
+}
+
 function withoutComments(value) {
-  return value.replace(/<!--[\s\S]*?-->/g, '').trim();
+  let fence = null;
+  let comment = false;
+  const lines = [];
+  for (const rawLine of value.split('\n')) {
+    if (fence) {
+      lines.push(rawLine);
+      if (closesFence(fenceMarker(rawLine), fence)) fence = null;
+      continue;
+    }
+    if (!comment) {
+      const marker = fenceMarker(rawLine);
+      if (marker) {
+        lines.push(rawLine);
+        fence = marker[1];
+        continue;
+      }
+    }
+
+    let visible = '';
+    let cursor = 0;
+    while (cursor < rawLine.length) {
+      if (comment) {
+        const end = rawLine.indexOf('-->', cursor);
+        if (end < 0) break;
+        cursor = end + 3;
+        comment = false;
+      } else {
+        const start = rawLine.indexOf('<!--', cursor);
+        if (start < 0) {
+          visible += rawLine.slice(cursor);
+          break;
+        }
+        visible += rawLine.slice(cursor, start);
+        cursor = start + 4;
+        comment = true;
+      }
+    }
+    lines.push(visible);
+  }
+  return lines.join('\n').trim();
 }
 
 function readableText(value) {
@@ -32,14 +79,32 @@ function readableText(value) {
 }
 
 function sections(body) {
-  const matches = [...body.matchAll(/^##\s+(.+?)\s*$/gm)];
+  const visible = withoutComments(body);
+  const matches = [];
+  let fence = null;
+  let offset = 0;
+  for (const rawLine of visible.split('\n')) {
+    const line = rawLine.replace(/\r$/, '');
+    const marker = fenceMarker(rawLine);
+    if (fence) {
+      if (closesFence(marker, fence)) {
+        fence = null;
+      }
+    } else if (marker) {
+      fence = marker[1];
+    } else {
+      const heading = /^##[\t ]+(.+?)[\t ]*$/.exec(line);
+      if (heading) matches.push({ name: heading[1], index: offset, end: offset + rawLine.length });
+    }
+    offset += rawLine.length + 1;
+  }
   const values = new Map();
   for (let index = 0; index < matches.length; index += 1) {
-    const start = matches[index].index + matches[index][0].length;
-    const end = matches[index + 1]?.index ?? body.length;
-    values.set(matches[index][1], body.slice(start, end));
+    const start = matches[index].end;
+    const end = matches[index + 1]?.index ?? visible.length;
+    values.set(matches[index].name, visible.slice(start, end));
   }
-  return { headings: matches.map(match => match[1]), values };
+  return { headings: matches.map(match => match.name), values };
 }
 
 function validatePullRequestBody(body) {
