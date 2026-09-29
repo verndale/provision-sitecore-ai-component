@@ -213,8 +213,8 @@ The wiki includes the knowledge graph: `pnpm graph:build` derives a typed node/e
 pnpm test          # node:test — goldens (byte-compared plans + TSX), executor units (injected fetch), skills lint, wiki conformance, graph freshness
 pnpm graph:build   # rebuild the knowledge graph + generated wiki/connections* pages
 pnpm graph:view    # serve the interactive graph viewer (localhost:4173)
-pnpm commit        # Conventional Commits via @verndale/ai-commit (husky-enforced)
-pnpm run pr:create # draft PR via @verndale/ai-pr (also runs on push via .github/workflows/pr.yml)
+git commit -m "chore(scope): Describe the change" # standalone Commitlint
+pnpm run lint:pr < pr-body.md # validate the deterministic issue-linked PR body
 ```
 
 Releases run via semantic-release on `main` (version + tag + GitHub Release; no npm publish). Golden fixtures under `test/fixtures/` pin the planner and emitter byte-for-byte — regenerate them intentionally when output changes, never to quiet a diff. See [CONTRIBUTING.md](CONTRIBUTING.md).

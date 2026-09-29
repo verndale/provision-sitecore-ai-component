@@ -19,6 +19,8 @@ The repo's self-model: a typed node/edge graph derived deterministically from th
 
 ## Decisions
 
+- 2026-09-28 — Git delivery uses labeled issues, updated-main branches, standalone Commitlint, deterministic PR bodies, and open PR review; the wiki writers use `BOT_TOKEN` and release waits for Quality ([issue #39](https://github.com/verndale/provision-sitecore-ai-component/issues/39), [plan](../plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md), [journal](../journal/2026-09-28-git-delivery-standard.md)).
+
 - 2026-08-23 — Standardized wiki Actions, repo-qualified evidence, compact routing, and contamination-safe graph lifecycle while preserving the curated graph and owner-handoff guard ([issue #29](https://github.com/verndale/provision-sitecore-component/issues/29), [plan](../plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md), [journal](../journal/2026-08-23-wiki-actions-routing-standard.md)).
 - 2026-07-21 — Modeled lifecycle hooks as first-class `hook` nodes with `invokes` edges (git, release, and agent PreToolUse guards → the scripts they run) and added a `connections/hooks.md` section ([PR #13](https://github.com/verndale/provision-sitecore-component/pull/13), [plan](../plans/2026-07-21-plan-model-lifecycle-hooks-as-first-class-knowledge-graph-no.md), [journal](../journal/2026-07-21-graph-hook-nodes.md)).
 - 2026-07-21 — Promoted the root operating docs to `root-doc` nodes so `AGENTS.md`/`CLAUDE.md` enter the graph and surface as cross-subsystem seams ([PR #5](https://github.com/verndale/provision-sitecore-component/pull/5), [journal](../journal/2026-07-21-agents-and-claude-md.md)).

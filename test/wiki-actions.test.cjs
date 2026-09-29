@@ -371,14 +371,13 @@ test("five workflow identities and writer contracts stay stable", () => {
   const check = read(".github/workflows/wiki-check.yml");
   const merge = read(".github/workflows/wiki-sync.yml");
   const issue = read(".github/workflows/wiki-issue-sync.yml");
-  const pr = read(".github/workflows/pr.yml");
 
   assert.match(commitlint, /^name: Commit message lint$/m);
   assert.match(commitlint, /^  commitlint:$/m);
   assert.match(commitlint, /types: \[opened, synchronize, reopened, edited\]/);
   assert.match(commitlint, /Lint PR title/);
   assert.match(commitlint, /--from/);
-  assert.match(commitlint, /pnpm exec commitlint --config commitlint\.config\.cjs/);
+  assert.match(commitlint, /pnpm run lint:commit/);
 
   assert.match(quality, /^name: Quality$/m);
   assert.match(quality, /^  quality:$/m);
@@ -408,16 +407,13 @@ test("five workflow identities and writer contracts stay stable", () => {
   assert.match(issue, /workflow_dispatch: \{\}/);
   assert.match(issue, /bot\/wiki-issue-sync/);
   assert.match(issue, /git push --force-with-lease/);
-  assert.match(pr, /- "bot\/wiki-\*\*"/);
-  assert.match(pr, /!startsWith\(github\.ref_name, 'bot\/wiki-'\)/);
 });
 
-test("ai-commit is the sole direct Commitlint provider", () => {
+test("standalone Commitlint and deterministic PR body validation are configured", () => {
   const pkg = JSON.parse(read("package.json"));
-  assert.equal(pkg.devDependencies["@verndale/ai-commit"], "2.7.0");
-  assert.equal(pkg.devDependencies["@commitlint/cli"], undefined);
-  assert.equal(pkg.devDependencies["@commitlint/config-conventional"], undefined);
-  assert.equal(read("commitlint.config.cjs").trim(), "module.exports = require(\"@verndale/ai-commit\");");
-  assert.match(read("pnpm-workspace.yaml"), /publicHoistPattern:\n  - "@commitlint\/cli"/);
-  assert.match(read(".husky/commit-msg"), /pnpm exec ai-commit lint --edit "\$1"/);
+  assert.equal(pkg.devDependencies["@commitlint/cli"], "20.5.3");
+  assert.equal(pkg.devDependencies["@commitlint/config-conventional"], "20.5.3");
+  assert.match(read("commitlint.config.cjs"), /@commitlint\/config-conventional/);
+  assert.match(read(".husky/commit-msg"), /pnpm run lint:commit --edit "\$1"/);
+  assert.match(read(".github/workflows/commitlint.yml"), /pnpm run lint:pr/);
 });

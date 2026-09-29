@@ -7,7 +7,7 @@
 //
 // Scope model: rules about the provisioning CLI itself (push gate, secrets)
 // apply in every repo, because setup.sh registers the guard user-level; rules
-// that encode THIS repo's contributor boundaries (deliver-and-handoff,
+// that encode THIS repo's contributor boundaries (merge/release boundaries,
 // generated/vendored/golden files) activate only when the session cwd is
 // inside this repo. Consumer repos keep their own commit policy.
 //
@@ -32,7 +32,7 @@ const GIT_TAG_READONLY = /^(-l|--list|-n\d*|--sort(=.*)?|--format(=.*)?|--contai
 
 const REASONS = {
   handoff:
-    "Version control here is deliver-and-handoff: leave an uncommitted working tree plus a suggested Conventional Commits message; the repo owner commits, pushes, merges, tags, and releases (AGENTS.md, Hard boundaries).",
+    "Git flow leaves merges, tags, and releases to the maintainer (AGENTS.md, Git delivery).",
   pushGate:
     "provision-sitecore-ai-component push mutates a shared SitecoreAI CMS environment. Approve only if the SKILL.md step-6 gate (one AskUserQuestion) was answered with approval in THIS session; the CLI additionally requires --yes or an interactive confirm (SKILL.md, Guardrails).",
   pushGateCodex:
@@ -141,7 +141,7 @@ function gitSubcommand(tokens) {
 function decideGit(tokens, prog) {
   if (prog !== "git") return null;
   const { sub, rest } = gitSubcommand(tokens);
-  if (sub === "commit" || sub === "push" || sub === "merge") return deny(REASONS.handoff);
+  if (sub === "merge") return deny(REASONS.handoff);
   if (sub === "tag") {
     if (rest.length === 0 || GIT_TAG_READONLY.test(rest[0])) return null;
     return deny(REASONS.handoff);
@@ -151,7 +151,7 @@ function decideGit(tokens, prog) {
 
 function decideGh(tokens, prog) {
   if (prog !== "gh") return null;
-  if (tokens[1] === "pr" && (tokens[2] === "create" || tokens[2] === "merge")) return deny(REASONS.handoff);
+  if (tokens[1] === "pr" && (tokens[2] === "merge")) return deny(REASONS.handoff);
   if (tokens[1] === "release" && tokens[2] && !["list", "view", "download"].includes(tokens[2])) {
     return deny(REASONS.handoff);
   }
@@ -178,9 +178,7 @@ function decideReleaseTooling(segment, tokens, prog) {
     while (i < tokens.length && tokens[i].startsWith("-")) i += 1;
     bin = tokens[i] ? path.basename(tokens[i]) : null;
   }
-  if (bin === "ai-commit" || bin === "ai-pr") return deny(REASONS.handoff);
   if (bin === "semantic-release" && !/--dry-run\b/.test(segment)) return deny(REASONS.handoff);
-  if (script === "commit" || script === "pr:create") return deny(REASONS.handoff);
   return null;
 }
 
