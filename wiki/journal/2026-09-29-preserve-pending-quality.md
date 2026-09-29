@@ -2,7 +2,7 @@
 date: 2026-09-29
 topics: [knowledge-graph]
 plan: none
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/52
 issue: https://github.com/verndale/provision-sitecore-ai-component/issues/51
 issues: ["https://github.com/verndale/provision-sitecore-ai-component/issues/51"]
 ---

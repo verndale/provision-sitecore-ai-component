@@ -1431,11 +1431,19 @@
         "knowledge-graph"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "52"
+      ],
       "issues": [
         "51"
       ],
       "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 52,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/52"
+        },
         {
           "kind": "issue",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -1443,7 +1451,7 @@
           "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/51"
         }
       ],
-      "bytes": 1060,
+      "bytes": 1120,
       "degree": 3
     },
     {
@@ -2041,6 +2049,7 @@
         "CMS template creation"
       ],
       "prs": [
+        "52",
         "49",
         "36",
         "46",
@@ -2057,6 +2066,7 @@
         "3"
       ],
       "issues": [
+        "51",
         "48",
         "45",
         "42",
@@ -2067,6 +2077,18 @@
         "17"
       ],
       "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 52,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/52"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 51,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/51"
+        },
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -2200,7 +2222,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 14903,
+      "bytes": 15210,
       "degree": 56
     }
   ],
