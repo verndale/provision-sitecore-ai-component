@@ -19,6 +19,7 @@ The repo's self-model: a typed node/edge graph derived deterministically from th
 
 ## Decisions
 
+- 2026-09-29 — Wiki issue-state reconciliation now runs Mondays at 11:30 UTC with manual replay retained ([journal](../journal/2026-09-28-git-delivery-standard.md)).
 - 2026-09-28 — Git delivery uses labeled issues, updated-main branches, standalone Commitlint, deterministic PR bodies, and open PR review; the wiki writers use `BOT_TOKEN` and release waits for Quality ([issue #39](https://github.com/verndale/provision-sitecore-ai-component/issues/39), [plan](../plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md), [journal](../journal/2026-09-28-git-delivery-standard.md)).
 
 - 2026-08-23 — Standardized wiki Actions, repo-qualified evidence, compact routing, and contamination-safe graph lifecycle while preserving the curated graph and owner-handoff guard ([issue #29](https://github.com/verndale/provision-sitecore-component/issues/29), [plan](../plans/2026-08-23-standardize-wiki-actions-hooks-and-route-navigation.md), [journal](../journal/2026-08-23-wiki-actions-routing-standard.md)).

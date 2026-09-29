@@ -403,7 +403,7 @@ test("five workflow identities and writer contracts stay stable", () => {
 
   assert.match(issue, /^name: Sync wiki issue state$/m);
   assert.match(issue, /^  sync:$/m);
-  assert.match(issue, /cron: "30 11 \* \* \*" # Daily at 11:30 UTC/);
+  assert.match(issue, /cron: "30 11 \* \* 1" # Mondays at 11:30 UTC/);
   assert.match(issue, /workflow_dispatch: \{\}/);
   assert.match(issue, /bot\/wiki-issue-sync/);
   assert.match(issue, /git push --force-with-lease/);

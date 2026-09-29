@@ -17,6 +17,7 @@ issues: [https://github.com/verndale/provision-sitecore-ai-component/issues/39]
 - Pre-push blocks direct main updates, and the Sitecore CMS push approval boundary remains intact.
 - Wiki bot writers use direct GitHub CLI with `BOT_TOKEN`.
 - Release waits for successful Quality on the pushed main revision.
+- Wiki issue-state reconciliation now runs Mondays at 11:30 UTC, matching agent-review-workflows.
 
 ## Files
 - `AGENTS.md`, `.husky/`, `scripts/hooks/`, `.github/workflows/`, `commitlint.config.cjs`, `package.json`, `test/`
