@@ -1,3 +1,39 @@
+# v2.1.1 — 2026-09-29
+
+## Highlights
+- commit: Merge pull request #46 from verndale/codex/45-wiki-quality-bot-replay (ddd19a2)
+- fix(ci): scope wiki quality and bot PR replay (4d48fb7)
+- docs(wiki): reconcile merged PR #43 (#44) (22a10c3)
+- chore(git): reject hidden PR descriptions (#43) (563ef28)
+- docs(wiki): reconcile PR #40 (4e77e60)
+- chore(git): standardize repository delivery (0e717d5)
+
+## Breaking changes
+- None
+
+## Changes by type
+### Fixes
+- fix(ci): scope wiki quality and bot PR replay (4d48fb7)
+
+### Docs
+- docs(wiki): reconcile merged PR #43 (#44) (22a10c3)
+- docs(wiki): reconcile PR #40 (4e77e60)
+
+### Chore
+- chore(git): reject hidden PR descriptions (#43) (563ef28)
+- chore(git): standardize repository delivery (0e717d5)
+
+### Other (unknown)
+- commit: Merge pull request #46 from verndale/codex/45-wiki-quality-bot-replay (ddd19a2)
+
+## Full commit list
+- ddd19a2 commit: Merge pull request #46 from verndale/codex/45-wiki-quality-bot-replay
+- 4d48fb7 fix(ci): scope wiki quality and bot PR replay
+- 22a10c3 docs(wiki): reconcile merged PR #43 (#44)
+- 563ef28 chore(git): reject hidden PR descriptions (#43)
+- 4e77e60 docs(wiki): reconcile PR #40
+- 0e717d5 chore(git): standardize repository delivery
+
 # v2.1.0 — 2026-09-22
 
 ## Summary (AI, bounded)
