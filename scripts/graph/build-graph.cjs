@@ -57,7 +57,7 @@ const REQUIRE_RE = /require\(\s*["'](\.{1,2}\/[^"']+)["']\s*\)/g;
 // In-repo scripts a hook runs: `node scripts/….cjs` (husky, .codex/hooks.json) or a
 // './scripts/….cjs' / "$CLAUDE_PROJECT_DIR/scripts/….cjs" reference (.releaserc.cjs,
 // .claude/settings.json). The captured repo path is resolved against known nodes, so an
-// `invokes` edge is grounded in the file — external tooling (ai-commit) yields no match.
+// `invokes` edge is grounded in the file — external tooling yields no match.
 const HOOK_INVOKE_RE = /(scripts\/[A-Za-z0-9._/-]+\.cjs)/g;
 const H1_RE = /^#\s+(.+?)\s*$/;
 
@@ -285,7 +285,7 @@ function build({ repoRoot = REPO_ROOT } = {}) {
 
   // 7. invokes — a hook node -> the in-repo script(s) it runs. Git hooks and the agent-guard
   //    configs name scripts via `node scripts/…`; the release config lists a local plugin path.
-  //    External tooling (ai-commit, @semantic-release/*) has no node, so those hooks get no edge.
+  //    External tooling has no node, so those hooks get no edge.
   for (const [id, text] of fileText) {
     if (nodes.get(id)?.type !== "hook") continue;
     for (const target of uniqueMatches(text, HOOK_INVOKE_RE)) {

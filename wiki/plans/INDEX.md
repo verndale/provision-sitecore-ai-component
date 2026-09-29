@@ -25,5 +25,6 @@ Every agent plan written for this repo, gathered from Claude plan stores, Codex 
 | 2026-07-22 | [Deny hand-edits to generated `<slug>.plan.json` plan artifacts](2026-07-22-deny-hand-edits-to-generated-slug-plan-json-plan-artifacts.md) | implemented | Issue #23, [PR #24](https://github.com/verndale/provision-sitecore-component/pull/24) | sitecore-provisioning |
 | 2026-09-01 | [Droplist sources via Sitecore query](2026-09-01-droplist-sources-via-sitecore-query.md) | implemented | — | sitecore-provisioning |
 | 2026-09-01 | [Droplist items based on Option template](2026-09-01-droplist-items-based-on-option-template.md) | implemented | — | sitecore-provisioning |
+| 2026-09-29 | [Standardize Git delivery in provision-sitecore-ai-component](2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md) | implemented | issue #39 | knowledge-graph |
 
-Totals: 11 implemented (11 plans).
+Totals: 12 implemented (12 plans).

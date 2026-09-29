@@ -2,10 +2,9 @@
 
 // Guardrail conformance: pins the PreToolUse policy (scripts/hooks/guard-core.cjs),
 // the harness adapter's payload normalization for BOTH Claude Code and Codex
-// shapes (pretooluse-guard.cjs), the husky agent fingerprints
-// (agent-commit-guard.cjs), and the checked-in hook configs, so a drift in any
+// shapes (pretooluse-guard.cjs) and the checked-in hook configs, so a drift in any
 // of them fails `pnpm test`. The policy is context-scoped: repo-boundary rules
-// (deliver-and-handoff, protected files) must fire ONLY in this repo, while the
+// (Git flow, protected files) must fire ONLY in this repo, while the
 // push gate and secret rules must fire everywhere — both directions are pinned.
 
 const { test } = require("node:test");
@@ -17,7 +16,6 @@ const { spawnSync } = require("node:child_process");
 
 const core = require("../scripts/hooks/guard-core.cjs");
 const adapter = require("../scripts/hooks/pretooluse-guard.cjs");
-const commitGuard = require("../scripts/hooks/agent-commit-guard.cjs");
 const installer = require("../scripts/hooks/install.cjs");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -53,32 +51,16 @@ test("context classification", () => {
   assert.equal(ctxPlain.inProvisioningRepo, false);
 });
 
-// --- Bash: deliver-and-handoff (this repo only) ---
+// --- Bash: Git flow boundaries (this repo only) ---
 
 const HANDOFF_DENIED = [
-  "git commit -m x",
-  "git commit --amend",
-  "git push",
-  "git push origin main",
-  "git -C /some/repo commit -m x",
-  "git -c user.name=x commit -m x",
   "git merge feature",
   "git tag v1.3.0",
   "git tag -a v1 -m x",
-  "gh pr create --fill",
   "gh pr merge 5",
   "gh release create v1.0.0",
-  "pnpm commit",
-  "pnpm run commit",
-  "npm run commit",
-  "ai-commit run",
-  "pnpm exec ai-commit run",
-  "ai-pr",
-  "pnpm pr:create",
-  "pnpm run pr:create",
   "npx semantic-release",
   "semantic-release",
-  "pnpm test && git commit -m done",
 ];
 
 for (const command of HANDOFF_DENIED) {
@@ -86,11 +68,14 @@ for (const command of HANDOFF_DENIED) {
     const decision = core.decideBash(command, ctxTool);
     assert.ok(decision, `expected deny for: ${command}`);
     assert.equal(decision.decision, "deny");
-    assert.match(decision.reason, /deliver-and-handoff/);
+    assert.match(decision.reason, /Git flow/);
   });
 }
 
 const HANDOFF_ALLOWED = [
+  "git commit -m x",
+  "git push",
+  "gh pr create --fill",
   "git status",
   "git diff --cached",
   "git log --oneline -5",
@@ -125,7 +110,6 @@ for (const command of HANDOFF_ALLOWED) {
 test("consumer repos keep their own commit policy (git commit allowed outside this repo)", () => {
   assert.equal(core.decideBash("git commit -m x", ctxProv), null);
   assert.equal(core.decideBash("git push", ctxPlain), null);
-  assert.equal(core.decideBash("pnpm commit", ctxProv), null);
 });
 
 // --- Bash: push gate (everywhere) ---
@@ -381,7 +365,7 @@ test("decideRead denies the central credential file from any repo", () => {
 test("adapter: Claude Bash payload", () => {
   const decision = adapter.evaluate({
     tool_name: "Bash",
-    tool_input: { command: "git commit -m x" },
+    tool_input: { command: "git merge feature" },
     cwd: REPO_ROOT,
   }, { platform: "claude" });
   assert.equal(decision.decision, "deny");
@@ -476,7 +460,7 @@ test("adapter: Claude keeps the interactive push ask", () => {
 test("adapter: Codex argv payload without shell wrapper joins tokens", () => {
   const decision = adapter.evaluate({
     tool_name: "shell",
-    tool_input: { command: ["git", "commit", "-m", "x"] },
+    tool_input: { command: ["git", "merge", "feature"] },
     cwd: REPO_ROOT,
   });
   assert.equal(decision.decision, "deny");
@@ -513,7 +497,7 @@ test("adapter: Codex apply_patch payload (changes object)", () => {
 });
 
 test("adapter: non-PreToolUse events and unknown tools pass through", () => {
-  assert.equal(adapter.evaluate({ hook_event_name: "PostToolUse", tool_name: "Bash", tool_input: { command: "git commit -m x" }, cwd: REPO_ROOT }), null);
+  assert.equal(adapter.evaluate({ hook_event_name: "PostToolUse", tool_name: "Bash", tool_input: { command: "git merge feature" }, cwd: REPO_ROOT }), null);
   assert.equal(adapter.evaluate({ tool_name: "Glob", tool_input: { pattern: ".env" }, cwd: REPO_ROOT }), null);
   assert.equal(adapter.evaluate({ tool_name: "Bash", tool_input: {}, cwd: REPO_ROOT }), null);
 });
@@ -528,7 +512,7 @@ function runGuard(payload, args = []) {
 }
 
 test("spawned guard emits permissionDecision JSON on deny", () => {
-  const run = runGuard({ tool_name: "Bash", tool_input: { command: "git commit -m x" }, cwd: REPO_ROOT });
+  const run = runGuard({ tool_name: "Bash", tool_input: { command: "git merge feature" }, cwd: REPO_ROOT });
   assert.equal(run.status, 0);
   const parsed = JSON.parse(run.stdout);
   assert.equal(parsed.hookSpecificOutput.hookEventName, "PreToolUse");
@@ -570,30 +554,6 @@ test("spawned guard fails open on malformed stdin", () => {
   assert.equal(run.status, 0);
   assert.equal(run.stdout, "");
   assert.match(run.stderr, /unreadable payload/);
-});
-
-// --- Husky agent-commit guard ---
-
-test("detectAgent matches each fingerprint and nothing else", () => {
-  for (const key of commitGuard.FINGERPRINTS) {
-    assert.equal(commitGuard.detectAgent({ [key]: "1" }), key);
-  }
-  assert.equal(commitGuard.detectAgent({ PATH: "/usr/bin" }), null);
-  assert.equal(commitGuard.detectAgent({ CLAUDECODE: "" }), null);
-});
-
-test("spawned agent-commit-guard blocks agent shells and honors the escape hatch", () => {
-  const guard = path.join(REPO_ROOT, "scripts", "hooks", "agent-commit-guard.cjs");
-  const base = { PATH: process.env.PATH };
-  for (const key of commitGuard.FINGERPRINTS) {
-    const run = spawnSync(process.execPath, [guard], { env: { ...base, [key]: "1" }, encoding: "utf8" });
-    assert.equal(run.status, 1, `${key} must block`);
-    assert.match(run.stderr, /deliver-and-handoff/);
-  }
-  const allowed = spawnSync(process.execPath, [guard], { env: { ...base, CLAUDECODE: "1", ALLOW_AGENT_COMMIT: "1" }, encoding: "utf8" });
-  assert.equal(allowed.status, 0);
-  const human = spawnSync(process.execPath, [guard], { env: base, encoding: "utf8" });
-  assert.equal(human.status, 0);
 });
 
 // --- Checked-in config drift guards ---
@@ -639,7 +599,7 @@ test("checked-in Codex hook resolves the guard from a repo subdirectory", () => 
     input: JSON.stringify({
       hook_event_name: "PreToolUse",
       tool_name: "Bash",
-      tool_input: { command: "git commit -m x" },
+      tool_input: { command: "git merge feature" },
       cwd: path.join(REPO_ROOT, "test"),
       model: "gpt-test",
     }),
@@ -649,7 +609,7 @@ test("checked-in Codex hook resolves the guard from a repo subdirectory", () => 
   assert.equal(run.status, 0, run.stderr);
   const parsed = JSON.parse(run.stdout);
   assert.equal(parsed.hookSpecificOutput.permissionDecision, "deny");
-  assert.match(parsed.hookSpecificOutput.permissionDecisionReason, /deliver-and-handoff/);
+  assert.match(parsed.hookSpecificOutput.permissionDecisionReason, /Git flow/);
 });
 
 test("setup explains Codex restart and exact-hash hook trust", () => {
@@ -670,11 +630,10 @@ test("checked-in configs and the setup.sh installer share one matcher list (no d
   assert.deepEqual(matchersOf(codex), installer.MATCHERS.codex.slice().sort());
 });
 
-test("husky hooks invoke the agent-commit guard and the guard files exist", () => {
-  assert.ok(fs.existsSync(GUARD));
-  assert.ok(fs.existsSync(path.join(REPO_ROOT, "scripts", "hooks", "guard-core.cjs")));
-  for (const hook of ["pre-commit", "pre-push"]) {
-    const content = fs.readFileSync(path.join(REPO_ROOT, ".husky", hook), "utf8");
-    assert.match(content, /agent-commit-guard\.cjs/, `.husky/${hook} must call the agent-commit guard`);
-  }
+test("husky hooks keep wiki reminders and branch push verification", () => {
+  const precommit = fs.readFileSync(path.join(REPO_ROOT, ".husky", "pre-commit"), "utf8");
+  const prepush = fs.readFileSync(path.join(REPO_ROOT, ".husky", "pre-push"), "utf8");
+  assert.match(precommit, /pre-commit-journal/);
+  assert.match(prepush, /refs\/heads\/main/);
+  assert.match(prepush, /verify:push/);
 });

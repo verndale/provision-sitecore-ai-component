@@ -13,50 +13,46 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  HUSKY: '0'
+  GRAPHIFY_SKIP_HOOK: '1'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   commitlint:
+    name: commitlint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout immutable revision
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-
+          persist-credentials: false
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "24.14.0"
-
-      - name: Enable pnpm via Corepack
-        run: corepack enable && corepack prepare pnpm@10.33.0 --activate
-
-      - name: Get pnpm store path
-        id: pnpm-cache
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
+          node-version: '24.14.0'
+      - name: Enable declared pnpm via Corepack
+        run: corepack enable && corepack install
+      - name: Install locked dependencies
         run: pnpm install --frozen-lockfile
+      - name: Validate PR body
+        if: ${{ !startsWith(github.event.pull_request.head.ref, 'bot/') }}
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: pnpm run lint:pr
 
-      - name: Lint PR title (squash merge becomes the commit on main)
+      - name: Lint PR title
+        if: github.event_name == 'pull_request'
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | pnpm run lint:commit --verbose
+      - name: Lint immutable PR commit range
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          printf '%s\n' "$PR_TITLE" | pnpm exec commitlint --config commitlint.config.cjs --verbose
-
-      - name: Lint commit messages (PR range)
-        run: |
-          pnpm exec commitlint --config commitlint.config.cjs \
-            --from "${{ github.event.pull_request.base.sha }}" \
-            --to "${{ github.event.pull_request.head.sha }}" \
-            --verbose
+          git cat-file -e "${BASE_SHA}^{commit}"
+          git cat-file -e "${HEAD_SHA}^{commit}"
+          pnpm run lint:commit --from "$BASE_SHA" --to "$HEAD_SHA" --verbose

@@ -35,7 +35,7 @@ jobs:
       !startsWith(github.event.pull_request.head.ref, 'bot/wiki-'))
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.PR_BOT_TOKEN }}
+      GH_TOKEN: ${{ secrets.BOT_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -68,7 +68,7 @@ jobs:
 
       - name: Require bot token
         run: |
-          test -n "$GH_TOKEN" || { echo 'PR_BOT_TOKEN is required'; exit 1; }
+          test -n "$GH_TOKEN" || { echo 'BOT_TOKEN is required'; exit 1; }
           gh auth setup-git
 
       - name: Build merged PR context
@@ -127,9 +127,12 @@ jobs:
         env:
           PR_BASE_BRANCH: ${{ steps.context.outputs.base_branch }}
           PR_HEAD_BRANCH: bot/wiki-sync/${{ inputs.pr_number || github.event.pull_request.number }}
-          PR_DRAFT: "false"
-          PR_AI: ${{ vars.PR_AI }}
-          PR_AI_ENDPOINT: ${{ vars.PR_AI_ENDPOINT }}
-          PR_AI_MODEL: ${{ vars.PR_AI_MODEL }}
-          PR_AI_API_KEY: ${{ secrets.PR_AI_API_KEY }}
-        run: pnpm run pr:create
+        run: |
+          title="docs(wiki): reconcile PR #${PR_NUMBER}"
+          body="Automated wiki reconciliation for merged PR #${PR_NUMBER}."
+          open="$(gh pr list --base "$PR_BASE_BRANCH" --head "$PR_HEAD_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "$open" ]; then
+            gh pr edit "$open" --title "$title" --body "$body"
+          else
+            gh pr create --base "$PR_BASE_BRANCH" --head "$PR_HEAD_BRANCH" --title "$title" --body "$body"
+          fi
