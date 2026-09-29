@@ -2,7 +2,8 @@
 status: implemented
 executed: 2026-09-01
 date: 2026-09-01
-evidence: []
+evidence:
+  - "verndale/provision-sitecore-ai-component PR #36 https://github.com/verndale/provision-sitecore-ai-component/pull/36 (merged 2026-09-22)"
 source_tool: file
 source: "/Users/juan.ruano/.cursor/plans/droplist_query_sources_18f0d73a.plan.md"
 topics: [sitecore-provisioning]

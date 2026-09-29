@@ -1199,10 +1199,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 1533,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 1593,
       "degree": 3
     },
     {
@@ -1214,10 +1223,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 1781,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 1841,
       "degree": 3
     },
     {
@@ -1229,10 +1247,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 1475,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 1535,
       "degree": 3
     },
     {
@@ -1244,10 +1271,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 2235,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 2295,
       "degree": 3
     },
     {
@@ -1259,10 +1295,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 1943,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 2003,
       "degree": 4
     },
     {
@@ -1274,10 +1319,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 1944,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 2004,
       "degree": 4
     },
     {
@@ -1289,10 +1343,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 3089,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 3149,
       "degree": 3
     },
     {
@@ -1651,10 +1714,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 3582,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 3721,
       "degree": 4
     },
     {
@@ -1666,10 +1738,19 @@
         "sitecore-provisioning"
       ],
       "aliases": [],
-      "prs": [],
+      "prs": [
+        "36"
+      ],
       "issues": [],
-      "githubRefs": [],
-      "bytes": 6966,
+      "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        }
+      ],
+      "bytes": 7105,
       "degree": 4
     },
     {
@@ -1713,6 +1794,7 @@
         "18",
         "21",
         "24",
+        "36",
         "40"
       ],
       "issues": [
@@ -1782,11 +1864,17 @@
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        },
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
           "number": 40,
           "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/40"
         }
       ],
-      "bytes": 3980,
+      "bytes": 4210,
       "degree": 14
     },
     {
@@ -1876,6 +1964,7 @@
         "CMS template creation"
       ],
       "prs": [
+        "36",
         "46",
         "43",
         "40",
@@ -1899,6 +1988,12 @@
         "17"
       ],
       "githubRefs": [
+        {
+          "kind": "pull-request",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 36,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/36"
+        },
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -2014,7 +2109,7 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 14382,
+      "bytes": 14593,
       "degree": 56
     }
   ],
