@@ -1,3 +1,28 @@
+# v2.1.3 — 2026-09-29
+
+## Highlights
+- fix(ci): preserve pending main Quality runs (#52) (4729136)
+- commit: Merge pull request #50 from verndale/bot/wiki-sync/49 (3baf82b)
+- docs(wiki): reconcile merged PR #49 (5c0572f)
+
+## Breaking changes
+- None
+
+## Changes by type
+### Fixes
+- fix(ci): preserve pending main Quality runs (#52) (4729136)
+
+### Docs
+- docs(wiki): reconcile merged PR #49 (5c0572f)
+
+### Other (unknown)
+- commit: Merge pull request #50 from verndale/bot/wiki-sync/49 (3baf82b)
+
+## Full commit list
+- 4729136 fix(ci): preserve pending main Quality runs (#52)
+- 3baf82b commit: Merge pull request #50 from verndale/bot/wiki-sync/49
+- 5c0572f docs(wiki): reconcile merged PR #49
+
 # v2.1.2 — 2026-09-29
 
 ## Highlights
