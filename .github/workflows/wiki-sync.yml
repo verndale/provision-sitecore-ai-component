@@ -130,9 +130,9 @@ jobs:
         run: |
           title="docs(wiki): reconcile PR #${PR_NUMBER}"
           body="Automated wiki reconciliation for merged PR #${PR_NUMBER}."
-          open="$(gh pr list --base "$PR_BASE_BRANCH" --head "$PR_HEAD_BRANCH" --state open --json number --jq '.[0].number // empty')"
+          open="$(gh api -X GET "repos/${GITHUB_REPOSITORY}/pulls" -f state=open -f base="$PR_BASE_BRANCH" -f head="${GITHUB_REPOSITORY%%/*}:${PR_HEAD_BRANCH}" --jq '.[0].number // empty')"
           if [ -n "$open" ]; then
-            gh pr edit "$open" --title "$title" --body "$body"
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/pulls/${open}" -f title="$title" -f body="$body" --jq '.html_url'
           else
             gh pr create --base "$PR_BASE_BRANCH" --head "$PR_HEAD_BRANCH" --title "$title" --body "$body"
           fi

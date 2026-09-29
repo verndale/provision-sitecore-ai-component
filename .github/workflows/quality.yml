@@ -31,14 +31,49 @@ jobs:
         with:
           node-version: "24.14.0"
 
+      - name: Classify verification scope
+        id: scope
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+          HEAD_SHA: ${{ github.sha }}
+          BEFORE_SHA: ${{ github.event.before || '' }}
+        run: |
+          full=true; reason='manual dispatch'
+          if [ "$EVENT_NAME" = 'pull_request' ] || [ "$EVENT_NAME" = 'push' ]; then
+            if [ "$EVENT_NAME" = 'push' ]; then BASE_SHA="$BEFORE_SHA"; fi
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = '0000000000000000000000000000000000000000' ] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+              echo 'full=true' >> "$GITHUB_OUTPUT"; echo 'reason=change range unavailable' >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            if ! git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null || ! changed_files="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")"; then
+              echo 'full=true' >> "$GITHUB_OUTPUT"; echo 'reason=change range unavailable' >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            full=false; reason='wiki-only change'
+            while IFS= read -r file; do
+              case "$file" in wiki/*|scripts/graph/data/graph.json) ;; *) full=true; reason='substantive change'; break ;; esac
+            done <<< "$changed_files"
+            if [ -z "$changed_files" ]; then full=true; reason='empty change set'; fi
+          fi
+          echo "full=$full" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+
+      - name: Lightweight wiki verification
+        if: steps.scope.outputs.full != 'true'
+        run: |
+          echo "Full suite skipped: ${{ steps.scope.outputs.reason }}"
+          node --test --test-reporter=spec test/wiki.test.cjs test/graph.test.cjs test/wiki-actions.test.cjs test/graph-precommit.test.cjs
+
       - name: Enable pnpm via Corepack
+        if: steps.scope.outputs.full == 'true'
         run: corepack enable && corepack prepare pnpm@10.33.0 --activate
 
       - name: Get pnpm store path
+        if: steps.scope.outputs.full == 'true'
         id: pnpm-cache
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
 
       - name: Cache pnpm store
+        if: steps.scope.outputs.full == 'true'
         uses: actions/cache@v4
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
@@ -47,7 +82,9 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
+        if: steps.scope.outputs.full == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Verify repository
+        if: steps.scope.outputs.full == 'true'
         run: pnpm run verify:ci
