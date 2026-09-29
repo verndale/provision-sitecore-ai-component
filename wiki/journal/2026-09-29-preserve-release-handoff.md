@@ -14,7 +14,7 @@ A wiki-only main push could cancel the full Quality run for an earlier substanti
 
 ## What changed
 
-Quality now cancels superseded pull-request runs while allowing every main push run to finish.
+Quality now cancels superseded pull-request runs without canceling an in-progress main push. A later main push could still replace a pending one in the shared group; [issue #51](https://github.com/verndale/provision-sitecore-ai-component/issues/51) addresses that remaining gap.
 
 ## Files
 
