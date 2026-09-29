@@ -23,6 +23,7 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 ## Journal
 
+- 2026-09-29 — [Reject hidden PR descriptions](journal/2026-09-29-pr-body-validation.md) — require visible canonical headings and guard the PR template contract.
 - 2026-09-28 — [Standard issue-linked Git delivery](journal/2026-09-28-git-delivery-standard.md) — standalone Commitlint, direct bot PRs, BOT_TOKEN, and release after Quality.
 
 <!-- One line per entry, newest first: - YYYY-MM-DD — [Title](journal/<file>.md) — hook. -->
