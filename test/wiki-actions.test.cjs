@@ -382,6 +382,7 @@ test("five workflow identities and writer contracts stay stable", () => {
   assert.match(quality, /^name: Quality$/m);
   assert.match(quality, /^  quality:$/m);
   assert.match(quality, /run: pnpm run verify:ci/);
+  assert.match(quality, /group: quality-\$\{\{ github\.event\.pull_request\.number \|\| github\.run_id \}\}/);
   assert.match(quality, /cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/);
   assert.equal((quality.match(/run: pnpm run verify:ci/g) || []).length, 1);
   assert.match(quality, /wiki\/\*\|scripts\/graph\/data\/graph\.json/);

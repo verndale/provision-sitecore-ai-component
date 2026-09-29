@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 104,
-    "edges": 240,
+    "nodes": 105,
+    "edges": 243,
     "byType": {
       "hook": 6,
       "root-doc": 4,
@@ -12,18 +12,18 @@
       "source": 9,
       "test": 16,
       "wiki-index": 3,
-      "wiki-journal": 22,
+      "wiki-journal": 23,
       "wiki-plan": 12,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 11,
       "invokes": 5,
-      "links-to": 106,
+      "links-to": 108,
       "plan": 12,
       "references": 6,
       "requires": 70,
-      "topic": 30
+      "topic": 31
     }
   },
   "nodes": [
@@ -856,7 +856,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 19929,
+      "bytes": 20040,
       "degree": 5
     },
     {
@@ -882,8 +882,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 8101,
-      "degree": 29
+      "bytes": 8291,
+      "degree": 30
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1423,6 +1423,30 @@
       "degree": 3
     },
     {
+      "id": "wiki/journal/2026-09-29-preserve-pending-quality.md",
+      "label": "Preserve pending main Quality runs",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "51"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 51,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/51"
+        }
+      ],
+      "bytes": 1060,
+      "degree": 3
+    },
+    {
       "id": "wiki/journal/2026-09-29-preserve-release-handoff.md",
       "label": "Preserve tested main release handoff",
       "type": "wiki-journal",
@@ -1435,7 +1459,8 @@
         "49"
       ],
       "issues": [
-        "48"
+        "48",
+        "51"
       ],
       "githubRefs": [
         {
@@ -1449,9 +1474,15 @@
           "repository": "verndale/provision-sitecore-ai-component",
           "number": 48,
           "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/48"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 51,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/51"
         }
       ],
-      "bytes": 804,
+      "bytes": 988,
       "degree": 3
     },
     {
@@ -1930,6 +1961,7 @@
       ],
       "issues": [
         "45",
+        "51",
         "48",
         "42",
         "39",
@@ -1941,6 +1973,12 @@
           "repository": "verndale/provision-sitecore-ai-component",
           "number": 45,
           "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/45"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 51,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/51"
         },
         {
           "kind": "issue",
@@ -1985,8 +2023,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 7015,
-      "degree": 25
+      "bytes": 7373,
+      "degree": 27
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
@@ -2580,6 +2618,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-29-preserve-pending-quality.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/journal/2026-09-29-preserve-release-handoff.md",
       "type": "links-to",
       "count": 1,
@@ -2763,6 +2808,13 @@
     {
       "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/journal/2026-09-29-preserve-pending-quality.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -3523,6 +3575,11 @@
     },
     {
       "source": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-29-preserve-pending-quality.md",
       "target": "wiki/topics/knowledge-graph.md",
       "type": "topic"
     },
