@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 103,
-    "edges": 237,
+    "nodes": 104,
+    "edges": 240,
     "byType": {
       "hook": 6,
       "root-doc": 4,
@@ -12,18 +12,18 @@
       "source": 9,
       "test": 16,
       "wiki-index": 3,
-      "wiki-journal": 21,
+      "wiki-journal": 22,
       "wiki-plan": 12,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 11,
       "invokes": 5,
-      "links-to": 104,
+      "links-to": 106,
       "plan": 12,
       "references": 6,
       "requires": 70,
-      "topic": 29
+      "topic": 30
     }
   },
   "nodes": [
@@ -856,7 +856,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 19832,
+      "bytes": 19929,
       "degree": 5
     },
     {
@@ -882,8 +882,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7932,
-      "degree": 28
+      "bytes": 8101,
+      "degree": 29
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1423,6 +1423,30 @@
       "degree": 3
     },
     {
+      "id": "wiki/journal/2026-09-29-preserve-release-handoff.md",
+      "label": "Preserve tested main release handoff",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "48"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 48,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/48"
+        }
+      ],
+      "bytes": 744,
+      "degree": 3
+    },
+    {
       "id": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
       "label": "Scope wiki Quality and harden bot PR replay",
       "type": "wiki-journal",
@@ -1898,6 +1922,7 @@
       ],
       "issues": [
         "45",
+        "48",
         "42",
         "39",
         "29"
@@ -1908,6 +1933,12 @@
           "repository": "verndale/provision-sitecore-ai-component",
           "number": 45,
           "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/45"
+        },
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 48,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/48"
         },
         {
           "kind": "issue",
@@ -1946,8 +1977,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 6676,
-      "degree": 23
+      "bytes": 7015,
+      "degree": 25
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
@@ -2527,6 +2558,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-29-preserve-release-handoff.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
       "type": "links-to",
       "count": 1,
@@ -2703,6 +2741,13 @@
     {
       "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/journal/2026-09-29-preserve-release-handoff.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -3456,6 +3501,11 @@
     },
     {
       "source": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-29-preserve-release-handoff.md",
       "target": "wiki/topics/knowledge-graph.md",
       "type": "topic"
     },

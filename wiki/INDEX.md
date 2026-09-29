@@ -23,6 +23,7 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 ## Journal
 
+- 2026-09-29 — [Preserve tested main release handoff](journal/2026-09-29-preserve-release-handoff.md) — later wiki merges no longer cancel substantive Quality runs.
 - 2026-09-29 — [Scope wiki Quality and harden bot PR replay](journal/2026-09-29-wiki-quality-and-bot-replay.md) — focused wiki checks and repository REST updates for existing bot PRs.
 - 2026-09-29 — [Reject hidden PR descriptions](journal/2026-09-29-pr-body-validation.md) — require visible canonical headings and guard the PR template contract.
 - 2026-09-28 — [Standard issue-linked Git delivery](journal/2026-09-28-git-delivery-standard.md) — standalone Commitlint, direct bot PRs, BOT_TOKEN, and release after Quality.
