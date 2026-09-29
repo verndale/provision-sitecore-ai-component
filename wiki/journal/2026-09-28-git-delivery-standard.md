@@ -2,9 +2,9 @@
 date: 2026-09-28
 topics: [knowledge-graph]
 plan: plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/40
 issue: https://github.com/verndale/provision-sitecore-ai-component/issues/39
-issues: [https://github.com/verndale/provision-sitecore-ai-component/issues/39]
+issues: ["https://github.com/verndale/provision-sitecore-ai-component/issues/39"]
 ---
 # Standard issue-linked Git delivery
 
