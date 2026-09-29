@@ -18,6 +18,7 @@ The repo's self-model: a typed node/edge graph derived deterministically from th
 - Two write-time gates run in `build-graph.cjs` before it overwrites anything (dangling-edge check, wiki-topic coverage — every first-class `skill` must be covered by a topic), and `test/graph.test.cjs` re-asserts them plus byte-freshness of `graph.json` and every connections page under `pnpm test`. The `.husky/pre-commit` lifecycle stays advisory and skips its rebuild whenever unstaged or untracked graph inputs could contaminate generated files.
 
 ## Decisions
+- 2026-09-29 — Wiki-only bot changes use the existing wiki and graph checks under the stable Quality job; missing or substantive ranges still run the full repository suite. Existing bot PRs are found and updated through repository REST calls with `BOT_TOKEN` ([verndale/provision-sitecore-ai-component issue #45](https://github.com/verndale/provision-sitecore-ai-component/issues/45), [journal](../journal/2026-09-29-wiki-quality-and-bot-replay.md)).
 - 2026-09-29 — PR validation recognizes only visible headings outside comments and code fences, because hidden descriptions had passed the canonical gate ([issue #42](https://github.com/verndale/provision-sitecore-ai-component/issues/42), [journal](../journal/2026-09-29-pr-body-validation.md)).
 
 - 2026-09-29 — Wiki issue-state reconciliation now runs Mondays at 11:30 UTC with manual replay retained ([journal](../journal/2026-09-28-git-delivery-standard.md)).

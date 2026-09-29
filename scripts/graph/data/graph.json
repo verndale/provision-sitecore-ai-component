@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 102,
-    "edges": 234,
+    "nodes": 103,
+    "edges": 237,
     "byType": {
       "hook": 6,
       "root-doc": 4,
@@ -12,18 +12,18 @@
       "source": 9,
       "test": 16,
       "wiki-index": 3,
-      "wiki-journal": 20,
+      "wiki-journal": 21,
       "wiki-plan": 12,
       "wiki-topic": 2
     },
     "byEdgeType": {
       "covers": 11,
       "invokes": 5,
-      "links-to": 102,
+      "links-to": 104,
       "plan": 12,
       "references": 6,
       "requires": 70,
-      "topic": 28
+      "topic": 29
     }
   },
   "nodes": [
@@ -856,7 +856,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 19046,
+      "bytes": 19832,
       "degree": 5
     },
     {
@@ -882,8 +882,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 7744,
-      "degree": 27
+      "bytes": 7932,
+      "degree": 28
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1360,6 +1360,30 @@
       "degree": 3
     },
     {
+      "id": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
+      "label": "Scope wiki Quality and harden bot PR replay",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "knowledge-graph"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "45"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 45,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/45"
+        }
+      ],
+      "bytes": 1138,
+      "degree": 3
+    },
+    {
       "id": "wiki/MECHANICS.md",
       "label": "Wiki Mechanics",
       "type": "wiki-index",
@@ -1777,11 +1801,18 @@
         "7"
       ],
       "issues": [
+        "45",
         "42",
         "39",
         "29"
       ],
       "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 45,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/45"
+        },
         {
           "kind": "issue",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -1819,8 +1850,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/7"
         }
       ],
-      "bytes": 6223,
-      "degree": 21
+      "bytes": 6676,
+      "degree": 23
     },
     {
       "id": "wiki/topics/sitecore-provisioning.md",
@@ -2379,6 +2410,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2548,6 +2586,13 @@
     {
       "source": "wiki/topics/knowledge-graph.md",
       "target": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/knowledge-graph.md",
+      "target": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -3294,6 +3339,11 @@
     },
     {
       "source": "wiki/journal/2026-09-29-pr-body-validation.md",
+      "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/journal/2026-09-29-wiki-quality-and-bot-replay.md",
       "target": "wiki/topics/knowledge-graph.md",
       "type": "topic"
     },

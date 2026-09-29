@@ -383,6 +383,9 @@ test("five workflow identities and writer contracts stay stable", () => {
   assert.match(quality, /^  quality:$/m);
   assert.match(quality, /run: pnpm run verify:ci/);
   assert.equal((quality.match(/run: pnpm run verify:ci/g) || []).length, 1);
+  assert.match(quality, /wiki\/\*\|scripts\/graph\/data\/graph\.json/);
+  assert.match(quality, /node --test --test-reporter=spec test\/wiki\.test\.cjs test\/graph\.test\.cjs test\/wiki-actions\.test\.cjs test\/graph-precommit\.test\.cjs/);
+  assert.equal((quality.match(/if: steps\.scope\.outputs\.full == 'true'/g) || []).length, 5);
 
   assert.match(check, /^name: Wiki integrity$/m);
   assert.match(check, /^  check:$/m);
@@ -400,6 +403,9 @@ test("five workflow identities and writer contracts stay stable", () => {
   assert.doesNotMatch(merge, /--slurp --jq/);
   assert.match(merge, /git push --force-with-lease/);
   assert.match(merge, /bot\/wiki-sync\/\$\{PR_NUMBER\}/);
+  assert.match(merge, /gh api -X GET "repos\/\$\{GITHUB_REPOSITORY\}\/pulls"/);
+  assert.match(merge, /gh api -X PATCH "repos\/\$\{GITHUB_REPOSITORY\}\/pulls\/\$\{open\}"/);
+  assert.doesNotMatch(merge, /gh pr (list|edit)/);
 
   assert.match(issue, /^name: Sync wiki issue state$/m);
   assert.match(issue, /^  sync:$/m);
@@ -407,6 +413,9 @@ test("five workflow identities and writer contracts stay stable", () => {
   assert.match(issue, /workflow_dispatch: \{\}/);
   assert.match(issue, /bot\/wiki-issue-sync/);
   assert.match(issue, /git push --force-with-lease/);
+  assert.match(issue, /gh api -X GET "repos\/\$\{GITHUB_REPOSITORY\}\/pulls"/);
+  assert.match(issue, /gh api -X PATCH "repos\/\$\{GITHUB_REPOSITORY\}\/pulls\/\$\{open\}"/);
+  assert.doesNotMatch(issue, /gh pr (list|edit)/);
 });
 
 test("standalone Commitlint and deterministic PR body validation are configured", () => {
