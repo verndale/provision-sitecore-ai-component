@@ -27,6 +27,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Decisions
 
+- 2026-09-29 — fix(ci): scope wiki quality and bot PR replay ([verndale/provision-sitecore-ai-component PR #46](https://github.com/verndale/provision-sitecore-ai-component/pull/46); [verndale/provision-sitecore-ai-component issue #45](https://github.com/verndale/provision-sitecore-ai-component/issues/45))
 - 2026-09-29 — chore(git): reject hidden PR descriptions ([verndale/provision-sitecore-ai-component PR #43](https://github.com/verndale/provision-sitecore-ai-component/pull/43); [verndale/provision-sitecore-ai-component issue #42](https://github.com/verndale/provision-sitecore-ai-component/issues/42))
 - 2026-09-29 — chore(git): standardize repository delivery ([verndale/provision-sitecore-ai-component PR #40](https://github.com/verndale/provision-sitecore-ai-component/pull/40); [verndale/provision-sitecore-ai-component issue #39](https://github.com/verndale/provision-sitecore-ai-component/issues/39))
 - 2026-09-02 — Kept one component per manifest and made family order explicit because child rendering existence is a real parent preflight dependency; CN Labeled Content Section is the canonical slot model, while contradictory General Image Card Row materials remain a review question rather than an inferred convention ([journal](../journal/2026-09-02-placeholder-component-families.md)).

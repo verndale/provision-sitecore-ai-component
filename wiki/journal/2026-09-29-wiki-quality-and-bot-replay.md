@@ -2,8 +2,9 @@
 date: 2026-09-29
 topics: [knowledge-graph]
 plan: none
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/46
 issue: https://github.com/verndale/provision-sitecore-ai-component/issues/45
+issues: ["https://github.com/verndale/provision-sitecore-ai-component/issues/45"]
 ---
 # Scope wiki Quality and harden bot PR replay
 
