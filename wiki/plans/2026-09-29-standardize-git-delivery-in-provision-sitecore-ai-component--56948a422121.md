@@ -4,6 +4,7 @@ executed: 2026-09-29
 date: 2026-09-29
 evidence:
   - "issue #39"
+  - "verndale/provision-sitecore-ai-component PR #40 https://github.com/verndale/provision-sitecore-ai-component/pull/40 (merged 2026-09-29)"
 source_tool: codex
 source: "/private/tmp/provision-sitecore-git-delivery-plan.md"
 topics: [knowledge-graph]
