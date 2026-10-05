@@ -1,3 +1,31 @@
+# v2.2.0 — 2026-10-05
+
+## Highlights
+- commit: Merge pull request #55 from verndale/codex/54-rest-inspection (1b5baeb)
+- feat(cli): add advisory REST inspection (ba4113e)
+- commit: Merge pull request #53 from verndale/bot/wiki-sync/52 (f7a6c6e)
+- docs(wiki): reconcile merged PR #52 (505b862)
+
+## Breaking changes
+- None
+
+## Changes by type
+### Features
+- feat(cli): add advisory REST inspection (ba4113e)
+
+### Docs
+- docs(wiki): reconcile merged PR #52 (505b862)
+
+### Other (unknown)
+- commit: Merge pull request #53 from verndale/bot/wiki-sync/52 (f7a6c6e)
+- commit: Merge pull request #55 from verndale/codex/54-rest-inspection (1b5baeb)
+
+## Full commit list
+- 1b5baeb commit: Merge pull request #55 from verndale/codex/54-rest-inspection
+- ba4113e feat(cli): add advisory REST inspection
+- f7a6c6e commit: Merge pull request #53 from verndale/bot/wiki-sync/52
+- 505b862 docs(wiki): reconcile merged PR #52
+
 # v2.1.3 — 2026-09-29
 
 ## Highlights
