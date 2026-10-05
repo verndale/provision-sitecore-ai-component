@@ -5,6 +5,7 @@ date: 2026-10-05
 evidence:
   - "Issue #54; local full suite and focused REST tests passed"
   - "Live REST pilot not exercised: signed-in Sitecore Deploy returned 403 for Verndale; client and endpoint association could not be confirmed"
+  - "verndale/provision-sitecore-ai-component PR #55 https://github.com/verndale/provision-sitecore-ai-component/pull/55 (merged 2026-10-05)"
 source_tool: file
 source: "/Users/joe.fusco/.codex/review-runs/f4c67fa3-5664-4531-a3f3-ef9c11ad6724/final.md"
 topics: [sitecore-provisioning]

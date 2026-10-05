@@ -28,6 +28,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Decisions
 
+- 2026-10-05 — feat(cli): add advisory REST inspection ([verndale/provision-sitecore-ai-component PR #55](https://github.com/verndale/provision-sitecore-ai-component/pull/55); [verndale/provision-sitecore-ai-component issue #54](https://github.com/verndale/provision-sitecore-ai-component/issues/54))
 - 2026-10-05 — Adopted basic REST inspection in the existing `check` command to measure the new API surface while preserving the reviewed manifest, add-only provisioning, and push gate. REST writes and contextual metadata are deferred ([issue #54](https://github.com/verndale/provision-sitecore-ai-component/issues/54), [plan](../plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md), [journal](../journal/2026-10-05-rest-inspection.md)).
 - 2026-09-29 — fix(ci): preserve pending main Quality runs ([verndale/provision-sitecore-ai-component PR #52](https://github.com/verndale/provision-sitecore-ai-component/pull/52); [verndale/provision-sitecore-ai-component issue #51](https://github.com/verndale/provision-sitecore-ai-component/issues/51))
 - 2026-09-29 — fix(ci): preserve main Quality release handoff ([verndale/provision-sitecore-ai-component PR #49](https://github.com/verndale/provision-sitecore-ai-component/pull/49); [verndale/provision-sitecore-ai-component issue #48](https://github.com/verndale/provision-sitecore-ai-component/issues/48))

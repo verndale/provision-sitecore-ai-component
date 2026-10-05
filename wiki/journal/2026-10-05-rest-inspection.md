@@ -2,7 +2,9 @@
 date: 2026-10-05
 topics: [sitecore-provisioning]
 plan: plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md
-pr: pending
+pr: https://github.com/verndale/provision-sitecore-ai-component/pull/55
+issue: https://github.com/verndale/provision-sitecore-ai-component/issues/54
+issues: ["https://github.com/verndale/provision-sitecore-ai-component/issues/54"]
 ---
 # Advisory REST inspection for manifest checks
 
