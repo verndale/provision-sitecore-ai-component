@@ -1,6 +1,6 @@
 ---
-aliases: [SitecoreAI component provisioning, component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation]
-covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs, src/field-source.cjs, src/option-source.cjs, src/validate-manifest.cjs]
+aliases: [SitecoreAI component provisioning, component provisioning, manifest, Authoring API push, TSX scaffold, CMS template creation, REST inspection, check --rest]
+covers: [skills/provision-sitecore-ai-component/SKILL.md, src/cli.cjs, src/build-plan.cjs, src/emit-tsx.cjs, src/executor.cjs, src/rest-inspection.cjs, src/field-source.cjs, src/option-source.cjs, src/validate-manifest.cjs]
 ---
 # SitecoreAI component provisioning — Design History
 
@@ -14,6 +14,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 - Authoring credentials resolve per key from process environment, project `.env`, then the per-machine bootstrap file; blank placeholders are treated as unset so a copied `.env.example` does not mask the machine default ([src/cli.cjs](../../src/cli.cjs)).
 - `plan` is offline and byte-deterministic; the plan JSON embeds the GraphQL documents verbatim with `__PLACEHOLDER__` ids bound from preflights at run time — no hardcoded GUIDs ([src/build-plan.cjs](../../src/build-plan.cjs)).
 - `check` is read-only (a hard guard refuses mutations outside push mode); `push` reconciles add-only — extra CMS fields, type mismatches, and mislocated fields become follow-ups, never deletions or retypes ([src/executor.cjs](../../src/executor.cjs)) — and is confirmation-gated at the CLI (TTY y/N, or `--yes` recording the skill's step-6 approval).
+- Opt-in `check --rest` inspects existing plan-bound templates and renderings after the complete GraphQL check, reusing its cached token. Differences are advisory, absent metadata is unavailable, and request/identity errors fail. REST uses fixed GET routes with `environmentId=main`; allowed sites are observed without inference ([src/rest-inspection.cjs](../../src/rest-inspection.cjs)).
 - The shared PreToolUse policy is platform-adapted: Claude Code can ask on push, while Codex denies the command until `--yes` records the skill gate; Codex hooks use canonical `Bash`/`apply_patch` payloads and require exact-hash trust after updates ([scripts/hooks/pretooluse-guard.cjs](../../scripts/hooks/pretooluse-guard.cjs)).
 - Required fields attach the standard Required rule (resolved by path) to the Validate Button and Workflow bars; list fields (`__Masters`, Allowed Controls, validation bars) merge append-only with brace/case-insensitive de-duplication.
 - Rich Text, Image, and General Link fields use deterministic house Source defaults (`query:$xaRichTextProfile`, `query:$siteMedia`, and `query:$linkableHomes`); an explicit reviewed Source overrides the default ([src/field-source.cjs](../../src/field-source.cjs)).
@@ -27,6 +28,7 @@ How one reviewed manifest drives both the SitecoreAI CMS side (templates, fields
 
 ## Decisions
 
+- 2026-10-05 — Adopted basic REST inspection in the existing `check` command to measure the new API surface while preserving the reviewed manifest, add-only provisioning, and push gate. REST writes and contextual metadata are deferred ([issue #54](https://github.com/verndale/provision-sitecore-ai-component/issues/54), [plan](../plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md), [journal](../journal/2026-10-05-rest-inspection.md)).
 - 2026-09-29 — fix(ci): preserve pending main Quality runs ([verndale/provision-sitecore-ai-component PR #52](https://github.com/verndale/provision-sitecore-ai-component/pull/52); [verndale/provision-sitecore-ai-component issue #51](https://github.com/verndale/provision-sitecore-ai-component/issues/51))
 - 2026-09-29 — fix(ci): preserve main Quality release handoff ([verndale/provision-sitecore-ai-component PR #49](https://github.com/verndale/provision-sitecore-ai-component/pull/49); [verndale/provision-sitecore-ai-component issue #48](https://github.com/verndale/provision-sitecore-ai-component/issues/48))
 - 2026-09-22 — feat(provision-sitecore-ai-component): provision general image card plac ([verndale/provision-sitecore-ai-component PR #36](https://github.com/verndale/provision-sitecore-ai-component/pull/36))

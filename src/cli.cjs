@@ -6,7 +6,7 @@
  *
  * Usage:
  *   provision-sitecore-ai-component [plan] <manifest.json> [--no-tsx] [--force-tsx] [--config <path>]
- *   provision-sitecore-ai-component check  <manifest.json> [--config <path>]
+ *   provision-sitecore-ai-component check  <manifest.json> [--rest] [--config <path>]
  *   provision-sitecore-ai-component push   <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>]
  *
  * Modes:
@@ -45,13 +45,14 @@ function fail(message, cause, next) {
 }
 
 function parseArgs(argv) {
-  const args = { mode: "plan", manifestPath: null, noTsx: false, forceTsx: false, configPath: null, yes: false };
+  const args = { mode: "plan", manifestPath: null, noTsx: false, forceTsx: false, configPath: null, yes: false, rest: false };
   const positional = [];
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--no-tsx") args.noTsx = true;
     else if (arg === "--force-tsx") args.forceTsx = true;
     else if (arg === "--yes") args.yes = true;
+    else if (arg === "--rest") args.rest = true;
     else if (arg === "--config") {
       i += 1;
       if (!argv[i]) return { error: "--config requires a path argument." };
@@ -70,6 +71,7 @@ function parseArgs(argv) {
     return { error: positional.length === 0 ? "No manifest path given." : `Unexpected argument(s): ${positional.slice(1).join(", ")}.` };
   }
   args.manifestPath = positional[0];
+  if (args.rest && args.mode !== "check") return { error: "--rest is supported only with check." };
   return { args };
 }
 
@@ -179,9 +181,9 @@ function emitTsxPair(manifest, resolved, cwd, { forceTsx }) {
 async function main() {
   const parsed = parseArgs(process.argv.slice(2));
   if (parsed.error) {
-    fail(parsed.error, "Expected: provision-sitecore-ai-component [plan|check|push] <manifest.json> [--yes] [--no-tsx] [--force-tsx] [--config <path>].", "Fix the invocation and re-run.");
+    fail(parsed.error, "Expected: provision-sitecore-ai-component [plan|check|push] <manifest.json> [--rest (check only)] [--yes] [--no-tsx] [--force-tsx] [--config <path>].", "Fix the invocation and re-run.");
   }
-  const { mode, manifestPath, noTsx, forceTsx, configPath, yes } = parsed.args;
+  const { mode, manifestPath, noTsx, forceTsx, configPath, yes, rest } = parsed.args;
   const cwd = process.cwd();
 
   const configResult = loadConfig(cwd, configPath);
@@ -227,6 +229,7 @@ async function main() {
     try {
       const outcome = await runPlan(plan, {
         mode,
+        rest,
         env: process.env,
         log: (line) => process.stdout.write(`${line}\n`),
       });

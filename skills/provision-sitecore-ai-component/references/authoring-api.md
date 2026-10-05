@@ -1,6 +1,6 @@
 # Authoring API contract
 
-How `check` and `push` talk to the SitecoreAI Authoring and Management GraphQL API: authentication, the operation set, placeholder binding, reconcile semantics, and the verification procedure for environment differences. The executor (`src/executor.cjs`) implements this contract; the plan JSON embeds every GraphQL document verbatim so a reviewer sees exactly what will run.
+How `check` and `push` talk to the SitecoreAI Authoring and Management GraphQL API, with optional read-only REST inspection during `check`: authentication, the operation set, placeholder binding, reconcile semantics, and the verification procedure for environment differences. The executor (`src/executor.cjs`) implements this contract; the plan JSON embeds every GraphQL document verbatim so a reviewer sees exactly what will run. REST inspection is derived from existing plan targets and does not alter the generated plan.
 
 ## Contents
 
@@ -29,13 +29,29 @@ The CLI fills non-empty values in this order: exported environment variables →
 
 `push` is confirmation-gated at the CLI: on a terminal it asks y/N before loading credentials; in a non-interactive shell it refuses without `--yes`, which records the skill's step-6 gate approval.
 
+`check --rest` reuses this automation client and the same cached bearer token as GraphQL; it needs no additional credentials. Before use, confirm in the Cloud Portal that the client and GraphQL endpoint belong to the same intended non-production environment. The REST API currently supports `environmentId=main`; this is the CMS environment selector, not a Git branch or permission to target production.
+
 ## Endpoint
 
 All GraphQL traffic posts to `SITECORE_AUTHORING_ENDPOINT` with a bearer token. The token is fetched once per run. Transport retry: at most 3 attempts per request, only for network errors, HTTP 429, and 5xx; other 4xx and GraphQL-level errors never retry.
 
+Opt-in REST inspection sends GET requests only to `https://edge-platform.sitecorecloud.io/authoring`, with `environmentId=main`, a bearer header, and JSON responses. It uses the same injected fetch and transport retry policy. Redirects are refused. JSON parsing and response-identity failures never retry. No REST writes are supported. Plain `check`, `plan`, and `push` do not issue REST requests.
+
 ## Operations
 
 The plan carries nine documents (see `plan.graphql`): five queries — item by path, template by ID with own/inherited fields plus bases/icon/linked Standard Values, one field value, Authoring `search`, and item children — and four mutations — `createItemTemplate`, `updateItemTemplate`, `createItem`, and `updateItem`. Template lookup first resolves the item by path, then uses its ID because current SitecoreAI returns an error rather than `null` for an absent `itemTemplate` path lookup. Everything composes from these primitives; there is no delete, rename, move, or clone operation in the set by design.
+
+After the entire GraphQL check operation loop succeeds, `check --rest` permits three retrieval routes ([Components API](https://api-docs.sitecore.com/sai/components-api), [Content Types OpenAPI](https://api-docs.sitecore.com/_bundle/sai/content-types-api/index.json?download=)):
+
+- `GET /api/v1/content-types/{modelId}` — existing `ensureTemplate` targets with a bound template ID and no absent marker, including templates with advisory conflicts or predicted metadata updates.
+- `GET /api/v1/components/{componentId}` — an existing `ensureRendering` target reporting `no-op` with a bound rendering ID.
+- `GET /api/v1/components/{componentId}/sites` — allowed-site observations, after component identity is verified. An empty array is valid.
+
+IDs must normalize to 32 hexadecimal digits; requests use lowercase hyphenated GUIDs. Detail responses must be objects whose valid `id` equals the requested ID after brace/case/hyphen normalization. `modelId` on a component is observed metadata, never its identity. Invalid IDs fail before their GET. New targets are skipped with reasons; a manifest without a rendering issues no Components requests. If no existing targets are inspected, the report explicitly says REST was not exercised.
+
+The inspector reports field groups, own/inherited fields, validation IDs, component parameters, variants, and allowed sites. Field names and types compare case-insensitively; inherited fields cannot satisfy reviewed own fields. Source compares verbatim against its effective `configureField` value after runtime substitution, including house defaults. Conflicted/unbound option Sources, including lowercase placeholders, are unavailable. Without a planned Source, the returned value is observed only. The rendering's `datasourceTemplateField` compares against the planned Datasource Template path case-insensitively, or by normalized GUID against the bound declared/external template ID. A GUID comparison lacking an existing reviewed template ID is unavailable. Null/omitted metadata is unavailable, never a match; an empty or different available datasource binding is advisory. Without a reviewed binding, no expectation is inferred.
+
+The distinct advisory report and optional `runPlan` outcome `restInspection` contain observations, findings, and skipped targets. Discrepancies never trigger writes or change GraphQL results/follow-ups. Allowed sites remain observations because manifest site-root names do not establish REST site IDs. Contextual metadata requiring site/page/host settings, Content Items operations, drafts, AI suggestions, and REST provisioning are outside this check.
 
 ## Placeholder binding
 
@@ -93,9 +109,13 @@ Read-only `check` compatibility, including the current query/schema surfaces and
 3. Fix the document/shape in `src/build-plan.cjs` (or the paths in `plan.systemPaths`/config) — never by hand-editing a plan file that then diverges from the tool.
 4. Re-run `check` until clean, then `push --yes` (the gate confirms; `--yes` records the step-6 approval).
 
+The earlier GraphQL verification does not establish live REST compatibility. For a REST pilot, confirm the client/endpoint environment first, then run plain `check` on the reviewed Rich Text Field manifest. Require success and both an existing template (its ensure action may be `no-op`, `update`, or advisory `conflict`) and an existing rendering (`ensure-rendering` must be `no-op`). If either is predicted for creation, report the existing-target pilot as not exercised; do not create CMS items to satisfy it. An alternate existing reviewed manifest is a user choice. When the precondition holds, run `check --rest` and record actual template/component identity verification and observations separately from fixture tests. No push gate is granted by this procedure.
+
 ## Failure classes and exits
 
 - Config (missing env, bad config file) → exit 2, before any network call.
-- Auth (token rejected, 401/403) → exit 1, no retry.
-- API (network after retries, 5xx after retries, GraphQL errors) → exit 1.
+- Auth (token rejected, GraphQL or REST 401/403) → exit 1, no retry.
+- API (network/429/5xx after retries, other failed requests, GraphQL errors, REST malformed JSON, incompatible response shape, invalid/missing/mismatched identity) → exit 1. An existing target's REST 404 is a failure with the target path and ID, never a skip.
 - Conflict (existing-template absent, wrong-template collision, missing system field, unbindable placeholder) → exit 1 with remediation text; nothing was forced.
+- REST contract discrepancies and skipped new targets → advisory, exit 0 after successful GraphQL/REST requests. Nullable/unavailable metadata is never reported as a match.
+- `--rest` outside `check` → invocation error, exit 2 before credentials or network.

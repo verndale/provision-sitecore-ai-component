@@ -42,8 +42,10 @@ function readFixtureFile(fixtureName, relative) {
  * - fieldValues: { "<path>::<field>": "value" }
  * Mutations mutate the fake state so later resolves observe them.
  * `calls` records every fetch; `mutations` only the mutation documents.
+ * `restRoutes` maps method + pathname to a JSON body or response function;
+ * `restCalls` records REST requests independently of token/GraphQL traffic.
  */
-function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures = null } = {}) {
+function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures = null, restRoutes = {} } = {}) {
   const state = {
     items: items.map((i) => ({ ...i, fieldNames: [...(i.fieldNames || [])] })),
     fieldValues: { ...fieldValues },
@@ -56,6 +58,7 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
   }
   const calls = [];
   const mutations = [];
+  const restCalls = [];
 
   const json = (status, body) => ({ ok: status < 400, status, json: async () => body });
   const byPath = (p) => state.items.find((i) => i.path === p) || null;
@@ -65,6 +68,9 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
 
   async function fetchImpl(url, init) {
     calls.push({ url, init });
+    const parsedUrl = new URL(url);
+    const isRest = parsedUrl.hostname === "edge-platform.sitecorecloud.io" && parsedUrl.pathname.startsWith("/authoring/api/v1/");
+    if (isRest) restCalls.push({ method: init.method, url, headers: init.headers });
     if (failures) {
       const failure = failures.shift();
       if (failure !== undefined && failure !== null) {
@@ -75,6 +81,11 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
     if (String(url).includes("/oauth/token")) {
       if (tokenStatus !== 200) return json(tokenStatus, { error: "denied" });
       return json(200, { access_token: "fake-token" });
+    }
+    if (isRest) {
+      const route = restRoutes[`${init.method} ${parsedUrl.pathname}`];
+      if (typeof route === "function") return route(url, init);
+      return route === undefined ? json(404, { title: "Not Found", status: 404 }) : json(200, route);
     }
     const body = JSON.parse(init.body);
     const { query, variables } = body;
@@ -266,7 +277,7 @@ function makeFakeCms({ items = [], fieldValues = {}, tokenStatus = 200, failures
     return json(400, { errors: [{ message: `Unrecognized query in fake CMS: ${query.slice(0, 60)}` }] });
   }
 
-  return { fetchImpl, calls, mutations, state };
+  return { fetchImpl, calls, restCalls, mutations, state };
 }
 
 const FAKE_ENV = {

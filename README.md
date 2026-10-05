@@ -63,6 +63,9 @@ node src/cli.cjs plan <manifest.json>
 # Online, read-only: preflight the plan against the CMS (per-op create/update/no-op/conflict).
 node src/cli.cjs check <manifest.json>
 
+# Also inspect existing templates and renderings through the SitecoreAI REST APIs.
+node src/cli.cjs check <manifest.json> --rest
+
 # Online, mutating: execute the plan (add-only reconcile), then emit the TSX pair.
 # Gated: prompts for confirmation on a terminal; non-interactive shells need --yes.
 node src/cli.cjs push <manifest.json> --yes
@@ -78,7 +81,11 @@ Three complete manifests live in the golden fixtures and double as reference exa
 | `check` | read-only | Run every preflight query; print the decision each op would take. Never mutates the CMS (all modes regenerate the local `<slug>.plan.json`). |
 | `push` | mutating | Execute ops in order with create-or-update reconcile; then emit TSX like `plan`. Confirmation-gated: interactive y/N on a terminal, `--yes` required non-interactively (the skill passes it only after its step-6 gate approval). |
 
-Flags: `--yes` (confirm `push`; recorded gate approval), `--no-tsx` (skip scaffold emission), `--force-tsx` (overwrite an existing pair), `--config <path>` (explicit config file).
+Flags: `--rest` (`check` only; advisory REST inspection), `--yes` (confirm `push`; recorded gate approval), `--no-tsx` (skip scaffold emission), `--force-tsx` (overwrite an existing pair), `--config <path>` (explicit config file).
+
+`check --rest` completes the GraphQL preflight first, then retrieves content-type details, component details, and allowed sites for existing targets identified by the reviewed plan's bound IDs. It compares own-field types, effective planned Sources (including defaults and resolved option queries), and the rendering's datasource-template binding. Other metadata, including inherited fields, validation IDs, parameters, variants, and allowed sites, is observed without inventing manifest expectations. Missing nullable metadata is unavailable; targets predicted for creation are skipped. If no existing targets are inspected, the report says REST was not exercised.
+
+REST contract differences are advisory and do not change a successful check's exit code. Failed requests (including an existing target returning 404), invalid response identities, malformed JSON, or incompatible response shapes fail with exit `1`. `--rest` with `plan` or `push` fails with exit `2` before reading credentials or making requests. REST uses the same cached token, the documented public Authoring host, and `environmentId=main`; confirm the automation client and GraphQL endpoint belong to the same intended non-production environment before use. See the [Authoring API contract](skills/provision-sitecore-ai-component/references/authoring-api.md) for the routes and live-pilot procedure.
 
 Exit codes: `0` success or clean skip · `1` API/auth/conflict failure (nothing was forced) · `2` invocation, config, or manifest-validation error (each printed as one `ERROR: … Cause: … Next: …` line).
 

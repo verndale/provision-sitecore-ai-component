@@ -1,7 +1,7 @@
 {
   "counts": {
-    "nodes": 105,
-    "edges": 243,
+    "nodes": 109,
+    "edges": 265,
     "byType": {
       "hook": 6,
       "root-doc": 4,
@@ -9,21 +9,21 @@
       "skill-readme": 1,
       "reference": 6,
       "skill": 1,
-      "source": 9,
-      "test": 16,
+      "source": 10,
+      "test": 17,
       "wiki-index": 3,
-      "wiki-journal": 23,
-      "wiki-plan": 12,
+      "wiki-journal": 24,
+      "wiki-plan": 13,
       "wiki-topic": 2
     },
     "byEdgeType": {
-      "covers": 11,
+      "covers": 12,
       "invokes": 5,
-      "links-to": 108,
-      "plan": 12,
+      "links-to": 119,
+      "plan": 13,
       "references": 6,
-      "requires": 70,
-      "topic": 31
+      "requires": 77,
+      "topic": 33
     }
   },
   "nodes": [
@@ -154,7 +154,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 18305,
+      "bytes": 19857,
       "degree": 8
     },
     {
@@ -466,8 +466,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 11254,
-      "degree": 5
+      "bytes": 16071,
+      "degree": 6
     },
     {
       "id": "skills/provision-sitecore-ai-component/references/confluence-import.md",
@@ -544,7 +544,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 11592,
+      "bytes": 12169,
       "degree": 13
     },
     {
@@ -558,7 +558,7 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 38227,
-      "degree": 10
+      "degree": 11
     },
     {
       "id": "src/cli.cjs",
@@ -570,8 +570,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 10586,
-      "degree": 7
+      "bytes": 10799,
+      "degree": 8
     },
     {
       "id": "src/emit-tsx.cjs",
@@ -596,8 +596,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 51952,
-      "degree": 6
+      "bytes": 54872,
+      "degree": 9
     },
     {
       "id": "src/field-source.cjs",
@@ -626,6 +626,19 @@
       "degree": 7
     },
     {
+      "id": "src/rest-inspection.cjs",
+      "label": "rest-inspection.cjs",
+      "type": "source",
+      "dir": "src",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 7682,
+      "degree": 6
+    },
+    {
       "id": "src/type-map.cjs",
       "label": "type-map.cjs",
       "type": "source",
@@ -649,7 +662,7 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 790,
-      "degree": 5
+      "degree": 6
     },
     {
       "id": "src/validate-manifest.cjs",
@@ -662,7 +675,7 @@
       "issues": [],
       "githubRefs": [],
       "bytes": 41671,
-      "degree": 9
+      "degree": 10
     },
     {
       "id": "test/executor.test.cjs",
@@ -700,7 +713,7 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 5260,
+      "bytes": 5690,
       "degree": 2
     },
     {
@@ -713,8 +726,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 12442,
-      "degree": 5
+      "bytes": 13161,
+      "degree": 7
     },
     {
       "id": "test/hooks-install.test.cjs",
@@ -793,6 +806,19 @@
       "githubRefs": [],
       "bytes": 5380,
       "degree": 1
+    },
+    {
+      "id": "test/rest-inspection.test.cjs",
+      "label": "rest-inspection.test.cjs",
+      "type": "test",
+      "dir": "test",
+      "topics": [],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 19751,
+      "degree": 6
     },
     {
       "id": "test/skill-link-install.test.cjs",
@@ -882,8 +908,8 @@
       "prs": [],
       "issues": [],
       "githubRefs": [],
-      "bytes": 8291,
-      "degree": 30
+      "bytes": 8493,
+      "degree": 31
     },
     {
       "id": "wiki/journal/2026-07-21-agents-and-claude-md.md",
@@ -1526,6 +1552,30 @@
       "degree": 3
     },
     {
+      "id": "wiki/journal/2026-10-05-rest-inspection.md",
+      "label": "Advisory REST inspection for manifest checks",
+      "type": "wiki-journal",
+      "dir": "wiki/journal",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [
+        "54"
+      ],
+      "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 54,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/54"
+        }
+      ],
+      "bytes": 2717,
+      "degree": 10
+    },
+    {
       "id": "wiki/MECHANICS.md",
       "label": "Wiki Mechanics",
       "type": "wiki-index",
@@ -1849,6 +1899,21 @@
       "degree": 4
     },
     {
+      "id": "wiki/plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md",
+      "label": "Add SitecoreAI REST inspection to manifest checks",
+      "type": "wiki-plan",
+      "dir": "wiki/plans",
+      "topics": [
+        "sitecore-provisioning"
+      ],
+      "aliases": [],
+      "prs": [],
+      "issues": [],
+      "githubRefs": [],
+      "bytes": 12230,
+      "degree": 4
+    },
+    {
       "id": "wiki/plans/INDEX.md",
       "label": "Plan Audit",
       "type": "wiki-index",
@@ -1945,8 +2010,8 @@
           "url": "https://github.com/verndale/provision-sitecore-ai-component/pull/40"
         }
       ],
-      "bytes": 4210,
-      "degree": 14
+      "bytes": 4477,
+      "degree": 15
     },
     {
       "id": "wiki/topics/knowledge-graph.md",
@@ -2046,7 +2111,9 @@
         "manifest",
         "Authoring API push",
         "TSX scaffold",
-        "CMS template creation"
+        "CMS template creation",
+        "REST inspection",
+        "check --rest"
       ],
       "prs": [
         "52",
@@ -2066,6 +2133,7 @@
         "3"
       ],
       "issues": [
+        "54",
         "51",
         "48",
         "45",
@@ -2077,6 +2145,12 @@
         "17"
       ],
       "githubRefs": [
+        {
+          "kind": "issue",
+          "repository": "verndale/provision-sitecore-ai-component",
+          "number": 54,
+          "url": "https://github.com/verndale/provision-sitecore-ai-component/issues/54"
+        },
         {
           "kind": "pull-request",
           "repository": "verndale/provision-sitecore-ai-component",
@@ -2222,8 +2296,8 @@
           "url": "https://github.com/verndale/provision-sitecore-component/pull/3"
         }
       ],
-      "bytes": 15210,
-      "degree": 56
+      "bytes": 16113,
+      "degree": 62
     }
   ],
   "edges": [
@@ -2275,6 +2349,11 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "src/option-source.cjs",
+      "type": "covers"
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/rest-inspection.cjs",
       "type": "covers"
     },
     {
@@ -2416,7 +2495,7 @@
       "source": "README.md",
       "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
       "type": "links-to",
-      "count": 1,
+      "count": 2,
       "anchors": []
     },
     {
@@ -2661,6 +2740,13 @@
     },
     {
       "source": "wiki/INDEX.md",
+      "target": "wiki/journal/2026-10-05-rest-inspection.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/INDEX.md",
       "target": "wiki/MECHANICS.md",
       "type": "links-to",
       "count": 1,
@@ -2683,6 +2769,48 @@
     {
       "source": "wiki/INDEX.md",
       "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "skills/provision-sitecore-ai-component/references/authoring-api.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "src/cli.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "src/executor.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "src/rest-inspection.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "test/helpers.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "test/rest-inspection.test.cjs",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2788,6 +2916,13 @@
     {
       "source": "wiki/plans/INDEX.md",
       "target": "wiki/plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/plans/INDEX.md",
+      "target": "wiki/plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -2934,6 +3069,13 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "src/rest-inspection.cjs",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/journal/2026-07-21-codex-pretooluse-compatibility.md",
       "type": "links-to",
       "count": 1,
@@ -3025,6 +3167,13 @@
     },
     {
       "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/journal/2026-10-05-rest-inspection.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/plans/2026-07-21-fix-codex-pretooluse-enforcement-and-track-the-bug--9937d534aad2.md",
       "type": "links-to",
       "count": 1,
@@ -3061,6 +3210,13 @@
     {
       "source": "wiki/topics/sitecore-provisioning.md",
       "target": "wiki/plans/2026-09-01-droplist-sources-via-sitecore-query.md",
+      "type": "links-to",
+      "count": 1,
+      "anchors": []
+    },
+    {
+      "source": "wiki/topics/sitecore-provisioning.md",
+      "target": "wiki/plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md",
       "type": "links-to",
       "count": 1,
       "anchors": []
@@ -3123,6 +3279,11 @@
     {
       "source": "wiki/journal/2026-09-28-git-delivery-standard.md",
       "target": "wiki/plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md",
+      "type": "plan"
+    },
+    {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "wiki/plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md",
       "type": "plan"
     },
     {
@@ -3296,7 +3457,17 @@
       "type": "requires"
     },
     {
+      "source": "src/executor.cjs",
+      "target": "src/rest-inspection.cjs",
+      "type": "requires"
+    },
+    {
       "source": "src/option-source.cjs",
+      "target": "src/util.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "src/rest-inspection.cjs",
       "target": "src/util.cjs",
       "type": "requires"
     },
@@ -3422,6 +3593,31 @@
     },
     {
       "source": "test/push-gate.test.cjs",
+      "target": "test/helpers.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/rest-inspection.test.cjs",
+      "target": "src/build-plan.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/rest-inspection.test.cjs",
+      "target": "src/executor.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/rest-inspection.test.cjs",
+      "target": "src/rest-inspection.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/rest-inspection.test.cjs",
+      "target": "src/validate-manifest.cjs",
+      "type": "requires"
+    },
+    {
+      "source": "test/rest-inspection.test.cjs",
       "target": "test/helpers.cjs",
       "type": "requires"
     },
@@ -3616,6 +3812,11 @@
       "type": "topic"
     },
     {
+      "source": "wiki/journal/2026-10-05-rest-inspection.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
+      "type": "topic"
+    },
+    {
       "source": "wiki/plans/2026-07-21-fix-codex-pretooluse-enforcement-and-track-the-bug--9937d534aad2.md",
       "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
@@ -3658,6 +3859,11 @@
     {
       "source": "wiki/plans/2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md",
       "target": "wiki/topics/knowledge-graph.md",
+      "type": "topic"
+    },
+    {
+      "source": "wiki/plans/2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md",
+      "target": "wiki/topics/sitecore-provisioning.md",
       "type": "topic"
     }
   ]
