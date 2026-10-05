@@ -22,6 +22,7 @@
  */
 
 const { sitecoreQuerySource, folderMatchesOptions, parentItemPath, SEARCH_PAGE_SIZE } = require("./option-source.cjs");
+const { inspectRest } = require("./rest-inspection.cjs");
 const DEFAULT_TOKEN_URL = "https://auth.sitecorecloud.io/oauth/token";
 const DEFAULT_AUDIENCE = "https://api.sitecorecloud.io";
 const MAX_ATTEMPTS = 3;
@@ -200,10 +201,50 @@ function createClient(plan, options) {
     return body.data;
   }
 
+  function redact(value) {
+    if (typeof value === "string") {
+      for (const secret of [...Object.values(config), token]) {
+        if (secret) value = value.split(secret).join("[redacted]");
+      }
+      return value;
+    }
+    if (Array.isArray(value)) return value.map(redact);
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, entry]) => [redact(key), redact(entry)]));
+    return value;
+  }
+
+  async function restGet(route, target) {
+    if (mode !== "check" || !/^\/api\/v1\/(?:content-types\/[0-9a-f-]{36}|components\/[0-9a-f-]{36}(?:\/sites)?)$/.test(route)) {
+      throw new ExecutorError("api", "Refused unsupported REST inspection request.", "Use check --rest with the reviewed retrieval routes.");
+    }
+    const label = `REST ${target.targetPath} (${target.id})`;
+    try {
+      const bearer = await getToken();
+      const response = await requestWithRetry(
+        `https://edge-platform.sitecorecloud.io/authoring${route}?environmentId=main`,
+        { method: "GET", headers: { authorization: `Bearer ${bearer}`, accept: "application/json" }, redirect: "error" },
+        label
+      );
+      if (!response.ok) {
+        const kind = response.status === 401 || response.status === 403 ? "auth" : "api";
+        throw new ExecutorError(kind, `${label} failed (HTTP ${response.status}).`, "Verify REST access and the existing target in the intended environment.");
+      }
+      try {
+        return await response.json();
+      } catch {
+        throw new ExecutorError("api", `${label} returned malformed JSON.`, "Verify the REST response against the documented API contract.");
+      }
+    } catch (error) {
+      throw new ExecutorError(error.kind || "api", redact(error.message), redact(error.next));
+    }
+  }
+
   return {
     log: log || (() => {}),
     mode,
     graphql,
+    restGet,
+    redact,
     async itemByPath(path) {
       const data = await graphql("ITEM_BY_PATH", { path });
       return data.item || null;
@@ -383,6 +424,7 @@ function optionItemByName(children, name) {
 
 async function runPlan(plan, options) {
   const mode = options.mode === "push" ? "push" : "check";
+  if (options.rest && mode !== "check") throw new ExecutorError("config", "REST inspection is supported only in check mode.", "Run check --rest.");
   const client = createClient(plan, { ...options, mode, retryDelayMs: options.retryDelayMs === undefined ? 250 : options.retryDelayMs });
   const bindings = {};
   const results = [];
@@ -1066,7 +1108,21 @@ async function runPlan(plan, options) {
     }
   }
 
-  return { ok: true, mode, results, followUps };
+  const outcome = { ok: true, mode, results, followUps };
+  if (options.rest) {
+    try {
+      outcome.restInspection = client.redact(await inspectRest(plan, { bindings, results, get: client.restGet, normalizeId, substitute }));
+    } catch (error) {
+      throw new ExecutorError(error.kind || "api", client.redact(error.message), client.redact(error.next));
+    }
+    client.log("REST inspection (advisory):");
+    const { observations, findings, skipped } = outcome.restInspection;
+    for (const observation of observations) client.log(`observed  ${observation.targetPath} — ${JSON.stringify(observation)}`);
+    for (const finding of findings) client.log(`advisory  ${finding.targetPath} — ${finding.message}`);
+    for (const target of skipped) client.log(`skipped   ${target.targetPath} — ${target.reason}`);
+    if (observations.length === 0) client.log("REST not exercised: no existing reviewed targets.");
+  }
+  return outcome;
 }
 
 module.exports = { runPlan, readEnv, listMerge, normalizeId, substitute, ExecutorError };

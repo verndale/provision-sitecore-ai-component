@@ -23,6 +23,7 @@ Writing protocol (when to capture, templates, automation): [MECHANICS.md](MECHAN
 
 ## Journal
 
+- 2026-10-05 — [Advisory REST inspection for manifest checks](journal/2026-10-05-rest-inspection.md) — optional existing-target inspection reuses the GraphQL token and keeps discrepancies advisory.
 - 2026-09-29 — [Preserve pending main Quality runs](journal/2026-09-29-preserve-pending-quality.md) — each main push keeps its own Quality run while PR retries still cancel.
 - 2026-09-29 — [Preserve tested main release handoff](journal/2026-09-29-preserve-release-handoff.md) — later wiki merges no longer cancel in-progress substantive Quality runs.
 - 2026-09-29 — [Scope wiki Quality and harden bot PR replay](journal/2026-09-29-wiki-quality-and-bot-replay.md) — focused wiki checks and repository REST updates for existing bot PRs.

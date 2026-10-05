@@ -73,8 +73,17 @@ test("navigate router returns real routes for why / wiring / impact", () => {
   const impact = route(graph, { intent: "impact", query: "build-plan.cjs" });
   assert.equal(impact.status, "ok", JSON.stringify(impact));
 
-  const ambiguous = route(graph, { intent: "why", query: "manifest" });
-  assert.notEqual(ambiguous.status, "ok", "an ambiguous query reports instead of guessing");
+  // New wiki titles can change the strongest live match. Use equal candidates
+  // for the ambiguity contract rather than assuming a word stays ambiguous.
+  const ambiguous = route({
+    nodes: [
+      { id: "manifest-a", label: "Manifest A", type: "source", aliases: [], topics: [] },
+      { id: "manifest-b", label: "Manifest B", type: "source", aliases: [], topics: [] },
+    ],
+    edges: [],
+  }, { intent: "why", query: "manifest" });
+  assert.equal(ambiguous.status, "ambiguous-source", "an ambiguous query reports instead of guessing");
+  assert.equal(ambiguous.candidates.length, 2);
 });
 
 test("compact routes print relation, authority, per-page bytes, and total bytes", () => {

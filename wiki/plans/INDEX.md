@@ -26,5 +26,6 @@ Every agent plan written for this repo, gathered from Claude plan stores, Codex 
 | 2026-09-01 | [Droplist sources via Sitecore query](2026-09-01-droplist-sources-via-sitecore-query.md) | implemented | [verndale/provision-sitecore-ai-component PR #36](https://github.com/verndale/provision-sitecore-ai-component/pull/36) | sitecore-provisioning |
 | 2026-09-01 | [Droplist items based on Option template](2026-09-01-droplist-items-based-on-option-template.md) | implemented | [verndale/provision-sitecore-ai-component PR #36](https://github.com/verndale/provision-sitecore-ai-component/pull/36) | sitecore-provisioning |
 | 2026-09-29 | [Standardize Git delivery in provision-sitecore-ai-component](2026-09-29-standardize-git-delivery-in-provision-sitecore-ai-component--56948a422121.md) | implemented | issue #39, [verndale/provision-sitecore-ai-component PR #40](https://github.com/verndale/provision-sitecore-ai-component/pull/40) | knowledge-graph |
+| 2026-10-05 | [Add SitecoreAI REST inspection to manifest checks](2026-10-05-add-sitecoreai-rest-inspection-to-manifest-checks.md) | partial | Issue #54; local verification passed; live REST not exercised (Sitecore Deploy 403) | sitecore-provisioning |
 
-Totals: 12 implemented (12 plans).
+Totals: 12 implemented · 1 partial (13 plans).
